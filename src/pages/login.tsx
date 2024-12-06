@@ -1,14 +1,14 @@
-import LoginBg from "../components/LoginBg";
+import GradientBackground from "../components/GradientBackground";
 import Card from "../components/Card";
 
-const login = () => {
+const Login = () => {
   return (
-    <LoginBg>
-      <div className="flex justify-center items-center  h-screen ">
+    <GradientBackground>
+      <div className="flex justify-center items-center h-screen">
         <Card />
       </div>
-    </LoginBg>
+    </GradientBackground>
   );
 };
 
-export default login;
+export default Login;
