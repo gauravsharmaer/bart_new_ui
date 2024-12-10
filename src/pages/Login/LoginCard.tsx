@@ -1,17 +1,16 @@
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
 import { useState } from "react";
-import oneLogin from "../assets/oneLogin.png";
-import user from "../assets/user.png";
+import oneLogin from "../../assets/oneLogin.png";
+import user from "../../assets/user.png";
 import { CaretDown } from "@phosphor-icons/react";
-import bartLogo from "../assets/bartLogo.svg";
-
-export default function Card() {
+import bartLogo from "../../assets/bartLogo.svg";
+import CardBackground from "../../components/CardBackground";
+export default function LoginCard() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   return (
-
     <div className="flex flex-col items-center gap-2 w-full max-w-[450px] mx-auto">
       {/* Logo and Header */}
       <div className="flex flex-col items-center gap-2">
@@ -21,13 +20,7 @@ export default function Card() {
         </div>
       </div>
 
-      
-        <div
-  className="items-center gap-2.5 px-0 py-2 relative bg-gradient-to-t from-[#FF3F0C0A] via-white to-white rounded-[20px] overflow-hidden border border-solid border-transparent flex flex-col w-full max-w-[500px] mx-auto"
-  style={{ background: 'linear-gradient(to top, #FF3F0C0A, rgba(255, 63, 12, 0) 50%, white)' }}
->
-  
-
+      <CardBackground>
         <div className="p-5 space-y-7 w-full max-w-[450px]">
           {/* Header Section */}
           <div className="space-y-7 ">
@@ -126,7 +119,10 @@ export default function Card() {
                   Having trouble logging in?{" "}
                 </span>
                 <span className="text-[#FF5600] font-medium">Click here</span>
-                <span className="text-[#202B3B]"> to set up a new password.</span>
+                <span className="text-[#202B3B]">
+                  {" "}
+                  to set up a new password.
+                </span>
               </p>
 
               <p className="text-[10.4px] leading-[12.5px]">
@@ -138,7 +134,7 @@ export default function Card() {
             </div>
           </div>
         </div>
-      </div>
+      </CardBackground>
     </div>
   );
 }
