@@ -6,9 +6,12 @@ import user from "../../assets/user.png";
 import { CaretDown } from "@phosphor-icons/react";
 import bartLogo from "../../assets/bartLogo.svg";
 import CardBackground from "../../components/CardBackground";
+import { useNavigate } from "react-router-dom";
+
 export default function LoginCard() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   return (
     <div className="flex flex-col items-center gap-2 w-full max-w-[450px] mx-auto">
@@ -96,7 +99,8 @@ export default function LoginCard() {
               <Button
                 variant="default"
                 className="w-full h-[49px] rounded-full text-white bg-gradient-to-b from-[#FE7855] to-[#FF0000] hover:opacity-90 transition-opacity"
-              >
+                onClick={() => navigate("/home")}
+>
                 Continue
               </Button>
             </div>
@@ -108,7 +112,9 @@ export default function LoginCard() {
               <span className="text-[#202B3B] text-sm">
                 Don't have an account?
               </span>
-              <span className="text-[#FF3E0C] text-sm font-medium tracking-[0.14px]">
+              <span className="text-[#FF3E0C] text-sm font-medium tracking-[0.14px]"
+                              onClick={() => navigate("/signup")}
+>
                 Sign Up
               </span>
             </div>

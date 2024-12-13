@@ -4,12 +4,13 @@ import genie from "../../assets/genie.svg";
 interface CardProps {
   title: string;
   description: string;
+  onClick?: () => void; // Add the onClick function as an optional prop
 }
 
-const Card: React.FC<CardProps> = ({ title, description }) => {
+const Card: React.FC<CardProps> = ({ title, description, onClick }) => {
   const cardStyle: React.CSSProperties = {
-    flex: "1 1 0", // Allows cards to grow but not shrink
-    minWidth: "288px", // Ensures each card has a minimum width
+    flex: "1 1 0",
+    minWidth: "288px",
     height: "176px",
     borderRadius: "12px",
     backgroundColor: "#ffffff",
@@ -21,7 +22,8 @@ const Card: React.FC<CardProps> = ({ title, description }) => {
     textAlign: "left",
     borderTop: "9px solid #7b5cff",
     position: "relative",
-    marginBottom: "16px", // Spacing between cards
+    marginBottom: "16px",
+    cursor: "pointer", // Add a pointer cursor for the clickable card
   };
 
   const genieStyle: React.CSSProperties = {
@@ -48,9 +50,9 @@ const Card: React.FC<CardProps> = ({ title, description }) => {
 
   const arrowContainerStyle: React.CSSProperties = {
     display: "flex",
-    justifyContent: "flex-start", // Aligns the arrow to the left
+    justifyContent: "flex-start",
     alignItems: "center",
-    marginTop: "auto", // Pushes the arrow to the bottom
+    marginTop: "auto",
   };
 
   const arrowStyle: React.CSSProperties = {
@@ -60,7 +62,7 @@ const Card: React.FC<CardProps> = ({ title, description }) => {
   };
 
   return (
-    <div style={cardStyle}>
+    <div style={cardStyle} onClick={onClick}> {/* Add the onClick here */}
       <img src={genie} alt="Genie Icon" style={genieStyle} />
       <div>
         <h3 style={titleStyle}>{title}</h3>

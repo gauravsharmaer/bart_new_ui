@@ -36,7 +36,7 @@ export function SiteHeader() {
             </Link>
             <nav className="flex items-center space-x-6">
               <Link
-                to="/"
+                to="/home"
                 className="text-sm font-medium transition-colors hover:text-primary"
               >
                 Home

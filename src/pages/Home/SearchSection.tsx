@@ -1,8 +1,11 @@
 import { MagnifyingGlass } from "@phosphor-icons/react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
+import { useNavigate } from "react-router-dom";
 
 export function SearchSection() {
+  const navigate = useNavigate();
+
   return (
     <div className="container max-w-4xl py-6 md:py-12">
       <h1 className="text-center text-3xl font-bold tracking-tighter mb-8 text-[#202B3B]">
@@ -28,7 +31,8 @@ export function SearchSection() {
           variant="outline"
           size="sm"
           className="rounded-full bg-[#F1F1F199] opacity-60 border"
-        >
+          onClick={() => navigate("/password")}
+>
           Password Management
         </Button>
         <Button

@@ -8,8 +8,8 @@ interface TimelineProps {
 const Timeline: React.FC<TimelineProps> = ({ isOpen, onClose }) => {
   const styles = {
     container: {
-      flex: 0.25, // Adjust the width to be part of the chat layout
-      display: isOpen ? "flex" : "none", // Show/Hide based on isOpen
+      flex: 0.25,
+      display: isOpen ? "flex" : "none",
       flexDirection: "column" as const,
       backgroundColor: "#ffffff",
       boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
@@ -18,25 +18,21 @@ const Timeline: React.FC<TimelineProps> = ({ isOpen, onClose }) => {
       borderRadius: "8px",
       overflow: "hidden",
     },
-    // header: {
-    //   padding: "16px",
-    //   // backgroundColor: "#ff7043",
-    //   color: "#ffffff",
-    //   fontWeight: "600",
-    //   display: "flex",
-    //   justifyContent: "space-between",
-    //   alignItems: "center",
-    // },
-
     header: {
-
+      display: "flex",
+      justifyContent: "flex-start", // Align to the left
+      alignItems: "center", // Vertically center
+      padding: "12px",
+      backgroundColor: "#fff",
     },
-    
     closeButton: {
-      background: "none",
+      background: "#f97316",
       border: "none",
-      color: "#ffffff",
-      fontSize: "18px",
+      color: "#fff",
+      padding: "3px 6px",
+      borderRadius: "20px",
+      fontSize: "14px",
+      fontWeight: "500",
       cursor: "pointer",
     },
     title: {
@@ -100,10 +96,11 @@ const Timeline: React.FC<TimelineProps> = ({ isOpen, onClose }) => {
     <div style={styles.container}>
       {/* Header */}
       <div style={styles.header}>
-        {/* <span>Timeline</span> */}
-        <button style={styles.closeButton} onClick={onClose}>
-          ✕
-        </button>
+      <button style={styles.closeButton} onClick={onClose}>
+  <span style={{ marginRight: "8px" }}>&lt;&lt;</span>
+  <span>Timeline</span>
+</button>
+
       </div>
 
       {/* Timeline Content */}
