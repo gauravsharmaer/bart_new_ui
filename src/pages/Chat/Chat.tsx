@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from "react";
 import SideBar from "./SideBar";
-import InputBar from "./InputBar";
 import { SiteHeader } from "../Home/Navbar";
 import Timeline from "./Timeline";
 import ChatArea from "./ChatArea";
+
+interface Message {
+  type: string;
+  logo: string;
+  botName?: string;
+  name?: string;
+  time: string;
+  content?: string;
+  text?: string;
+}
 
 const Chat: React.FC = () => {
   const [isTimelineOpen, setTimelineOpen] = useState(false);
@@ -27,7 +36,7 @@ const Chat: React.FC = () => {
       logo: "https://example.com/bot-logo.png",
       botName: "BART Buddy",
       time: "12:12 PM",
-      content: "Sure, I can help with that! Please share your Username/Email ID.",
+      content: "Hi, How are you",
     },
     {
       type: "user",
@@ -47,23 +56,38 @@ const Chat: React.FC = () => {
       type: "response",
       logo: "https://example.com/bot-logo.png",
       botName: "BART Buddy",
-      time: "12:15 PM",
-      content: "Hi, I can assist with your request!",
+      time: "12:12 PM",
+      content: "Sure, I can help with that! Please share your Username/Email ID.",
     },
     {
       type: "response",
       logo: "https://example.com/bot-logo.png",
       botName: "BART Buddy",
-      time: "12:15 PM",
-      content: "Hello, I can assist with your request!",
+      time: "12:12 PM",
+      content: "Hello.",
     },
   ]);
+
+  const handleNewMessage = (text: string) => {
+    const newMessage: Message = {
+      type: "user",
+      logo: "https://example.com/user-avatar.png",
+      name: "John Doe",
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      text: text,
+    };
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+  };
 
   const [isTyping] = useState(false);
 
   const globalStyles = `
     ::-webkit-scrollbar {
       display: none;
+    }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
     }
   `;
 
@@ -82,12 +106,29 @@ const Chat: React.FC = () => {
       flexDirection: "column" as const,
       height: "100vh",
       backgroundColor: "#f8f9fa",
+      '@media (max-width: 576px)': {
+        height: 'calc(100vh - 56px)', // Account for mobile browser nav
+      },
     },
     chatContainer: {
       display: "flex",
       flex: 1,
       background: "linear-gradient(to bottom, #fff, #f5f5f5, #ffe4e1)",
       overflow: "hidden",
+      '@media (max-width: 768px)': {
+        flexDirection: 'column',
+      },
+    },
+    sidebar: {
+      flex: "0 0 250px",
+    },
+    timeline: {
+      flex: "0 0 300px",
+    },
+    mainContent: {
+      flex: 1,
+      display: "flex",
+      flexDirection: "column" as const,
     },
   };
 
@@ -95,18 +136,18 @@ const Chat: React.FC = () => {
     <div style={styles.container}>
       <SiteHeader />
       <div style={styles.chatContainer}>
-        <SideBar />
+        <SideBar style={styles.sidebar} />
         <ChatArea
           messages={messages}
           isTyping={isTyping}
           isTimelineOpen={isTimelineOpen}
           setTimelineOpen={setTimelineOpen}
+          onNewMessage={handleNewMessage}
         />
-        <Timeline isOpen={isTimelineOpen} onClose={() => setTimelineOpen(false)} />
+        {isTimelineOpen && <Timeline isOpen={isTimelineOpen} onClose={() => setTimelineOpen(false)} />}
       </div>
     </div>
   );
 };
 
 export default Chat;
-

@@ -31,8 +31,11 @@ const Card3 = () => {
   };
 
   return (
-    <div className="bg-[#f5f5f5] flex flex-col items-center gap-3 mt-0 p-6 rounded-xl shadow-xl max-w-sm mx-auto">
-      <div className="flex gap-2">
+    // <div className=" flex flex-col gap-4 bg-gray-100  rounded-md shadow-md w-fit pt-4 pb-4 ">
+    <div className=" flex flex-col gap-4 w-fit">
+
+      <p className="text-lg font-medium">Please enter the OTP below:</p>
+      <div className="flex gap-2  justify-center">
         {otp.map((digit, index) => (
           <input
             key={index}
@@ -46,7 +49,7 @@ const Card3 = () => {
           />
         ))}
       </div>
-      <div className="w-full flex justify-start">
+      <div className="w-full flex">
         <button
           className="bg-orange-500 text-white px-6 py-2 rounded-md font-semibold hover:bg-orange-600"
           onClick={handleSubmit}
@@ -56,6 +59,9 @@ const Card3 = () => {
       </div>
     </div>
   );
+  
+  
+  
 };
 
 export default Card3;

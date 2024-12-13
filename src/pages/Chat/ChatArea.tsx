@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Lock } from "lucide-react";
 import ResponseCard from "../../components/ui/ResponseCard";
 import UserCard from "../../components/ui/UserCard";
@@ -7,6 +7,7 @@ import Card2 from "../../components/ui/Card2";
 import Card3 from "../../components/ui/Card3";
 import TicketCard from "../../components/ui/ticketcard";
 import InputBar from "./InputBar";
+
 
 interface Message {
   type: string;
@@ -23,6 +24,7 @@ interface ChatAreaProps {
   isTyping: boolean;
   isTimelineOpen: boolean;
   setTimelineOpen: (isOpen: boolean) => void;
+  onNewMessage: (message: string) => void;
 }
 
 const ChatArea: React.FC<ChatAreaProps> = ({
@@ -30,8 +32,13 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   isTyping,
   isTimelineOpen,
   setTimelineOpen,
+  onNewMessage,
 }) => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
 
   const styles = {
     chatSection: {
@@ -40,7 +47,14 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       flexDirection: "column",
       transition: "flex 0.3s ease",
       height: "100%",
-    } as const,
+      '@media (max-width: 768px)': {
+        flex: '1',
+        width: '100%',
+      },
+      '@media (max-width: 576px)': {
+        height: 'calc(100vh - 120px)', // Adjust for header and input
+      }
+    },
     messages: {
       flex: 1,
       padding: "16px",
@@ -50,27 +64,40 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       margin: "7px",
       scrollbarWidth: "none" as const,
       msOverflowStyle: "none" as const,
+      '@media (max-width: 576px)': {
+        padding: '2px',
+        margin: '4px',
+      }
     },
     messageContainer: {
       display: "flex",
       flexDirection: "column" as const,
-      gap: "16px",
+      gap: "7px",
+      '@media (max-width: 576px)': {
+        gap: '5px',
+      }
     },
     responseContent: {
       display: "flex",
       flexDirection: "column" as const,
     },
     cardContainer: {
-      marginTop: "5px",
+      marginTop: "1px",
     },
     responseWrapper: {
       alignSelf: "flex-start",
       maxWidth: "70%",
       width: "100%",
+      '@media (max-width: 576px)': {
+        maxWidth: '85%',
+      }
     },
     userWrapper: {
       alignSelf: "flex-end",
       maxWidth: "70%",
+      '@media (max-width: 576px)': {
+        maxWidth: '85%',
+      }
     },
     blueBarWrapper: {
       width: "4px",
@@ -83,13 +110,17 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       height: "100%",
     },
     header: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "5px 60px 5px 0px",
-        position: "relative", // Position relative for absolute elements inside
-        height: "40px", // Ensure a consistent height for proper alignment
-      },
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: "5px 60px 5px 0px",
+      position: "relative",
+      height: "40px",
+      '@media (max-width: 576px)': {
+        padding: '5px 20px 5px 0px',
+        height: '36px',
+      }
+    },
       centerContent: {
         position: "absolute",
         left: "50%",
@@ -166,6 +197,23 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       </div>
     );
   };
+
+
+  const handleSendMessage = (text: string) => {
+    const newMessage = {
+      type: "user",
+      logo: "https://example.com/user-avatar.png",
+      name: "John Doe",
+      time: new Date().toLocaleTimeString([], { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      }),
+      text: text
+    };
+
+    setMessages([...messages, newMessage]);
+  };
+
   return (
     <div style={styles.chatSection}>
       <div style={styles.header}>
@@ -210,7 +258,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
         )}
         <div ref={messagesEndRef} />
       </div>
-      <InputBar/>
+      <InputBar onSendMessage={onNewMessage} />
     </div>
   );
 };

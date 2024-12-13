@@ -65,31 +65,48 @@ export function SiteHeader() {
           </div>
 
           <div className="flex items-center space-x-4">
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <Envelope size={16} />
-              Invite team-mate
-            </Button>
-            {/* Notification Button */}
-            <Button variant="ghost" size="icon" className="relative" onClick={toggleNotification}>
-              <Bell size={20} weight="fill" />
-              <span
-                className="absolute bottom-6 left-5 h-4 w-4
-                 rounded-full bg-red-500 text-[10px] font-medium
-                 text-white flex items-center justify-center"
-              >
-                2
-              </span>
-            </Button>
+  <Button
+    variant="outline"
+    size="sm"
+    className="flex items-center gap-2"
+  >
+    <Envelope size={16} />
+    Invite team-mate
+  </Button>
+  {/* Notification Button */}
+  <Button variant="ghost" size="icon" className="relative" onClick={toggleNotification}>
+    <Bell size={20} weight="fill" />
+    <span
+      className="absolute bottom-6 left-5 h-4 w-4
+      rounded-full bg-red-500 text-[10px] font-medium
+      text-white flex items-center justify-center"
+    >
+      2
+    </span>
+  </Button>
 
-            {/* Three Bars Button for Profile */}
-            <Button variant="ghost" size="icon" onClick={toggleProfile}>
-              <List size={20} />
-            </Button>
-          </div>
+  {/* Avatar */}
+  <div style={{
+    width: "30px",
+    height: "30px",
+    borderRadius: "50%",
+    backgroundColor: "#FF6F61",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: "14px",
+    color: "#fff",
+    marginRight: "12px",
+  }}
+  onClick={toggleProfile}>
+    JD
+  </div>
+
+  <Button variant="ghost" size="icon" >
+    <List size={20} />
+  </Button>
+</div>
+
         </div>
       </header>
 
