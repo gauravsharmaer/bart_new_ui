@@ -1,18 +1,16 @@
-import "./index.css";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import Layout from "./layout";
 import "./App.css";
-import "react-toastify/dist/ReactToastify.css";
-import * as faceapi from "face-api.js";
-import { modelLoadingState } from "./utils/modelState";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "./redux/store";
 import { currentProfile } from "./redux/authSlice";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Preload from "./components/Preload";
+import * as faceapi from "face-api.js";
+import { modelLoadingState } from "./utils/modelState";
 
-function App() {
+const App: React.FC = () => {
   const authenticated = useSelector<RootState>(
     (state) => state.auth.authenticated
   ) as boolean;
@@ -62,11 +60,10 @@ function App() {
   }
 
   return (
-    <div className="">
+    <>
       <Layout />
       <ToastContainer />
-    </div>
+    </>
   );
-}
-
+};
 export default App;
