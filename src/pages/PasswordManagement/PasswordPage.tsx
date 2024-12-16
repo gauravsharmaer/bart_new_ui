@@ -1,7 +1,10 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Card from "./Card";
 
 const PasswordPage: React.FC = () => {
+  const navigate = useNavigate();
+
   const containerStyle: React.CSSProperties = {
     width: "976px",
     height: "642px",
@@ -27,7 +30,7 @@ const PasswordPage: React.FC = () => {
 
   const cardsContainerStyle: React.CSSProperties = {
     display: "flex",
-    gap: "25px", // Increased the gap between the cards
+    gap: "25px",
     padding: "0",
   };
 
@@ -35,15 +38,18 @@ const PasswordPage: React.FC = () => {
     {
       title: "Password Reset",
       description: "Keep your software up-to-date with automatic update requests.",
+      onClick: () => navigate("/chat"),
     },
     {
       title: "Unlock Account",
       description: "Regain access to locked accounts quickly with automated unlocks.",
+      // onClick: () => navigate("/unlock"),
     },
     {
       title: "Multi-Factor Authentication",
       description:
         "Easily set up, modify, or troubleshoot multi-factor authentication.",
+      // onClick: () => navigate("/mfa"),
     },
   ];
 
@@ -55,7 +61,12 @@ const PasswordPage: React.FC = () => {
       </p>
       <div style={cardsContainerStyle}>
         {cardsData.map((card, index) => (
-          <Card key={index} title={card.title} description={card.description} />
+          <Card
+            key={index}
+            title={card.title}
+            description={card.description}
+            onClick={card.onClick}
+          />
         ))}
       </div>
     </div>

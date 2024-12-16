@@ -18,7 +18,7 @@ const SideBar: React.FC = () => {
       listStyleType: "none",
       padding: 0,
       margin: 0,
-      overflowY: "auto",  // Scroll if list overflows
+      overflowY: "auto",  
 
     },
     sidebarItem: {

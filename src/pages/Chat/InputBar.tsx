@@ -1,8 +1,27 @@
-import React from "react";
+import React, { useState, KeyboardEvent } from "react";
 import plusIcon from "../../assets/plus.png";
 import arrowIcon from "../../assets/arrow-up-right.png";
 
-const InputBar: React.FC = () => {
+interface InputBarProps {
+  onSendMessage: (message: string) => void;
+}
+
+const InputBar: React.FC<InputBarProps> = ({ onSendMessage }) => {
+  const [inputText, setInputText] = useState("");
+
+  const handleSend = () => {
+    if (inputText.trim()) {
+      onSendMessage(inputText.trim());
+      setInputText("");
+    }
+  };
+
+  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && inputText.trim()) {
+      handleSend();
+    }
+  };
+
   const styles = {
     inputBar: {
       display: "flex",
@@ -12,6 +31,10 @@ const InputBar: React.FC = () => {
       borderRadius: "20px",
       margin: "12px",
       boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+      '@media (max-width: 576px)': {
+        margin: '8px',
+        padding: '4px 5px',
+      }
     },
     input: {
       flex: 1,
@@ -22,6 +45,11 @@ const InputBar: React.FC = () => {
       borderRadius: "20px",
       backgroundColor: "#f5f5f5",
       outline: "none",
+      '@media (max-width: 576px)': {
+        height: '36px',
+        fontSize: '14px',
+        padding: '0 6px',
+      }
     },
     iconContainer: {
       width: "36px",
@@ -32,7 +60,12 @@ const InputBar: React.FC = () => {
       borderRadius: "50%",
       cursor: "pointer",
       margin: "0 0",
+      '@media (max-width: 576px)': {
+        width: '32px',
+        height: '32px',
+      }
     },
+  
     plusIcon: {
       width: "18px",
       height: "18px",
@@ -54,11 +87,21 @@ const InputBar: React.FC = () => {
   return (
     <div style={styles.inputBar}>
       <div style={styles.iconContainer}>
-        <div style={styles.plusIcon}></div>
+        <div style={styles.plusIcon} />
       </div>
-      <input style={styles.input} type="text" placeholder="Type a message" />
-      <div style={styles.iconContainer}>
-        <div style={styles.arrowIcon}></div>
+      <input
+        type="text"
+        placeholder="Type your message..."
+        style={styles.input}
+        value={inputText}
+        onChange={(e) => setInputText(e.target.value)}
+        onKeyPress={handleKeyPress}
+      />
+      <div 
+        style={styles.iconContainer} 
+        onClick={handleSend}
+      >
+        <div style={styles.arrowIcon} />
       </div>
     </div>
   );

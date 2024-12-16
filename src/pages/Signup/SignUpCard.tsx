@@ -3,9 +3,12 @@ import { Input } from "../../components/ui/input";
 import { useState } from "react";
 import bartLogo from "../../assets/bartLogo.svg";
 import CardBackground from "../../components/CardBackground";
+import { useNavigate } from "react-router-dom";
+
 export default function Card() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const navigate = useNavigate();
 
   return (
     <div className="flex flex-col items-center gap-2 w-full max-w-[450px] mx-auto">
@@ -60,7 +63,8 @@ export default function Card() {
                 variant="default"
                 className="w-full  h-[49px] rounded-full text-white bg-gradient-to-b
                  from-[#FE7855] to-[#FF0000] hover:opacity-90 transition-opacity"
-              >
+                 onClick={() => navigate("/")}
+>
                 I'm Ready
               </Button>
             </div>
