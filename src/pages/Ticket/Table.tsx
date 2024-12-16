@@ -1,30 +1,26 @@
 // Table.tsx
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import genie from "../../assets/genie.svg";
+import { TicketHistoryData } from "./Interface/Interface";
+import TicketApiService from "./api";
 
-interface TicketData {
-  name: string;
-  ticketNo: string;
-  dateTime: string;
-  assignedTo: string;
-  status: 'Urgent' | 'Normal';
-  updateStatus: 'See update' | 'Resolved';
-}
+export const Table: React.FC = () => {
+  const [ticketData, setTicketData] = useState<TicketHistoryData[]>([]);
 
-interface TableProps {
-  data?: TicketData[];
-}
-
-export const Table: React.FC<TableProps> = ({ data }) => {
-  // Use dummy data if no data is provided
-  const tableData = data || Array(6).fill({
-    name: 'Password Recovery',
-    ticketNo: '#654345',
-    dateTime: '24 July 2023 | 10:10 AM',
-    assignedTo: 'Darlene Robertson',
-    status: 'Urgent',
-    updateStatus: 'See update'
-  });
+  useEffect(() => {
+    const getTicketHistory = async () => {
+      try {
+        const data = await TicketApiService.getTicketHistory(
+          localStorage.getItem("user_id") || "674eaffe7cbb08e51f7adada"
+        );
+        setTicketData(data.ticketHistory);
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getTicketHistory();
+  }, []);
 
   return (
     <div className="w-full border border-gray-200 rounded-lg overflow-hidden">
@@ -40,27 +36,32 @@ export const Table: React.FC<TableProps> = ({ data }) => {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
-          {tableData.map((row, idx) => (
+          {ticketData.map((item, idx) => (
             <tr key={idx} className="hover:bg-gray-50">
-              <td className="px-6 py-4 text-sm">{row.name}</td>
+              <td className="px-6 py-4 text-sm">{item.name}</td>
               <td className="px-6 py-4">
-                <span className="text-purple-600 text-sm">{row.ticketNo}</span>
+                <span className="text-purple-600 text-sm">
+                  {item.ticket_id}
+                </span>
               </td>
+
               <td className="px-6 py-4 text-sm text-gray-600">
-                {row.dateTime}
+                {new Date(item.created_at).toLocaleString()}
               </td>
               <td className="px-6 py-4">
                 <div className="flex items-center gap-2">
-                  <img 
-                    src={genie} 
-                    alt="Genie logo" 
+                  <img
+                    src={genie}
+                    alt="Genie logo"
                     className="h-6 w-6 rounded-full"
                   />
-                  <span className="text-sm text-gray-600">{row.assignedTo}</span>
+                  <span className="text-sm text-gray-600">No one</span>
                 </div>
               </td>
               <td className="px-6 py-4">
-                <span className="text-sm text-red-500 font-medium">{row.status}</span>
+                <span className="text-sm text-red-500 font-medium">
+                  {item.status}
+                </span>
               </td>
               <td className="px-6 py-4">
                 {idx % 2 === 0 ? (
@@ -68,9 +69,7 @@ export const Table: React.FC<TableProps> = ({ data }) => {
                     See update
                   </span>
                 ) : (
-                  <span className="text-green-600 text-sm">
-                    Resolved
-                  </span>
+                  <span className="text-green-600 text-sm">Resolved</span>
                 )}
               </td>
             </tr>

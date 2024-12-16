@@ -2,14 +2,42 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { useState } from "react";
 import oneLogin from "../../assets/oneLogin.png";
-import user from "../../assets/user.png";
-import { CaretDown } from "@phosphor-icons/react";
+// import user from "../../assets/user.png";
+// import { CaretDown } from "@phosphor-icons/react";
 import bartLogo from "../../assets/bartLogo.svg";
 import CardBackground from "../../components/CardBackground";
+import { initiateOneLogin } from "../../utils/OneLoginAuth";
+import { LoginApiService } from "./api";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../redux/store";
+import { currentProfile } from "../../redux/authSlice";
+
 export default function LoginCard() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const dispatch = useDispatch<AppDispatch>();
+  const handleLogin = async (email: string, password: string) => {
+    try {
+      const response = await LoginApiService.postLogin(email, password);
+      toast.success(response.message);
+      localStorage.setItem("email", response.email);
+      localStorage.setItem("user_id", response.user_id);
+      localStorage.setItem("name", response.name);
+      localStorage.setItem(
+        "isFaceVerified",
+        response.isFaceVerified.toString()
+      );
+      dispatch(currentProfile());
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "An error occurred during login"
+      );
+    }
+  };
   return (
     <div className="flex flex-col items-center gap-2 w-full max-w-[450px] mx-auto">
       {/* Logo and Header */}
@@ -25,8 +53,19 @@ export default function LoginCard() {
           {/* Header Section */}
           <div className="space-y-7 ">
             <div className="space-y-7 ">
-              <div className="relative h-[42px] bg-[#202B3B] rounded-[3.5px] border border-[#E7E7E7]/40">
-                <div className="absolute right-[7px] top-[7px] w-7 h-7 bg-white rounded-[2.8px] flex items-center justify-center">
+              <div
+                className="relative h-[42px] bg-[#202B3B] rounded-[3.5px] border border-[#E7E7E7]/40 cursor-pointer"
+                onClick={() => {
+                  initiateOneLogin();
+                }}
+              >
+                <div className="text-white text-[20px] font-normal pt-1">
+                  Login with OneLogin
+                </div>
+                <div
+                  className="absolute right-[7px] top-[7px] w-7 h-7
+                 bg-white rounded-[2.8px] flex items-center justify-center"
+                >
                   <img
                     src={oneLogin}
                     alt="One Login"
@@ -36,7 +75,12 @@ export default function LoginCard() {
                   />
                 </div>
 
-                <div className="flex items-center gap-3 pt-1 pl-2">
+                {/* <div
+                  className="flex items-center gap-3 pt-1 pl-2"
+                  onClick={() => {
+                    initiateOneLogin();
+                  }}
+                >
                   <img
                     src={user}
                     alt="User"
@@ -55,7 +99,7 @@ export default function LoginCard() {
                       <CaretDown size={16} className="text-white/70" />
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -95,6 +139,9 @@ export default function LoginCard() {
 
               <Button
                 variant="default"
+                onClick={() => {
+                  handleLogin(email, password);
+                }}
                 className="w-full h-[49px] rounded-full text-white bg-gradient-to-b from-[#FE7855] to-[#FF0000] hover:opacity-90 transition-opacity"
               >
                 Continue
@@ -109,7 +156,7 @@ export default function LoginCard() {
                 Don't have an account?
               </span>
               <span className="text-[#FF3E0C] text-sm font-medium tracking-[0.14px]">
-                Sign Up
+                <Link to="/signup">Sign Up</Link>
               </span>
             </div>
 
