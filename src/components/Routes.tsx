@@ -7,7 +7,7 @@ import Tickets from "../pages/Ticket/Ticket";
 import Chat from "../pages/Chat/Chat";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-
+import OneLoginCallBack from "../pages/Callback/OneLoginCallBack";
 const AppRoutes = () => {
   const authenticated = useSelector<RootState>(
     (state) => state.auth.authenticated
@@ -32,6 +32,7 @@ const AppRoutes = () => {
           authenticated ? <PasswordManagement /> : <Navigate to="/login" />
         }
       />
+      <Route path="/callback" element={<OneLoginCallBack />} />
       <Route path="*" element={<h1>404 page not found</h1>} />
       <Route
         path="/chat"

@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Bell, List, MagnifyingGlass } from "@phosphor-icons/react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Envelope } from "@phosphor-icons/react";
 import { Link } from "react-router-dom";
-import Notification from "./Notification"; // Import Notification Component
+import Notification from "./Notification";
 import Profile from "./Profile"; // Import Profile Component
 import genie from "../../assets/genie.svg";
 
@@ -74,7 +74,12 @@ export function SiteHeader() {
               Invite team-mate
             </Button>
             {/* Notification Button */}
-            <Button variant="ghost" size="icon" className="relative" onClick={toggleNotification}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative"
+              onClick={toggleNotification}
+            >
               <Bell size={20} weight="fill" />
               <span
                 className="absolute bottom-6 left-5 h-4 w-4
@@ -127,10 +132,7 @@ export function SiteHeader() {
           zIndex: 1000,
         }}
       >
-        <Profile
-          isOpen={isProfileOpen}
-          onClose={() => setProfileOpen(false)}
-        />
+        <Profile isOpen={isProfileOpen} onClose={() => setProfileOpen(false)} />
       </div>
     </>
   );

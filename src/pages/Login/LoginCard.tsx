@@ -13,9 +13,10 @@ import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store";
 import { currentProfile } from "../../redux/authSlice";
-
+import AuthvideoCard from "./AuthvideoCard";
 export default function LoginCard() {
   const [email, setEmail] = useState("");
+  const [showAuthVideo, setShowAuthVideo] = useState(false);
   const [password, setPassword] = useState("");
   const dispatch = useDispatch<AppDispatch>();
   const handleLogin = async (email: string, password: string) => {
@@ -38,6 +39,7 @@ export default function LoginCard() {
       );
     }
   };
+
   return (
     <div className="flex flex-col items-center gap-2 w-full max-w-[450px] mx-auto">
       {/* Logo and Header */}
@@ -110,44 +112,62 @@ export default function LoginCard() {
             </div>
 
             {/* Form Section */}
-            <div className="space-y-4">
-              <div className="space-y-4">
-                <div className="relative h-[63px] flex flex-col gap-2">
-                  <div className="text-[#202B3B] text-xs font-medium pl-2">
-                    Email
-                  </div>
-                  <Input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className=" rounded-full"
-                  />
-                </div>
-
-                <div className="relative h-[63px] flex flex-col gap-2">
-                  <div className="text-[#202B3B] text-xs font-medium pl-2">
-                    Password
-                  </div>
-                  <Input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="rounded-full"
-                  />
-                </div>
+            {showAuthVideo ? (
+              <div className="flex flex-col items-center gap-2">
+                <AuthvideoCard />
               </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="space-y-4">
+                  <div className="relative h-[63px] flex flex-col gap-2">
+                    <div className="text-[#202B3B] text-xs font-medium pl-2">
+                      Email
+                    </div>
+                    <Input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className=" rounded-full"
+                    />
+                  </div>
 
-              <Button
-                variant="default"
-                onClick={() => {
-                  handleLogin(email, password);
-                }}
-                className="w-full h-[49px] rounded-full text-white bg-gradient-to-b from-[#FE7855] to-[#FF0000] hover:opacity-90 transition-opacity"
-              >
-                Continue
-              </Button>
-            </div>
+                  <div className="relative h-[63px] flex flex-col gap-2">
+                    <div className="text-[#202B3B] text-xs font-medium pl-2">
+                      Password
+                    </div>
+                    <Input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="rounded-full"
+                    />
+                  </div>
+                </div>
+
+                <Button
+                  variant="default"
+                  onClick={() => {
+                    handleLogin(email, password);
+                  }}
+                  className="w-full h-[49px] rounded-full
+                 text-white bg-gradient-to-b from-[#FE7855] to-[#FF0000] hover:opacity-90 transition-opacity"
+                >
+                  Continue
+                </Button>
+              </div>
+            )}
           </div>
+
+          <Button
+            variant="default"
+            onClick={() => {
+              setShowAuthVideo(true);
+            }}
+            className="w-full h-[49px] rounded-full
+                 text-white bg-gradient-to-b from-[#FE7855] to-[#FF0000] hover:opacity-90 transition-opacity"
+          >
+            Facial Login
+          </Button>
 
           {/* Footer Section */}
           <div className="flex flex-col items-center gap-7 w-[311px] mx-auto">
