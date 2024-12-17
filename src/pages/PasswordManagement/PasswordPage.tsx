@@ -1,44 +1,16 @@
-import React from "react";
 import Card from "./Card";
 
-const PasswordPage: React.FC = () => {
-  const containerStyle: React.CSSProperties = {
-    width: "976px",
-    height: "642px",
-    top: "85px",
-    left: "288px",
-    borderRadius: "12px",
-    backgroundColor: "#ffffff",
-    padding: "50px",
-  };
-
-  const headingStyle: React.CSSProperties = {
-    fontSize: "20px",
-    fontWeight: 600,
-    color: "#262626",
-    marginBottom: "8px",
-  };
-
-  const subtitleStyle: React.CSSProperties = {
-    fontSize: "14px",
-    color: "#6c6f76",
-    marginBottom: "24px",
-  };
-
-  const cardsContainerStyle: React.CSSProperties = {
-    display: "flex",
-    gap: "25px", // Increased the gap between the cards
-    padding: "0",
-  };
-
+const PasswordPage = () => {
   const cardsData = [
     {
       title: "Password Reset",
-      description: "Keep your software up-to-date with automatic update requests.",
+      description:
+        "Keep your software up-to-date with automatic update requests.",
     },
     {
       title: "Unlock Account",
-      description: "Regain access to locked accounts quickly with automated unlocks.",
+      description:
+        "Regain access to locked accounts quickly with automated unlocks.",
     },
     {
       title: "Multi-Factor Authentication",
@@ -48,12 +20,14 @@ const PasswordPage: React.FC = () => {
   ];
 
   return (
-    <div style={containerStyle}>
-      <h2 style={headingStyle}>PASSWORD MANAGEMENT </h2>
-      <p style={subtitleStyle}>
+    <div className="w-[976px] h-[642px] top-[85px] left-[288px] rounded-xl bg-white p-[50px]">
+      <h2 className="text-xl font-semibold text-[#262626] mb-2">
+        PASSWORD MANAGEMENT
+      </h2>
+      <p className="text-sm text-[#6c6f76] mb-6">
         Start with our most-used templates for work and life.
       </p>
-      <div style={cardsContainerStyle}>
+      <div className="flex gap-[25px] p-0">
         {cardsData.map((card, index) => (
           <Card key={index} title={card.title} description={card.description} />
         ))}

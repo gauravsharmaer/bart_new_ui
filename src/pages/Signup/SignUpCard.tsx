@@ -3,7 +3,7 @@ import { Input } from "../../components/ui/input";
 import { useState } from "react";
 import bartLogo from "../../assets/bartLogo.svg";
 import CardBackground from "../../components/CardBackground";
-export default function Card() {
+const Card = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
@@ -72,4 +72,5 @@ export default function Card() {
       </CardBackground>
     </div>
   );
-}
+};
+export default Card;

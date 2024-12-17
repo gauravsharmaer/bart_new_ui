@@ -7,11 +7,12 @@ import { useDispatch } from "react-redux";
 import { handleFacialAuth } from "../../redux/authSlice";
 import { AppDispatch } from "../../redux/store";
 import { TinyFaceDetectorOptions } from "face-api.js";
+import { modelLoadingState } from "../../utils/modelState";
 import debounce from "lodash/debounce";
 import { AUTH_MODES } from "./authConfig";
 
 const MAX_NO_FACE_FRAMES = 10;
-const MODEL_URL = "/models";
+// const MODEL_URL = "/models";
 const BLINK_THRESHOLD = 0.3;
 const OPEN_EYE_THRESHOLD = 0.4;
 const HEAD_TURN_THRESHOLD = 0.04;
@@ -130,35 +131,6 @@ export const AuthVideoCard: React.FC<AuthVideoCardProps> = ({
     []
   );
 
-  //   const handleBlinkDetection = useCallback(
-  //     (
-  //       detections: faceapi.WithFaceLandmarks<
-  //         { detection: faceapi.FaceDetection },
-  //         faceapi.FaceLandmarks68
-  //       > &
-  //         faceapi.WithFaceDescriptor<any>
-  //     ) => {
-  //       const leftEye = detections.landmarks.getLeftEye();
-  //       const rightEye = detections.landmarks.getRightEye();
-
-  //       if (!leftEye.length || !rightEye.length) return;
-
-  //       const leftEyeAspectRatio = calculateEyeAspectRatio(leftEye, rightEye);
-  //       const rightEyeAspectRatio = calculateEyeAspectRatio(rightEye, leftEye);
-  //       const eyeAspectRatio = (leftEyeAspectRatio + rightEyeAspectRatio) / 2;
-
-  //       if (eyeAspectRatio < BLINK_THRESHOLD) {
-  //         blinkCountRef.current++;
-  //         if (blinkCountRef.current >= 1) {
-  //           actionCompleted();
-  //         }
-  //       } else if (eyeAspectRatio > OPEN_EYE_THRESHOLD) {
-  //         blinkCountRef.current = 0;
-  //       }
-  //     },
-  //     [calculateEyeAspectRatio, actionCompleted]
-  //   );
-
   const handleBlinkDetection = useCallback(
     (
       detections: faceapi.WithFaceLandmarks<
@@ -193,34 +165,6 @@ export const AuthVideoCard: React.FC<AuthVideoCardProps> = ({
     },
     [calculateEyeAspectRatio, actionCompleted]
   );
-
-  //   const handleHeadMovement = useCallback(
-  //     (
-  //       detections: faceapi.WithFaceLandmarks<
-  //         { detection: faceapi.FaceDetection },
-  //         faceapi.FaceLandmarks68
-  //       > &
-  //         faceapi.WithFaceDescriptor<any>,
-  //       expectedAction: string
-  //     ) => {
-  //       const jawOutline = detections.landmarks.getJawOutline();
-  //       const nose = detections.landmarks.getNose();
-  //       const jawCenter = jawOutline[8];
-  //       const noseTop = nose[0];
-
-  //       const headTurn =
-  //         (jawCenter.x - noseTop.x) / detections.detection.box.width;
-  //       const actionDetected =
-  //         expectedAction === "left"
-  //           ? headTurn >= HEAD_TURN_THRESHOLD
-  //           : headTurn <= -HEAD_TURN_THRESHOLD;
-
-  //       if (actionDetected) {
-  //         actionCompleted();
-  //       }
-  //     },
-  //     [actionCompleted]
-  //   );
 
   const handleHeadMovement = useCallback(
     (
@@ -403,22 +347,22 @@ export const AuthVideoCard: React.FC<AuthVideoCardProps> = ({
     [videoConstraints]
   );
 
-  useEffect(() => {
-    const loadModels = async () => {
-      try {
-        await Promise.all([
-          faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-          faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL),
-          faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
-        ]);
-        setIsModelLoaded(true);
-      } catch (error) {
-        console.error("Error loading face-api models:", error);
-        setError("Failed to load face recognition models. Please try again.");
-      }
-    };
-    void loadModels();
-  }, []);
+  // useEffect(() => {
+  //   const loadModels = async () => {
+  //     try {
+  //       await Promise.all([
+  //         faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+  //         faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL),
+  //         faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
+  //       ]);
+  //       setIsModelLoaded(true);
+  //     } catch (error) {
+  //       console.error("Error loading face-api models:", error);
+  //       setError("Failed to load face recognition models. Please try again.");
+  //     }
+  //   };
+  //   void loadModels();
+  // }, []);
 
   //   useEffect(() => {
   //     if (webcamRef.current?.video && isModelLoaded) {
@@ -432,6 +376,27 @@ export const AuthVideoCard: React.FC<AuthVideoCardProps> = ({
   //       };
   //     }
   //   }, [isModelLoaded]);
+
+  useEffect(() => {
+    // Check if models are already loaded
+    if (modelLoadingState.isLoaded) {
+      setIsModelLoaded(true);
+    } else {
+      // Check periodically if models are loaded
+      const checkInterval = setInterval(() => {
+        if (modelLoadingState.isLoaded) {
+          setIsModelLoaded(true);
+          clearInterval(checkInterval);
+        }
+        if (modelLoadingState.error) {
+          setError(modelLoadingState.error);
+          clearInterval(checkInterval);
+        }
+      }, 100);
+
+      return () => clearInterval(checkInterval);
+    }
+  }, []);
 
   useEffect(() => {
     if (webcamRef.current?.video && isModelLoaded) {

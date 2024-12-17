@@ -1,17 +1,17 @@
 // Table.tsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import genie from "../../assets/genie.svg";
 import { TicketHistoryData } from "./Interface/Interface";
 import TicketApiService from "./api";
 
-export const Table: React.FC = () => {
+export const Table = () => {
   const [ticketData, setTicketData] = useState<TicketHistoryData[]>([]);
 
   useEffect(() => {
     const getTicketHistory = async () => {
       try {
         const data = await TicketApiService.getTicketHistory(
-          localStorage.getItem("user_id") || "674eaffe7cbb08e51f7adada"
+          localStorage.getItem("user_id") || ""
         );
         setTicketData(data.ticketHistory);
         console.log(data);

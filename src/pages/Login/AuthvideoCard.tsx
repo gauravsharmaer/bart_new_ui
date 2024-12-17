@@ -19,6 +19,7 @@ interface ApiError {
 
 const MAX_NO_FACE_FRAMES = 10;
 // const MODEL_URL = "/models";
+
 const API_URL_FACE = `${NODE_API_URL}/login-with-face`;
 const BLINK_THRESHOLD = 0.3;
 const OPEN_EYE_THRESHOLD = 0.4;

@@ -1,39 +1,14 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { SiteHeader } from "../Home/Navbar";
 import Sidebar from "./Sidebar";
-import PasswordPage from "./PasswordPage"; 
-import EquipmentPage from "./EquipmentRequests"; 
+import PasswordPage from "./PasswordPage";
+import EquipmentPage from "./EquipmentRequests";
 import SoftwarePage from "./SoftwareSupport";
 
-const PasswordManagement: React.FC = () => {
-  const [selectedTemplate, setSelectedTemplate] = useState<string>("Password Management");
-
-  const containerStyle: React.CSSProperties = {
-    height: "100vh",
-    display: "flex",
-    flexDirection: "column",
-  };
-
-  const layoutStyle: React.CSSProperties = {
-    display: "flex",
-    flex: 1,
-    overflow: "hidden",
-  };
-
-  const sidebarStyle: React.CSSProperties = {
-    background: "#ffffff",
-    borderRight: "1px solid #ddd",
-    flexShrink: 0,
-    width: "280px",
-    height: "100%",
-  };
-
-  const contentStyle: React.CSSProperties = {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    padding: "20px",
-  };
+const PasswordManagement = () => {
+  const [selectedTemplate, setSelectedTemplate] = useState<string>(
+    "Password Management"
+  );
 
   const renderPage = () => {
     console.log("Selected Template:", selectedTemplate);
@@ -48,25 +23,23 @@ const PasswordManagement: React.FC = () => {
         return null;
     }
   };
-  
+
   return (
-    <div style={containerStyle}>
+    <div className="h-screen flex flex-col">
       {/* Header Section */}
       <SiteHeader />
 
       {/* Main Layout with Sidebar and Content */}
-      <div style={layoutStyle}>
+      <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <div style={sidebarStyle}>
+        <div className="w-[280px] h-full bg-white border-r border-[#ddd] flex-shrink-0">
           <Sidebar
             selectedTemplate={selectedTemplate}
             onTemplateSelect={setSelectedTemplate}
           />
         </div>
         {/* Content Section */}
-        <div style={contentStyle}>
-          {renderPage()}
-        </div>
+        <div className="flex-1 flex flex-col p-5">{renderPage()}</div>
       </div>
     </div>
   );

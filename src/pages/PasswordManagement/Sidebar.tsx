@@ -8,18 +8,15 @@ const SidebarItem: React.FC<{
   return (
     <li
       onClick={onClick}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        cursor: "pointer",
-        width: "100%",
-        padding: "6px 5px", // Consistent padding for alignment
-        fontWeight: isSelected ? "bold" : "normal",
-        color: isSelected ? "#000000" : "#6b6b6b",
-        borderLeft: isSelected ? "3px solid #ff6a00" : "3px solid transparent",
-        backgroundColor: isSelected ? "#f9f9f9" : "transparent",
-        transition: "all 0.3s ease-in-out",
-      }}
+      className={`flex items-center cursor-pointer w-full px-5 py-6 
+      ${isSelected ? "font-bold text-black" : "font-normal text-[#6b6b6b]"}
+      ${
+        isSelected
+          ? "border-l-[3px] border-l-[#ff6a00]"
+          : "border-l-[3px] border-transparent"
+      }
+      ${isSelected ? "bg-[#f9f9f9]" : "bg-transparent"}
+      transition-all duration-300 ease-in-out`}
     >
       {title}
     </li>
@@ -46,67 +43,21 @@ const Sidebar: React.FC<{
   ];
 
   return (
-    <div
-      style={{
-        width: "300px",
-        maxWidth: "100%", // Ensures responsiveness
-        height: "100%",
-        backgroundColor: "#ffffff",
-        padding: "20px",
-        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <div className="w-[300px] max-w-full h-full bg-white p-5 shadow-md flex flex-col">
       {/* Back Button */}
-      <div
-  style={{
-    display: "flex",
-    alignItems: "center", // Vertically center the content
-    marginBottom: "16px", // Add spacing below the header
-  }}
->
-  <button
-    onClick={() => console.log("Back button clicked")}
-    style={{
-      display: "inline-flex",
-      alignItems: "center",
-      justifyContent: "center",
-      background: "none",
-      border: "none",
-      cursor: "pointer",
-      fontSize: "30px", // Larger arrow size
-      marginRight: "1px", // Spacing between arrow and "Categories"
-      color: "#000000",
-      padding: "0px", // Optional for better click area
-    }}
-  >
-    ←
-  </button>
-
-        <h2
-          style={{
-            fontFamily: "Graphik, sans-serif",
-            fontWeight: 500,
-            fontSize: "25px",
-            lineHeight: "28px",
-            margin: 0,
-            color: "#000000",
-          }}
+      <div className="flex items-center mb-4">
+        <button
+          onClick={() => console.log("Back button clicked")}
+          className="inline-flex items-center justify-center bg-none border-none cursor-pointer text-[30px] mr-[1px] text-black p-0"
         >
+          ←
+        </button>
+
+        <h2 className="font-[Graphik] font-medium text-[25px] leading-[28px] m-0 text-black">
           Categories
         </h2>
       </div>
-      <ul
-        style={{
-          listStyle: "none",
-          padding: 0,
-          margin: 0,
-          display: "flex",
-          flexDirection: "column",
-          gap: "4px",
-        }}
-      >
+      <ul className="list-none p-0 m-0 flex flex-col gap-1">
         {templates.map((template) => (
           <SidebarItem
             key={template}
