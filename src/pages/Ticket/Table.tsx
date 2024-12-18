@@ -1,4 +1,3 @@
-// Table.tsx
 import { useState, useEffect } from "react";
 import genie from "../../assets/genie.svg";
 import { TicketHistoryData } from "./Interface/Interface";
@@ -23,53 +22,74 @@ export const Table = () => {
   }, []);
 
   return (
-    <div className="w-full border border-gray-200 rounded-lg overflow-hidden">
-      <table className="w-full">
+    <div className="w-full border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+      <table className="w-full text-sm text-left text-gray-600">
+        {/* Table Head */}
         <thead>
-          <tr className="bg-gray-50 text-sm text-gray-600">
-            <th className="px-6 py-3 text-left font-medium">Name</th>
-            <th className="px-6 py-3 text-left font-medium">Ticket no</th>
-            <th className="px-6 py-3 text-left font-medium">Date and time</th>
-            <th className="px-6 py-3 text-left font-medium">Assigned to</th>
-            <th className="px-6 py-3 text-left font-medium">Status</th>
-            <th className="px-6 py-3 text-left font-medium">Updates</th>
+          <tr className="bg-gray-100 font-medium">
+            <th className="px-6 py-3">Name</th>
+            <th className="px-6 py-3">Ticket no</th>
+            <th className="px-6 py-3">Date and time</th>
+            <th className="px-6 py-3">Assigned to</th>
+            <th className="px-6 py-3">Status</th>
+            <th className="px-6 py-3">Updates</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200">
-          {ticketData.map((item, idx) => (
-            <tr key={idx} className="hover:bg-gray-50">
-              <td className="px-6 py-4 text-sm">{item.name}</td>
-              <td className="px-6 py-4">
-                <span className="text-purple-600 text-sm">
-                  {item.ticket_id}
-                </span>
-              </td>
 
-              <td className="px-6 py-4 text-sm text-gray-600">
-                {new Date(item.created_at).toLocaleString()}
+        {/* Table Body */}
+        <tbody>
+          {ticketData.map((item, idx) => (
+            <tr
+              key={idx}
+              className="border-b hover:bg-gray-50 transition-all"
+            >
+              <td className="px-6 py-4 font-medium text-gray-900">
+                Password Recovery
               </td>
               <td className="px-6 py-4">
-                <div className="flex items-center gap-2">
-                  <img
-                    src={genie}
-                    alt="Genie logo"
-                    className="h-6 w-6 rounded-full"
-                  />
-                  <span className="text-sm text-gray-600">No one</span>
-                </div>
+              <a
+                href="#"
+                className="text-sm text-purple-600 hover:underline"
+              >
+                #{Math.floor(100000 + Math.random() * 900000)} {/* Generates random 6-digit number */}
+              </a>
+            </td>
+              <td className="px-6 py-4 text-gray-600">
+              {new Date(item.created_at).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                })}{" "}
+                |{" "}
+                {new Date(item.created_at).toLocaleTimeString("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
+                })}
               </td>
-              <td className="px-6 py-4">
-                <span className="text-sm text-red-500 font-medium">
-                  {item.status}
+              <td className="px-6 py-4 flex items-center">
+                <img
+                  src={genie}
+                  alt="Agent Avatar"
+                  className="h-6 w-6 rounded-full mr-2"
+                />
+                <span className="text-sm font-medium text-gray-600">
+                  {item.assigned_to || "Darlene Robertson"}
                 </span>
+              </td>
+              <td className="px-6 py-4">
+                <span className="text-gray-500 font-medium">Urgent</span>
               </td>
               <td className="px-6 py-4">
                 {idx % 2 === 0 ? (
-                  <span className="text-orange-500 text-sm cursor-pointer">
+                  <a
+                    href="#"
+                    className="text-orange-500 text-sm font-medium hover:underline"
+                  >
                     See update
-                  </span>
+                  </a>
                 ) : (
-                  <span className="text-green-600 text-sm">Resolved</span>
+                  <span className="text-green-500 font-medium">Resolved</span>
                 )}
               </td>
             </tr>
