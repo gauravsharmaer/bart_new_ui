@@ -24,7 +24,6 @@ export const Table = () => {
   return (
     <div className="w-full border border-gray-200 rounded-lg overflow-hidden shadow-sm">
       <table className="w-full text-sm text-left text-gray-600">
-        {/* Table Head */}
         <thead>
           <tr className="bg-gray-100 font-medium">
             <th className="px-6 py-3">Name</th>

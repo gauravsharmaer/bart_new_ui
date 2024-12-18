@@ -25,7 +25,7 @@ const Tickets = () => {
             </div>
           </div>
 
-          {/* Ticket Filters */}
+
           <div className="flex gap-8 border-b border-gray-200">
             <button className="text-sm font-medium border-b-2 border-purple-600 text-black px-2 py-2">
               All tickets
