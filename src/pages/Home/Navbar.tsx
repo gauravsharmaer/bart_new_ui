@@ -100,17 +100,9 @@ export function SiteHeader() {
 
       {/* Notification Component */}
       <div
-        style={{
-          position: "fixed",
-          top: 0,
-          right: isNotificationOpen ? 0 : "-367px",
-          width: "367px",
-          height: "100vh",
-          backgroundColor: "#fff",
-          boxShadow: "0 0 10px rgba(0,0,0,0.3)",
-          transition: "right 0.3s ease",
-          zIndex: 1000,
-        }}
+        className={`fixed top-0 ${
+          isNotificationOpen ? "right-0" : "-right-[367px]"
+        } w-[367px] h-screen bg-white shadow-lg transition-right duration-300 ease-in-out z-[1000]`}
       >
         <Notification
           isOpen={isNotificationOpen}
@@ -120,17 +112,9 @@ export function SiteHeader() {
 
       {/* Profile Component */}
       <div
-        style={{
-          position: "fixed",
-          top: 0,
-          right: isProfileOpen ? 0 : "-324px",
-          width: "324px",
-          height: "100vh",
-          backgroundColor: "#fff",
-          boxShadow: "0 0 10px rgba(0,0,0,0.3)",
-          transition: "right 0.3s ease",
-          zIndex: 1000,
-        }}
+        className={`fixed top-0 ${
+          isProfileOpen ? "right-0" : "-right-[324px]"
+        } w-[324px] h-screen bg-white shadow-lg transition-right duration-300 ease-in-out z-[1000]`}
       >
         <Profile isOpen={isProfileOpen} onClose={() => setProfileOpen(false)} />
       </div>

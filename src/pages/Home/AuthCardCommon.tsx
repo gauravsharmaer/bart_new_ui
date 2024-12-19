@@ -2,37 +2,28 @@ import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import Webcam from "react-webcam";
 import * as faceapi from "face-api.js";
 import Eye from "../../assets/eye.svg";
-import Face from "../../assets/Face.gif";
+// import Face from "../../assets/Face.gif";
 import { useDispatch } from "react-redux";
 import { handleFacialAuth } from "../../redux/authSlice";
 import { AppDispatch } from "../../redux/store";
-import { TinyFaceDetectorOptions } from "face-api.js";
+// import { TinyFaceDetectorOptions } from "face-api.js";
 import { modelLoadingState } from "../../utils/modelState";
 import debounce from "lodash/debounce";
 import { AUTH_MODES } from "./authConfig";
-
-const MAX_NO_FACE_FRAMES = 10;
-// const MODEL_URL = "/models";
-const BLINK_THRESHOLD = 0.3;
-const OPEN_EYE_THRESHOLD = 0.4;
-const HEAD_TURN_THRESHOLD = 0.04;
-const ANALYSIS_INTERVAL = 500;
-const ANALYSIS_OPTIONS = new TinyFaceDetectorOptions({ inputSize: 224 });
-
-interface ApiError {
-  message: string;
-}
-
-type Instructions = {
-  right: string;
-  left: string;
-  blink: JSX.Element;
-};
-
-interface AuthVideoCardProps {
-  onVerificationComplete?: () => void;
-  mode: "capture" | "verify";
-}
+import {
+  MAX_NO_FACE_FRAMES,
+  BLINK_THRESHOLD,
+  OPEN_EYE_THRESHOLD,
+  HEAD_TURN_THRESHOLD,
+  ANALYSIS_INTERVAL,
+  ANALYSIS_OPTIONS,
+} from "../../utils/CommonAuthValues";
+import {
+  ApiError,
+  Instructions,
+  AuthVideoCardProps,
+} from "../../CommonInterface/Interface";
+import FacialAuthenticationCard from "../../components/ui/FacialAuthenticationCard";
 
 export const AuthVideoCard: React.FC<AuthVideoCardProps> = ({
   onVerificationComplete,
@@ -56,7 +47,7 @@ export const AuthVideoCard: React.FC<AuthVideoCardProps> = ({
   const actionSequenceRef = useRef<string[]>([]);
   const noFaceDetectionCountRef = useRef(0);
   const descriptorsRef = useRef<Float32Array[]>([]);
-
+  console.log(faceDescriptors);
   const generateActionSequence = useCallback((): string[] => {
     console.log("generateActionSequence called");
     return ["left", "right", "blink"];
@@ -447,85 +438,17 @@ export const AuthVideoCard: React.FC<AuthVideoCardProps> = ({
   }, []);
 
   return (
-    <div className="flex flex-col space-y-4 w-[450px]">
-      <div className="w-full bg-[#2C2C2E] rounded-xl">
-        {!isAnalyzing && !showGif && (
-          <div className="flex flex-col items-center gap-2">
-            {!isModelLoaded ? (
-              <>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-purple-500 border-t-transparent" />
-                  <span className="text-white">Loading ...</span>
-                </div>
-              </>
-            ) : !isWebcamReady ? (
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-red-500 animate-pulse rounded-full" />
-                <span className="text-white">Initializing Camera...</span>
-              </div>
-            ) : null}
-          </div>
-        )}
-        {!showGif && showCamera && (
-          <div className="relative w-full aspect-video rounded-lg overflow-hidden ring-2 ring-purple-500/30">
-            <div className="absolute inset-0 bg-gradient-to-t from-purple-500/10 to-transparent pointer-events-none" />
-            {webcamComponent}
-            {!isWebcamReady && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
-                <div className="animate-pulse flex space-x-4">
-                  <div className="rounded-full bg-slate-700 h-5 w-5"></div>
-                  <div className="flex-1 space-y-6 py-1">
-                    <div className="h-2 bg-slate-700 rounded"></div>
-                    <div className="space-y-3">
-                      <div className="grid grid-cols-3 gap-4">
-                        <div className="h-2 bg-slate-700 rounded col-span-2"></div>
-                        <div className="h-2 bg-slate-700 rounded col-span-1"></div>
-                      </div>
-                      <div className="h-2 bg-slate-700 rounded"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-        {showGif && (
-          <div className="w-full rounded-lg flex justify-center items-center overflow-hidden ring-2 ring-purple-500/30">
-            <img
-              src={Face}
-              alt="Verifying"
-              className="w-full aspect-video rounded-lg object-cover"
-            />
-          </div>
-        )}
-      </div>
-      <div className="w-full bg-[#2C2C2E] rounded-lg px-2 py-2">
-        <div className="text-white text-center">
-          {isAnalyzing &&
-          isModelLoaded &&
-          faceDescriptors.length > 0 &&
-          descriptorsRef.current.length > 0 ? (
-            <div className="space-y-3">
-              <div className="text-[16px] font-[200] flex justify-center items-center">
-                {instruction}
-              </div>
-              <div className="w-full h-3 bg-[#282829] rounded-lg overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-pink-500 to-purple-500 transition-width duration-400 ease"
-                  style={{ width: `${progress}%` }}
-                ></div>
-              </div>
-            </div>
-          ) : (
-            <div className="text-[14px] font-[400] flex justify-center items-center gap-2">
-              <div className="animate-spin rounded-full h-4 w-4 border-2 border-purple-500 border-t-transparent" />
-              <span>Initializing face detection...</span>
-            </div>
-          )}
-          {error && <div className="text-red-500 mt-2">{error}</div>}
-        </div>
-      </div>
-    </div>
+    <FacialAuthenticationCard
+      progress={progress}
+      instruction={instruction}
+      error={error}
+      webcamComponent={showCamera ? webcamComponent : undefined}
+      showCamera={showCamera}
+      onBackClick={() => {
+        stopAnalysis();
+        window.history.back();
+      }}
+    />
   );
 };
 

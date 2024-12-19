@@ -6,9 +6,10 @@ import { Lock } from "lucide-react";
 import Timeline from "./Timeline";
 import ResponseCard from "../../components/ui/ResponseCard";
 import UserCard from "../../components/ui/UserCard";
-import Card1 from "../../components/ui/Card1";
+import ChatButtonCard from "../../components/ui/ChatButtonCard";
+import OtpInputCard from "../../components/ui/OtpInputCard";
 import Card2 from "../../components/ui/Card2";
-import Card3 from "../../components/ui/Card3";
+// import Card3 from "../../components/ui/Card3";
 import TicketCard from "../../components/ui/ticketcard";
 
 const Chat: React.FC = () => {
@@ -19,7 +20,8 @@ const Chat: React.FC = () => {
       logo: "https://example.com/bot-logo.png",
       botName: "BART Buddy",
       time: "12:10 PM",
-      content: "Welcome to the Password Reset Service. How can I assist you today?",
+      content:
+        "Welcome to the Password Reset Service. How can I assist you today?",
     },
     {
       type: "user",
@@ -33,7 +35,8 @@ const Chat: React.FC = () => {
       logo: "https://example.com/bot-logo.png",
       botName: "BART Buddy",
       time: "12:12 PM",
-      content: "Sure, I can help with that! Please share your Username/Email ID.",
+      content:
+        "Sure, I can help with that! Please share your Username/Email ID.",
     },
     {
       type: "user",
@@ -47,7 +50,8 @@ const Chat: React.FC = () => {
       logo: "https://example.com/bot-logo.png",
       botName: "BART Buddy",
       time: "12:14 PM",
-      content: "Verification successful! Please select one of the following applications to reset your password.",
+      content:
+        "Verification successful! Please select one of the following applications to reset your password.",
     },
     {
       type: "response",
@@ -214,7 +218,7 @@ const Chat: React.FC = () => {
             <div style={styles.messageContainer}>
               {messages.map((message, index) => {
                 if (message.type === "response") {
-                  const showCard = hasCard(message.content);
+                  const showCard = hasCard(message.content || "");
                   const ResponseContent = (
                     <>
                       <ResponseCard
@@ -223,9 +227,13 @@ const Chat: React.FC = () => {
                         time={message.time}
                         content={message.content}
                       />
-                      {message.content.includes("Username/Email") && <Card1 />}
-                      {message.content.includes("Hello") && <Card2 />}
-                      {message.content.includes("Verification successful!") && <Card3 />}
+                      {message.content?.includes("Username/Email") && (
+                        <ChatButtonCard />
+                      )}
+                      {message.content?.includes("Hello") && <Card2 />}
+                      {message.content?.includes(
+                        "Verification successful!"
+                      ) && <OtpInputCard />}
                       {message.content.includes("Hi") && (
                         <TicketCard
                           dateTime="Jul 19,06:30PM"
@@ -267,7 +275,13 @@ const Chat: React.FC = () => {
               })}
             </div>
             {isTyping && (
-              <div style={{ fontStyle: "italic", color: "#888", textAlign: "left" }}>
+              <div
+                style={{
+                  fontStyle: "italic",
+                  color: "#888",
+                  textAlign: "left",
+                }}
+              >
                 BART Buddy is typing...
               </div>
             )}
@@ -277,7 +291,10 @@ const Chat: React.FC = () => {
           <InputBar />
         </div>
 
-        <Timeline isOpen={isTimelineOpen} onClose={() => setTimelineOpen(false)} />
+        <Timeline
+          isOpen={isTimelineOpen}
+          onClose={() => setTimelineOpen(false)}
+        />
       </div>
     </div>
   );

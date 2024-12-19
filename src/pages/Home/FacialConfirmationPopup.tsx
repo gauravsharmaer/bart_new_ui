@@ -1,13 +1,5 @@
-// type FacialConfirmationPopupProps = {
-//   showConfirmationPopup: boolean;
-//   setShowConfirmationPopup: (value: boolean) => void;
-//   setShowPopup: (value: boolean) => void;
-// };
-type FacialConfirmationPopupProps = {
-  showConfirmationPopup: boolean;
-  setShowConfirmationPopup: (value: boolean) => void;
-  setShowPopup: (value: boolean) => void;
-};
+import { FacialConfirmationPopupProps } from "./Interface/Interface";
+
 const FacialConfirmationPopup = ({
   setShowConfirmationPopup,
   setShowPopup,

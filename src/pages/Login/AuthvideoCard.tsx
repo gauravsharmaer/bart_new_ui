@@ -4,40 +4,56 @@ import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import Webcam from "react-webcam";
 import * as faceapi from "face-api.js";
 import Eye from "../../assets/eye.svg";
-import Face from "../../assets/Face.gif";
 
+import {
+  ApiError,
+  VerifyAuthProps,
+  Instructions,
+} from "../../CommonInterface/Interface";
 import { useDispatch } from "react-redux";
 import { handleFacialAuth } from "../../redux/authSlice";
 import { AppDispatch } from "../../redux/store";
-import { TinyFaceDetectorOptions } from "face-api.js";
+// import { TinyFaceDetectorOptions } from "face-api.js";
 import debounce from "lodash/debounce";
 import { modelLoadingState } from "../../utils/modelState";
-import { NODE_API_URL } from "../../config";
-interface ApiError {
-  message: string;
-}
+// import { NODE_API_URL } from "../../config";
+import {
+  MAX_NO_FACE_FRAMES,
+  API_URL_FACE,
+  BLINK_THRESHOLD,
+  OPEN_EYE_THRESHOLD,
+  HEAD_TURN_THRESHOLD,
+  ANALYSIS_INTERVAL,
+  ANALYSIS_OPTIONS,
+} from "../../utils/CommonAuthValues";
+import FaceVerification from "../../components/ui/FacialAuthenticationCard";
 
-const MAX_NO_FACE_FRAMES = 10;
-// const MODEL_URL = "/models";
+// interface ApiError {
+//   message: string;
 
-const API_URL_FACE = `${NODE_API_URL}/login-with-face`;
-const BLINK_THRESHOLD = 0.3;
-const OPEN_EYE_THRESHOLD = 0.4;
-const HEAD_TURN_THRESHOLD = 0.02;
-const ANALYSIS_INTERVAL = 500;
-const ANALYSIS_OPTIONS = new TinyFaceDetectorOptions({ inputSize: 224 });
+// }
 
-type Instructions = {
-  right: string;
-  left: string;
-  blink: JSX.Element;
-};
+// const MAX_NO_FACE_FRAMES = 10;
+// // const MODEL_URL = "/models";
 
-interface VerifyAuthProps {
-  onVerificationComplete?: () => void;
-}
+// const API_URL_FACE = `${NODE_API_URL}/login-with-face`;
+// const BLINK_THRESHOLD = 0.3;
+// const OPEN_EYE_THRESHOLD = 0.4;
+// const HEAD_TURN_THRESHOLD = 0.02;
+// const ANALYSIS_INTERVAL = 500;
+// const ANALYSIS_OPTIONS = new TinyFaceDetectorOptions({ inputSize: 224 });
 
-const AuthvideoCard: React.FC<VerifyAuthProps> = () => {
+// type Instructions = {
+//   right: string;
+//   left: string;
+//   blink: JSX.Element;
+// };
+
+// interface VerifyAuthProps {
+//   onVerificationComplete?: () => void;
+// }
+
+const AuthvideoCard: React.FC<VerifyAuthProps> = ({ onBackClick }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [error, setError] = useState("");
   const [isModelLoaded, setIsModelLoaded] = useState(false);
@@ -449,85 +465,37 @@ const AuthvideoCard: React.FC<VerifyAuthProps> = () => {
   ]);
 
   return (
-    <div className="rounded-2xl overflow-hidden">
-      {!isAnalyzing && !showGif && (
-        <div className="flex flex-col items-center gap-2 ">
-          {!isModelLoaded ? (
-            <>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="animate-spin rounded-full h-4 w-4 border-2 border-purple-500 border-t-transparent" />
-                <span className="text-white">Loading ...</span>
-              </div>
-            </>
-          ) : !isWebcamReady ? (
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-red-500 animate-pulse rounded-full" />
-              <span className="text-black">Initializing Camera...</span>
-            </div>
-          ) : null}
-        </div>
-      )}
-
-      {!showGif && showCamera && (
-        <div className="relative w-64 h-52">
-          {webcamComponent}
-          {!isWebcamReady && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-2xl">
-              <div className="animate-pulse flex space-x-4">
-                <div className="rounded-full bg-slate-700 h-10 w-10"></div>
-                <div className="flex-1 space-y-6 py-1">
-                  <div className="h-2 bg-slate-700 rounded"></div>
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="h-2 bg-slate-700 rounded col-span-2"></div>
-                      <div className="h-2 bg-slate-700 rounded col-span-1"></div>
-                    </div>
+    <FaceVerification
+      progress={progress}
+      instruction={instruction}
+      error={error}
+      onBackClick={onBackClick}
+      webcamComponent={
+        !showGif && showCamera ? (
+          <div className="relative w-full h-full">
+            {webcamComponent}
+            {!isWebcamReady && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-2xl">
+                <div className="animate-pulse flex space-x-4">
+                  <div className="rounded-full bg-slate-700 h-10 w-10"></div>
+                  <div className="flex-1 space-y-6 py-1">
                     <div className="h-2 bg-slate-700 rounded"></div>
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="h-2 bg-slate-700 rounded col-span-2"></div>
+                        <div className="h-2 bg-slate-700 rounded col-span-1"></div>
+                      </div>
+                      <div className="h-2 bg-slate-700 rounded"></div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      <div className="text-white text-center">
-        {isAnalyzing &&
-        isModelLoaded &&
-        faceDescriptors.length > 0 &&
-        descriptorsRef.current.length > 0 ? (
-          <>
-            <div className="text-white text-lg text-center ">
-              <div className="text-black text-[14px] font-[400] flex justify-center items-center">
-                {instruction}
-              </div>
-              <div className="w-full h-3 bg-[#282829] rounded-lg overflow-hidden my-1">
-                <div
-                  className="h-full w-96 bg-gradient-to-r from-pink-500 to-purple-500 transition-width duration-400 ease"
-                  style={{ width: `${progress}%` }}
-                ></div>
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="text-white text-[14px] font-[400] flex justify-center items-center gap-2">
-            <div className="animate-spin rounded-full h-4 w-4 border-2 border-purple-500 border-t-transparent" />
-            <span className="text-black">Initializing face detection...</span>
+            )}
           </div>
-        )}
-
-        {showGif && (
-          <div className="rounded-lg flex justify-center items-center">
-            <img
-              src={Face}
-              alt="Verifying"
-              className="w-96 h-72 rounded-lg object-fill"
-            />
-          </div>
-        )}
-        {error && <div className="text-red-500 my-2">{error}</div>}
-      </div>
-    </div>
+        ) : null
+      }
+      showCamera={showCamera && !showGif}
+    />
   );
 };
 

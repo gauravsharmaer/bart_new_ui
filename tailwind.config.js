@@ -4,6 +4,9 @@ export default {
   content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      transitionProperty: {
+        right: "right",
+      },
       screens: {},
       borderRadius: {
         lg: "var(--radius)",

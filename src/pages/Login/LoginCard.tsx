@@ -2,8 +2,7 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { useState } from "react";
 import oneLogin from "../../assets/oneLogin.png";
-// import user from "../../assets/user.png";
-// import { CaretDown } from "@phosphor-icons/react";
+
 import bartLogo from "../../assets/bartLogo.svg";
 import CardBackground from "../../components/CardBackground";
 import { initiateOneLogin } from "../../utils/OneLoginAuth";
@@ -19,6 +18,7 @@ export default function LoginCard() {
   const [showAuthVideo, setShowAuthVideo] = useState(false);
   const [password, setPassword] = useState("");
   const dispatch = useDispatch<AppDispatch>();
+
   const handleLogin = async (email: string, password: string) => {
     try {
       const response = await LoginApiService.postLogin(email, password);
@@ -76,32 +76,6 @@ export default function LoginCard() {
                     className="object-contain"
                   />
                 </div>
-
-                {/* <div
-                  className="flex items-center gap-3 pt-1 pl-2"
-                  onClick={() => {
-                    initiateOneLogin();
-                  }}
-                >
-                  <img
-                    src={user}
-                    alt="User"
-                    width={13}
-                    height={17}
-                    className="w-[30px] h-[30px]"
-                  />
-                  <div className="flex flex-col">
-                    <div className="text-white text-[8.7px] font-medium">
-                      Continue as John Doe
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <div className="text-white/70 text-xs">
-                        johndoe@onelogin.com
-                      </div>
-                      <CaretDown size={16} className="text-white/70" />
-                    </div>
-                  </div>
-                </div> */}
               </div>
             </div>
 
@@ -114,7 +88,7 @@ export default function LoginCard() {
             {/* Form Section */}
             {showAuthVideo ? (
               <div className="flex flex-col items-center gap-2">
-                <AuthvideoCard />
+                <AuthvideoCard onBackClick={() => setShowAuthVideo(false)} />
               </div>
             ) : (
               <div className="space-y-4">

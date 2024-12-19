@@ -24,7 +24,6 @@ export const CallbackApiService = {
 
       return jsonResponse;
     } catch (error) {
-      // Rethrow with more context if needed
       throw error instanceof Error
         ? error
         : new Error("An unexpected error occurred during callback");

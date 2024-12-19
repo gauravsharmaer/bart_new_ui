@@ -2,13 +2,9 @@ import React, { useState, useCallback } from "react";
 import ChatLogo from "../assets/Genie.svg";
 import VerifyAuth from "../pages/Home/verifyAuth";
 import { askBart, verifyOTP } from "../Api/CommonApi";
+import OtpInputCard from "./ui/OtpInputCard";
 import createMarkup from "../utils/chatUtils";
-// import {
-//   Message,
-//   ChatMessageProps,
-//   InlineOTPCardProps,
-// } from "./Interface/Interface";
-
+import ChatButtonCard from "./ui/ChatButtonCard";
 interface Message {
   text: string;
   isUserMessage: boolean;
@@ -26,103 +22,11 @@ interface ChatMessageProps {
   onNewMessage: (message: Message) => void;
 }
 
-interface InlineOTPCardProps {
-  onSubmitOTP: (otp: string) => void;
-  otp: string[];
-  setOtp: React.Dispatch<React.SetStateAction<string[]>>;
-}
-
-const InlineOTPCard: React.FC<InlineOTPCardProps> = ({
-  onSubmitOTP,
-  otp,
-  setOtp,
-}) => {
-  const inputRefs = React.useRef<(HTMLInputElement | null)[]>(
-    Array(6).fill(null)
-  );
-
-  React.useEffect(() => {
-    inputRefs.current[0]?.focus();
-  }, []);
-
-  const handleSubmit = useCallback(() => {
-    if (otp.every((digit: string) => digit !== "")) {
-      onSubmitOTP(otp.join(""));
-    }
-  }, [otp, onSubmitOTP]);
-
-  const handleChange = useCallback(
-    (index: number, value: string) => {
-      const newOtp = [...otp];
-      newOtp[index] = value.slice(-1);
-      setOtp(newOtp);
-
-      if (value && index < otp.length - 1) {
-        inputRefs.current[index + 1]?.focus();
-      }
-    },
-    [otp, setOtp]
-  );
-
-  const handleKeyDown = useCallback(
-    (index: number, event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === "Backspace") {
-        event.preventDefault();
-        if (!otp[index] && index > 0) {
-          inputRefs.current[index - 1]?.focus();
-          const updatedOtp = [...otp];
-          updatedOtp[index - 1] = "";
-          setOtp(updatedOtp);
-        } else {
-          const updatedOtp = [...otp];
-          updatedOtp[index] = "";
-          setOtp(updatedOtp);
-        }
-      } else if (event.key === "Enter") {
-        handleSubmit();
-      }
-    },
-    [otp, setOtp, handleSubmit]
-  );
-
-  return (
-    <div className="mt-4">
-      <div className="bg-gray-800 p-4 rounded-lg">
-        <p className="text-gray-200 mb-3">Please enter below</p>
-        <div className="flex space-x-2 justify-start mb-4">
-          {otp.map((value: string, index: number) => (
-            <input
-              key={index}
-              type="text"
-              inputMode="numeric"
-              pattern="\d*"
-              value={value}
-              onChange={(e) => handleChange(index, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(index, e)}
-              onFocus={(e) => e.target.select()}
-              maxLength={1}
-              ref={(el) => (inputRefs.current[index] = el)}
-              className="w-12 h-12 text-center bg-gray-700 text-white border border-gray-700 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-lg"
-            />
-          ))}
-        </div>
-        <button
-          onClick={handleSubmit}
-          className="w-32 py-2 bg-gray-700 text-white rounded-lg hover:opacity-90 transition-opacity"
-          style={{ background: "linear-gradient(90deg, #f7a8a8, #bf5fe1)" }}
-        >
-          Submit
-        </button>
-      </div>
-    </div>
-  );
-};
-
 const ChatMessage: React.FC<ChatMessageProps> = React.memo(
   ({ message, onNewMessage }) => {
     const profilePhoto = "https://avatar.vercel.sh/jill";
     const [showAuthVideoCard, setShowAuthVideoCard] = useState(false);
-    const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
+    const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
     const [clickedButton, setClickedButton] = useState<string | null>(null);
     console.log(message);
     const handleVerificationComplete = useCallback(async () => {
@@ -204,9 +108,8 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
 
     const handleOtpSubmit = async (otpString: string) => {
       try {
-        // Display "Done" as the user's message
         const userMessage: Message = {
-          text: "Done", // Show "Done" instead of the OTP
+          text: "Done",
           isUserMessage: true,
           timestamp: new Date().toISOString().replace("Z", "000"),
           button_display: false,
@@ -215,14 +118,12 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
         };
         onNewMessage(userMessage);
 
-        // Send the actual OTP to the backend
         const result = await verifyOTP({
-          otp: parseInt(otpString), // Send actual OTP to the backend
+          otp: parseInt(otpString),
           email: localStorage.getItem("email") || "",
           chat_id: localStorage.getItem("chat_id") || "",
         });
 
-        // Display the response from the backend
         const botMessage: Message = {
           text: result.answer || "No response received",
           isUserMessage: false,
@@ -288,29 +189,19 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                 dangerouslySetInnerHTML={createMarkup(message.text)}
               />
               {message.text.includes("verification code") && (
-                <InlineOTPCard
-                  onSubmitOTP={handleOtpSubmit}
+                <OtpInputCard
+                  onSubmitOTP={(otpString) => handleOtpSubmit(otpString)}
                   otp={otp}
                   setOtp={setOtp}
                 />
               )}
               {message.button_display &&
                 !message.text.includes("verification code") && (
-                  <div className="mt-2 text-sm flex flex-row gap-2">
-                    {message.button_text.map((button, index) => (
-                      <button
-                        key={index}
-                        className={`px-4 py-2 rounded-md cursor-pointer ${
-                          clickedButton === button
-                            ? "bg-gradient-to-r from-[#f7a8a8] to-[#bf5fe1] text-white"
-                            : "bg-gray-700 text-white"
-                        }`}
-                        onClick={() => handleButtonClick(button)}
-                      >
-                        {button}
-                      </button>
-                    ))}
-                  </div>
+                  <ChatButtonCard
+                    buttons={message.button_text}
+                    onButtonClick={handleButtonClick}
+                    clickedButton={clickedButton}
+                  />
                 )}
             </div>
           </div>

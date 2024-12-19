@@ -4,22 +4,23 @@ import { toast } from "react-toastify";
 // import { AuthBackground } from "../../components/ui/authBackground";
 // import VideoCard from "../../components/videoCard";
 // import { handleOneloginAuth } from "../../redux/authSlice";
-// import { useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
+import { handleOneloginAuth } from "../../redux/authSlice";
 import { Spinner } from "@phosphor-icons/react";
 import { CallbackApiService } from "./api";
-export interface CallbackInterface {
-  _id: string;
-  one_login_id: string;
-  email: string;
-  name: string;
-  faceDescriptor: [];
-  is_facial_verified: boolean;
-}
+// export interface CallbackInterface {
+//   _id: string;
+//   one_login_id: string;
+//   email: string;
+//   name: string;
+//   faceDescriptor: [];
+//   is_facial_verified: boolean;
+// }
 
 const OneLoginCallBack = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  //   const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -60,7 +61,7 @@ const OneLoginCallBack = () => {
 
         // 7. Notify and redirect
         toast.success("Successfully logged in");
-        // dispatch(handleOneloginAuth(true));
+        dispatch(handleOneloginAuth(true));
         navigate("/"); // or your dashboard route
         setLoading(false);
       } catch (error) {
