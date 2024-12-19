@@ -1,9 +1,14 @@
+// Tickets.tsx
 import { Search } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { SiteHeader } from "../Home/Navbar";
 import { Table } from "./Table";
+import { useState } from "react";
+import { CaretDown } from "phosphor-react";
 
 const Tickets = () => {
+  const [gridViewEnabled, setGridViewEnabled] = useState(false);
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <SiteHeader />
@@ -11,7 +16,7 @@ const Tickets = () => {
       <main className="flex flex-col px-6 py-8">
         <div className="w-full max-w-[1096px] mx-auto space-y-6">
           {/* Header */}
-          <div className="w-full max-w-[1096px] flex items-center justify-between h-[40px] bg-white px-1 text-sm font-semibold  rounded-md">
+          <div className="w-full max-w-[1096px] flex items-center justify-between h-[40px] bg-white px-1 text-sm font-semibold rounded-md">
             <h1 className="text-xl font-semibold">My tickets</h1>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -42,17 +47,40 @@ const Tickets = () => {
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium">All tickets</span>
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="text-sm">
+            <div className="flex items-center gap-2">
+              {/* Apply Filters with Dropdown */}
+              <div className="relative">
+              <button className="flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-700 bg-white-100 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-200">
                 Apply filters
-              </Button>
-              <Button variant="outline" size="sm">
-                <span className="sr-only">Grid view</span>⊞
-              </Button>
-              <Button variant="outline" size="sm">
-                <span className="sr-only">Print</span>
-                🖨️
-              </Button>
+                <CaretDown size={16} className="ml-2 text-gray-700" />
+              </button>
+              </div>
+
+              {/* Icons Container */}
+              <div className="flex items-center gap-2 border border-gray-200 rounded-lg p-2 bg-gray-100">
+                {/* Grid View Icon */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={`text-sm ${
+                    gridViewEnabled
+                      ? "bg-white text-black border-gray-300"
+                      : "text-gray-600"
+                  }`}
+                  onClick={() => setGridViewEnabled(!gridViewEnabled)}
+                >
+                  <span className="sr-only">Grid view</span>⊞
+                </Button>
+
+                {/* Print Icon */}
+                <Button
+                  // variant="outline"
+                  size="sm"
+                  className="text-sm text-gray-400 bg-gray-100 hover:bg-gray-100 hover:text-gray-400 focus:ring-0"
+                >
+                  <span className="sr-only">Print</span>🖨️
+                </Button>
+              </div>
             </div>
           </div>
 
