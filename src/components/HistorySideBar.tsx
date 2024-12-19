@@ -1,11 +1,41 @@
 // ChatSidebar.tsx
-import React from "react";
-import VerifyMailCard from "../../components/ui/VerifyMailCard";
+import React, { useState, useEffect } from "react";
+import VerifyMailCard from "../components/ui/VerifyMailCard";
+import { getUserChats, chatHistory } from "../Api/CommonApi";
 
-const SideBar: React.FC = () => {
+interface HistorySideBarProps {
+  onChatSelect: (chatId: string) => void;
+}
+
+const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
+  const [chatHistory, setChatHistory] = useState<chatHistory[]>([]);
+
+  useEffect(() => {
+    const fetchChatHistory = async () => {
+      try {
+        const data = await getUserChats();
+        setChatHistory(data);
+      } catch (error) {
+        console.error("Error fetching chat history:", error);
+      }
+    };
+
+    fetchChatHistory();
+  }, []);
   return (
-    <aside className="w-1/4 bg-white border-r border-gray-200 p-4 flex flex-col justify-between">
-      <ul className="list-none p-0 m-0 overflow-y-auto">
+    <aside className=" bg-white border-r border-gray-200 p-4 flex flex-col justify-between h-screen">
+      <div className="overflow-y-auto">
+        {chatHistory.map((chat) => (
+          <p
+            key={chat.id}
+            className="text-black opacity-80 cursor-pointer hover:bg-zinc-800 p-2 rounded"
+            onClick={() => onChatSelect(chat.id)}
+          >
+            {chat.name}
+          </p>
+        ))}
+      </div>
+      {/* <ul className="list-none p-0 m-0 overflow-y-auto">
         <li className="p-3 text-base text-gray-700 cursor-pointer rounded-lg bg-gray-100 font-bold">
           My password reset
         </li>
@@ -33,7 +63,7 @@ const SideBar: React.FC = () => {
             2 days ago
           </span>
         </li>
-      </ul>
+      </ul> */}
       <div className="mt-auto w-full">
         <VerifyMailCard />
       </div>
@@ -41,4 +71,4 @@ const SideBar: React.FC = () => {
   );
 };
 
-export default SideBar;
+export default HistorySideBar;

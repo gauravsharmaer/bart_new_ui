@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import Layout from "./layout";
-import "./App.css";
+// import "./App.css";
+import "./index.css";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "./redux/store";
 import { currentProfile } from "./redux/authSlice";

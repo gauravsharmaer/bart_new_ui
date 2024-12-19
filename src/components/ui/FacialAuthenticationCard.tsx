@@ -9,8 +9,12 @@ interface FaceVerificationProps {
   error?: string;
   webcamComponent?: React.ReactNode;
   onBackClick?: () => void;
-  // onClose?: () => void;
   showCamera?: boolean;
+  isModelLoaded?: boolean;
+  isWebcamReady?: boolean;
+  isAnalyzing?: boolean;
+  showGif?: boolean;
+  hasFaceDescriptors?: boolean;
 }
 
 export default function FaceVerification({
@@ -19,21 +23,16 @@ export default function FaceVerification({
   error,
   webcamComponent,
   onBackClick,
-  // onClose,
   showCamera = true,
+  isModelLoaded = false,
+  isWebcamReady = false,
+  isAnalyzing = false,
+  showGif = false,
+  hasFaceDescriptors = false,
 }: FaceVerificationProps) {
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div className="w-[323px] bg-white rounded-[20px] shadow-xl relative animate-in fade-in duration-300">
-        {/* Close button */}
-        {/* <button
-          onClick={onClose}
-          className="absolute right-4 top-4 text-gray-500 hover:text-gray-700 transition-colors"
-        >
-          <X className="h-5 w-5" />
-          <span className="sr-only">Close</span>
-        </button> */}
-
         <div className="p-6">
           <div className="space-y-4">
             {/* Back button */}
@@ -55,9 +54,37 @@ export default function FaceVerification({
                 Face Verification
               </h2>
               <p className="text-sm text-gray-500">
-                {instruction || "Please look at the camera and hold still"}
+                {isAnalyzing && hasFaceDescriptors
+                  ? instruction
+                  : "Please wait while we analyze your face"}
               </p>
             </div>
+
+            {/* Loading States */}
+            {!isAnalyzing && !showGif && (
+              <div className="flex flex-col items-center gap-2">
+                {!isModelLoaded ? (
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-purple-500 border-t-transparent" />
+                    <span className="text-gray-700">Loading ...</span>
+                  </div>
+                ) : !isWebcamReady ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-red-500 animate-pulse rounded-full" />
+                    <span className="text-gray-700">
+                      Initializing Camera...
+                    </span>
+                  </div>
+                ) : !hasFaceDescriptors ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-yellow-500 animate-pulse rounded-full" />
+                    <span className="text-gray-700">
+                      Waiting for face detection...
+                    </span>
+                  </div>
+                ) : null}
+              </div>
+            )}
 
             {/* Camera view */}
             <div className="flex items-center justify-center py-4">
@@ -75,12 +102,6 @@ export default function FaceVerification({
 
             {/* Progress section */}
             <div className="space-y-3">
-              {/* <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600">Verification Progress</span>
-                <span className="font-medium">{progress}%</span>
-              </div> */}
-
-              {/* Progress bar */}
               <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full relative bg-[#90D167] transition-all duration-1000 ease-in-out"
@@ -110,6 +131,7 @@ export default function FaceVerification({
                 </div>
               </div>
             </div>
+
             {/* Error message */}
             {error && (
               <div className="text-red-500 text-sm text-center bg-red-50 p-2 rounded-lg">

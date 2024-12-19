@@ -49,6 +49,25 @@ interface VerifyOTPResponse {
   };
 }
 
+export interface chatHistory {
+  id: string;
+  name: string;
+  user_id: string;
+}
+
+interface Message {
+  text: string;
+  isUserMessage: boolean;
+  button_display: boolean;
+  number_of_buttons: number;
+  button_text: string[];
+  id?: string;
+  vertical_bar?: boolean;
+  timestamp: string;
+}
+
+type HistoryInterface = Message[][];
+
 export const askBart = async (data: AskRequest): Promise<AskResponse> => {
   try {
     const requestBody = {
@@ -136,5 +155,57 @@ export const verifyOTP = async (
     }
 
     throw new Error("An unexpected error occurred during OTP verification");
+  }
+};
+
+export const getHistory = async (chatId: string): Promise<HistoryInterface> => {
+  try {
+    const response = await fetch(
+      `https://bart-api-bd05237bdea5.herokuapp.com/chat_histories/${chatId}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch chat history");
+    }
+
+    const data = await response.json();
+    return data as HistoryInterface;
+  } catch (error) {
+    throw error instanceof Error
+      ? error
+      : new Error("An unexpected error occurred while fetching chat history");
+  }
+};
+
+export const getUserChats = async (): Promise<chatHistory[]> => {
+  try {
+    const response = await fetch(
+      `https://bart-api-bd05237bdea5.herokuapp.com/chats/${localStorage.getItem(
+        "user_id"
+      )}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch chat history");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw error instanceof Error
+      ? error
+      : new Error("An unexpected error occurred during signup");
   }
 };

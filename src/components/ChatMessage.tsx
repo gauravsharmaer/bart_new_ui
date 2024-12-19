@@ -5,6 +5,8 @@ import { askBart, verifyOTP } from "../Api/CommonApi";
 import OtpInputCard from "./ui/OtpInputCard";
 import createMarkup from "../utils/chatUtils";
 import ChatButtonCard from "./ui/ChatButtonCard";
+import UserCard from "./ui/UserCard";
+
 interface Message {
   text: string;
   isUserMessage: boolean;
@@ -24,7 +26,7 @@ interface ChatMessageProps {
 
 const ChatMessage: React.FC<ChatMessageProps> = React.memo(
   ({ message, onNewMessage }) => {
-    const profilePhoto = "https://avatar.vercel.sh/jill";
+    // const profilePhoto = "https://avatar.vercel.sh/jill";
     const [showAuthVideoCard, setShowAuthVideoCard] = useState(false);
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
     const [clickedButton, setClickedButton] = useState<string | null>(null);
@@ -151,61 +153,64 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
 
     return (
       <div className="flex items-start mb-8 w-full text-left">
-        <div className="flex items-start w-full">
-          <img
-            src={message.isUserMessage ? profilePhoto : ChatLogo}
-            alt={message.isUserMessage ? "User" : "BART Genie"}
-            className={`w-8 h-8 rounded-full object-cover ${
-              message.isUserMessage ? "mx-2" : "mx-2"
-            }`}
+        {message.isUserMessage ? (
+          <UserCard
+            name={localStorage.getItem("name") || "User"}
+            text={message.text}
           />
-          <div className="flex-1 flex">
-            {(message.button_display ||
-              message.text.includes("verification code")) && (
-              <div
-                className="w-1 h-auto mr-2"
-                style={{
-                  background: "linear-gradient(90deg, #f7a8a8, #bf5fe1)",
-                  borderRadius: "4px",
-                }}
-              ></div>
-            )}
-            <div>
-              <div className="flex items-center justify-start">
-                <span className="text-sm font-semibold mr-2 text-black">
-                  {message.isUserMessage
-                    ? localStorage.getItem("name") || "User"
-                    : "BART Genie"}
-                </span>
-                <span className="w-1 h-1 bg-white rounded-full mx-1"></span>
-                <span className="text-xs text-gray-400">
-                  {new Date(
-                    message.timestamp.replace("000", "Z")
-                  ).toLocaleString()}
-                </span>
-              </div>
-              <div
-                className="mt-2 text-sm text-black [&_a]:text-blue-400 [&_a]:underline [&_a:hover]:text-blue-300"
-                dangerouslySetInnerHTML={createMarkup(message.text)}
-              />
-              {message.text.includes("verification code") && (
-                <OtpInputCard
-                  onSubmitOTP={(otpString) => handleOtpSubmit(otpString)}
-                  otp={otp}
-                  setOtp={setOtp}
-                />
+        ) : (
+          <div className="flex items-start w-full">
+            <img
+              src={ChatLogo}
+              alt="BART Genie"
+              className="w-8 h-8 rounded-full object-cover mx-2"
+            />
+            <div className="flex-1 flex">
+              {(message.button_display ||
+                message.text.includes("verification code")) && (
+                <div
+                  className="w-1 h-auto mr-2"
+                  style={{
+                    background: "linear-gradient(90deg, #f7a8a8, #bf5fe1)",
+                    borderRadius: "4px",
+                  }}
+                ></div>
               )}
-              {message.button_display &&
-                !message.text.includes("verification code") && (
-                  <ChatButtonCard
-                    buttons={message.button_text}
-                    onButtonClick={handleButtonClick}
-                    clickedButton={clickedButton}
+              <div>
+                <div className="flex items-center justify-start">
+                  <span className="text-sm font-semibold mr-2 text-black">
+                    BART Genie
+                  </span>
+                  <span className="w-1 h-1 bg-white rounded-full mx-1"></span>
+                  <span className="text-xs text-gray-400">
+                    {new Date(
+                      message.timestamp.replace("000", "Z")
+                    ).toLocaleString()}
+                  </span>
+                </div>
+                <div
+                  className="mt-2 text-sm text-black [&_a]:text-blue-400 [&_a]:underline [&_a:hover]:text-blue-300"
+                  dangerouslySetInnerHTML={createMarkup(message.text)}
+                />
+                {message.text.includes("verification code") && (
+                  <OtpInputCard
+                    onSubmitOTP={(otpString) => handleOtpSubmit(otpString)}
+                    otp={otp}
+                    setOtp={setOtp}
                   />
                 )}
+                {message.button_display &&
+                  !message.text.includes("verification code") && (
+                    <ChatButtonCard
+                      buttons={message.button_text}
+                      onButtonClick={handleButtonClick}
+                      clickedButton={clickedButton}
+                    />
+                  )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {showAuthVideoCard && (
           <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">

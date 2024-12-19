@@ -3,6 +3,7 @@ import { SiteHeader } from "./Navbar";
 import { SearchSection } from "./SearchSection";
 import FacialConfirmationPopup from "./FacialConfirmationPopup";
 import { useState, useEffect } from "react";
+
 import VerifyAuthCapture from "./verifyAuthCapture";
 const Home = () => {
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
@@ -24,7 +25,7 @@ const Home = () => {
         />
       )}
       <SiteHeader />
-      <div className="flex flex-col items-center justify-center mt-[10%]">
+      <div className="flex flex-col items-center justify-center mt-[1%]">
         <SearchSection />
       </div>
       {showPopup &&
