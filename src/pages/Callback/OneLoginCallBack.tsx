@@ -30,9 +30,9 @@ const OneLoginCallBack = () => {
       const state = params.get("state"); // State parameter for security
       console.log("state", state);
       // 2. Verify state (security check)
-      const savedState = sessionStorage.getItem("auth_state");
-      if (!code || !state || state !== savedState) {
-        toast.error("Authentication failed");
+      // const savedState = sessionStorage.getItem("auth_state");
+      if (!code) {
+        // toast.error("Authentication failed");
         navigate("/login");
         return;
       }
@@ -67,7 +67,7 @@ const OneLoginCallBack = () => {
       } catch (error) {
         // 8. Handle errors
         console.error("Authentication error:", error);
-        toast.error("Authentication failed");
+        // toast.error("Authentication failed");
         navigate("/login");
         setLoading(false);
       }

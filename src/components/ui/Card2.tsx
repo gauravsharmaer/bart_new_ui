@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 
 const Card2 = () => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -7,7 +7,7 @@ const Card2 = () => {
     setActiveIndex(index);
   };
 
-  const options = ['Email Verification', 'Face Recognition'];
+  const options = ["Email Verification", "Face Recognition"];
 
   return (
     <div className="flex gap-4 mt-4">
@@ -17,8 +17,8 @@ const Card2 = () => {
           onClick={() => handleClick(index)}
           className={`px-5 py-3 rounded-md ${
             activeIndex === index
-              ? 'bg-orange-500 text-white'
-              : 'bg-white border border-gray-300 hover:bg-gray-100'
+              ? "bg-orange-500 text-white"
+              : "bg-white border border-gray-300 hover:bg-gray-100"
           }`}
         >
           {option}

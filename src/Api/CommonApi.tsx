@@ -66,6 +66,7 @@ interface Message {
   timestamp: string;
 }
 
+import { NODE_API_URL } from "../config";
 type HistoryInterface = Message[][];
 
 export const askBart = async (data: AskRequest): Promise<AskResponse> => {
@@ -207,5 +208,21 @@ export const getUserChats = async (): Promise<chatHistory[]> => {
     throw error instanceof Error
       ? error
       : new Error("An unexpected error occurred during signup");
+  }
+};
+export const logout = async () => {
+  try {
+    const response = await fetch(`${NODE_API_URL}/logout`, {
+      method: "GET",
+      credentials: "include",
+    });
+    if (!response.ok) {
+      throw new Error("Failed to logout");
+    }
+    return response.json();
+  } catch (error) {
+    throw error instanceof Error
+      ? error
+      : new Error("An unexpected error occurred during logout");
   }
 };

@@ -5,7 +5,7 @@ import { SiteHeader } from "../Home/Navbar";
 import { Table } from "./Table";
 import { useState } from "react";
 import { CaretDown } from "phosphor-react";
-
+import SupportTicket from "./SupportTicketCard";
 const Tickets = () => {
   const [gridViewEnabled, setGridViewEnabled] = useState(false);
 
@@ -50,10 +50,10 @@ const Tickets = () => {
             <div className="flex items-center gap-2">
               {/* Apply Filters with Dropdown */}
               <div className="relative">
-              <button className="flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-700 bg-white-100 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-200">
-                Apply filters
-                <CaretDown size={16} className="ml-2 text-gray-700" />
-              </button>
+                <button className="flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-700 bg-white-100 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-200">
+                  Apply filters
+                  <CaretDown size={16} className="ml-2 text-gray-700" />
+                </button>
               </div>
 
               {/* Icons Container */}
@@ -84,8 +84,7 @@ const Tickets = () => {
             </div>
           </div>
 
-          {/* Table Component */}
-          <Table />
+          {gridViewEnabled ? <SupportTicket /> : <Table />}
         </div>
       </main>
     </div>
