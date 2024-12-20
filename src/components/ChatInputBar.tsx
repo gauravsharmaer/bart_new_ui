@@ -22,30 +22,31 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative bottom-20">
-      <div className="flex items-center p-[5px_6px] bg-[#f5f5f5] rounded-[20px] shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
-        <div className="w-9 h-9 flex justify-center items-center rounded-full cursor-pointer ">
-          <div
-            className="w-[18px] h-[18px] bg-contain bg-no-repeat bg-center"
-            style={{ backgroundImage: `url(${plusIcon})` }}
-          ></div>
+    <form onSubmit={handleSubmit} className="relative mb-5">
+      <div className="flex items-center p-1 bg-white rounded-[15px] shadow-[0_2px_4px_rgba(0,0,0,0.1)] w-[80%] mx-auto mb-10">
+        {/* Plus Icon */}
+        <div className="w-14 h-10 flex justify-center items-center bg-[#f9f9f9] shadow-[inset_0_0_1px_rgba(128,128,128,0.5)] rounded-[10px]">
+          <div className="relative">
+            <img src={plusIcon} alt="Plus" className="w-6 h-6" />
+            <div className="absolute top-0 right-0 w-1 h-1 bg-green-500 rounded-full" />
+          </div>
         </div>
+
+        {/* Input Field */}
         <input
           type="text"
-          placeholder="Type a message"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
-          className="flex-1 h-10 px-2 text-base border-none rounded-[20px] bg-[#f5f5f5] outline-none"
+          className="flex-1 h-10 px-4 text-base border-none bg-transparent outline-none"
         />
+
+        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading}
-          className="w-9 h-9 flex justify-center items-center rounded-full cursor-pointer m-0"
+          className="w-12 h-10 flex justify-center items-center bg-[#f9f9f9] shadow-[inset_0_0_1px_rgba(128,128,128,0.5)] rounded-[10px]"
         >
-          <div
-            className="w-[18px] h-[18px] bg-contain bg-no-repeat bg-center"
-            style={{ backgroundImage: `url(${arrowIcon})` }}
-          ></div>
+          <img src={arrowIcon} alt="Submit" className="w-6 h-6" />
         </button>
       </div>
     </form>
