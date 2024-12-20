@@ -6,7 +6,7 @@ import OtpInputCard from "./ui/OtpInputCard";
 import createMarkup from "../utils/chatUtils";
 import ChatButtonCard from "./ui/ChatButtonCard";
 import UserCard from "./ui/UserCard";
-
+import TicketCard from "./ui/ticketcard";
 interface Message {
   text: string;
   isUserMessage: boolean;
@@ -16,6 +16,13 @@ interface Message {
   id?: string;
   vertical_bar?: boolean;
   timestamp: string; // Make this optional
+  ticket?: boolean;
+  ticket_options?: {
+    name: string | undefined;
+    description: string | undefined;
+    ticket_id: string | undefined;
+    assignee_name: string | undefined;
+  };
 }
 
 interface ChatMessageProps {
@@ -42,6 +49,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           button_display: false,
           number_of_buttons: 0,
           button_text: [],
+          ticket: false,
         };
         onNewMessage(userMessage);
 
@@ -60,6 +68,9 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           number_of_buttons:
             result.display_settings?.options?.buttons?.length || 0,
           button_text: result.display_settings?.options?.buttons || [],
+          ticket: result.display_settings?.ticket || false,
+          ticket_options:
+            result.display_settings?.options?.ticket_options || {},
         };
 
         onNewMessage(botMessage);
@@ -80,6 +91,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           button_display: false,
           number_of_buttons: 0,
           button_text: [],
+          ticket: false,
         };
         onNewMessage(userMessage);
 
@@ -99,6 +111,9 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
             number_of_buttons:
               result.display_settings?.options?.buttons?.length || 0,
             button_text: result.display_settings?.options?.buttons || [],
+            ticket: result.display_settings?.ticket || false,
+            ticket_options:
+              result.display_settings?.options?.ticket_options || {},
           };
 
           onNewMessage(botMessage);
@@ -117,6 +132,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           button_display: false,
           number_of_buttons: 0,
           button_text: [],
+          ticket: false,
         };
         onNewMessage(userMessage);
 
@@ -134,6 +150,9 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           number_of_buttons:
             result.display_settings?.options?.buttons?.length || 0,
           button_text: result.display_settings?.options?.buttons || [],
+          ticket: result.display_settings?.ticket || false,
+          ticket_options:
+            result.display_settings?.options?.ticket_options || {},
         };
 
         onNewMessage(botMessage);
@@ -146,10 +165,16 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           button_display: false,
           number_of_buttons: 0,
           button_text: [],
+          ticket: false,
         };
         onNewMessage(errorMessage);
       }
     };
+
+    console.log("Message data:", {
+      ticket: message.ticket,
+      ticket_options: message.ticket_options,
+    });
 
     return (
       <div className="flex items-start mb-8 w-full text-left">
@@ -207,6 +232,15 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                       clickedButton={clickedButton}
                     />
                   )}
+
+                {message.ticket && message.ticket_options && (
+                  <TicketCard
+                    name={message.ticket_options.name}
+                    description={message.ticket_options.description}
+                    ticket_id={message.ticket_options.ticket_id}
+                    assignee_name={message.ticket_options.assignee_name}
+                  />
+                )}
               </div>
             </div>
           </div>

@@ -17,7 +17,14 @@ interface Message {
   button_text: string[];
   id?: string;
   vertical_bar?: boolean;
-  timestamp: string; // Make this optional
+  timestamp: string;
+  ticket?: boolean;
+  ticket_options?: {
+    name: string | undefined;
+    description: string | undefined;
+    ticket_id: string | undefined;
+    assignee_name: string | undefined;
+  };
 }
 
 interface PasswordResetUiProps {
@@ -56,6 +63,9 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
           number_of_buttons:
             result.display_settings?.options?.buttons?.length || 0,
           button_text: result.display_settings?.options?.buttons || [],
+          ticket: result.display_settings?.ticket || false,
+          ticket_options:
+            result.display_settings?.options?.ticket_options || undefined,
         };
 
         setMessages([userMessage, botMessage]);
@@ -242,6 +252,10 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
                   number_of_buttons:
                     result.display_settings?.options?.buttons?.length || 0,
                   button_text: result.display_settings?.options?.buttons || [],
+                  ticket: result.display_settings?.ticket || false,
+                  ticket_options:
+                    result.display_settings?.options?.ticket_options ||
+                    undefined,
                 };
 
                 setMessages((prev) => [...prev, botMessage]);

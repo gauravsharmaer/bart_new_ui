@@ -16,8 +16,15 @@ interface AskResponse {
   display_settings: {
     vertical_bar: boolean;
     button_display: boolean;
+    ticket: boolean;
     options: {
       buttons: string[];
+      ticket_options: {
+        name: string | undefined;
+        description: string | undefined;
+        ticket_id: string | undefined;
+        assignee_name: string | undefined;
+      };
     };
     message_history: {
       question: string;
@@ -39,8 +46,15 @@ interface VerifyOTPResponse {
   display_settings: {
     vertical_bar: boolean;
     button_display: boolean;
+    ticket: boolean;
     options: {
       buttons: string[];
+      ticket_options: {
+        name: string | undefined;
+        description: string | undefined;
+        ticket_id: string | undefined;
+        assignee_name: string | undefined;
+      };
     };
     message_history: {
       question: string;

@@ -1,4 +1,4 @@
-import genie from "../../assets/genie.svg";
+import genie from "../../assets/Genie.svg";
 import { CardProps } from "./Interface/Interface";
 
 const Card = ({ title, description }: CardProps) => {

@@ -6,7 +6,7 @@ import { Envelope } from "@phosphor-icons/react";
 import { Link } from "react-router-dom";
 import Notification from "./Notification";
 import Profile from "./Profile"; // Import Profile Component
-import genie from "../../assets/genie.svg";
+import genie from "../../assets/Genie.svg";
 
 export function SiteHeader() {
   const [isNotificationOpen, setNotificationOpen] = useState(false);
