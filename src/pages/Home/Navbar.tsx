@@ -1,16 +1,20 @@
 import { useState } from "react";
-import { Bell, List, MagnifyingGlass } from "@phosphor-icons/react";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
-import { Envelope } from "@phosphor-icons/react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Notification from "./Notification";
-import Profile from "./Profile"; // Import Profile Component
+import Profile from "./Profile";
 import genie from "../../assets/Genie.svg";
+import invite from "../../assets/invite.svg";
+import profileicon from "../../assets/profile.svg";
+import notificationicon from "../../assets/notification-bell.svg";
+import menubar from "../../assets/menu-bar.svg";
 
 export function SiteHeader() {
   const [isNotificationOpen, setNotificationOpen] = useState(false);
   const [isProfileOpen, setProfileOpen] = useState(false);
+  const location = useLocation();
 
   // Toggle notification sidebar
   const toggleNotification = () => {
@@ -30,26 +34,39 @@ export function SiteHeader() {
         <div className="flex items-center h-14 px-10">
           <div className="flex items-center space-x-6">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="h-6 w-6">
-                <img src={genie} alt="Logo" className="h-full w-full" />
+              <div className="h-8 w-8">
+                <img src={genie} alt="Logo" className="h-8 w-8" />
               </div>
             </Link>
-            <nav className="flex items-center space-x-6">
+            <nav className="flex items-center space-x-4">
               <Link
                 to="/"
-                className="text-sm font-medium transition-colors hover:text-primary"
+                className={`relative flex items-center justify-center px-4 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary ${
+                  location.pathname === "/"
+                    ? "text-primary bg-gray-100"
+                    : "text-muted-foreground"
+                }`}
               >
-                Home
+                <span className="z-10">Home</span>
+                {location.pathname === "/" && (
+                  <div className="absolute inset-0 rounded-full bg-gray-100 pointer-events-none"></div>
+                )}
               </Link>
               <Link
                 to="/tickets"
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                className={`relative flex items-center justify-center px-4 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary ${
+                  location.pathname === "/tickets"
+                    ? "text-primary bg-gray-100"
+                    : "text-muted-foreground"
+                }`}
               >
-                My tickets
+                <span className="z-10">My tickets</span>
+                {location.pathname === "/tickets" && (
+                  <div className="absolute inset-0 rounded-full bg-gray-100 pointer-events-none"></div>
+                )}
               </Link>
             </nav>
           </div>
-
           <div className="flex flex-1 items-center justify-center px-4">
             <div className="flex w-full max-w-2xl items-center relative">
               <MagnifyingGlass
@@ -63,42 +80,36 @@ export function SiteHeader() {
               />
             </div>
           </div>
-
           <div className="flex items-center space-x-4">
             <Button
               variant="outline"
               size="sm"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-[#fafafa]"
             >
-              <Envelope size={16} />
+              <img src={invite} alt="Invite" className="h-4 w-4" />
               Invite team-mate
             </Button>
-            {/* Notification Button */}
             <Button
               variant="ghost"
               size="icon"
               className="relative"
               onClick={toggleNotification}
             >
-              <Bell size={20} weight="fill" />
+              <img src={notificationicon} alt="Notifications" className="h-6 w-6" />
               <span
-                className="absolute bottom-6 left-5 h-4 w-4
-                 rounded-full bg-red-500 text-[10px] font-medium
-                 text-white flex items-center justify-center"
+                className="absolute bottom-6 left-5 h-4 w-4"
               >
-                2
               </span>
             </Button>
-
-            {/* Three Bars Button for Profile */}
-            <Button variant="ghost" size="icon" onClick={toggleProfile}>
-              <List size={20} />
-            </Button>
+            <div className="flex items-center space-x-2">
+              <img src={profileicon} alt="Profile" className="h-10 w-10 rounded-full" />
+              <Button variant="ghost" size="icon" onClick={toggleProfile}>
+                <img src={menubar} alt="Menu" className="h-7 w-7" />
+              </Button>
+            </div>
           </div>
         </div>
       </header>
-
-      {/* Notification Component */}
       <div
         className={`fixed top-0 ${
           isNotificationOpen ? "right-0" : "-right-[367px]"
@@ -109,8 +120,6 @@ export function SiteHeader() {
           onClose={() => setNotificationOpen(false)}
         />
       </div>
-
-      {/* Profile Component */}
       <div
         className={`fixed top-0 ${
           isProfileOpen ? "right-0" : "-right-[324px]"
@@ -121,3 +130,5 @@ export function SiteHeader() {
     </>
   );
 }
+
+export default SiteHeader;

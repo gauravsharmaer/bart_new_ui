@@ -63,4 +63,22 @@
   body {
     @apply bg-background text-foreground;
   }
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent scrolling */
+  }
+  input[type="search"] {
+    border: none;
+    outline: none;
+  }
+  input[type="search"]:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
+  input[type="search"]:hover {
+    border: none;
+  }
 }

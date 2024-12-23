@@ -23,7 +23,7 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="relative mb-5">
-      <div className="flex items-center p-1 bg-white rounded-[15px] shadow-[0_2px_4px_rgba(0,0,0,0.1)] w-[80%] mx-auto mb-10">
+      <div className="flex items-center p-1 bg-white rounded-[15px] w-[100%] mx-auto mb-10 border border-gray-200">
         {/* Plus Icon */}
         <div className="w-14 h-10 flex justify-center items-center bg-[#f9f9f9] shadow-[inset_0_0_1px_rgba(128,128,128,0.5)] rounded-[10px]">
           <div className="relative">

@@ -187,60 +187,61 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           <div className="flex items-start w-full">
             <img
               src={ChatLogo}
-              alt="BART Genie"
+              alt="BART Buddy"
               className="w-8 h-8 rounded-full object-cover mx-2"
             />
-            <div className="flex-1 flex">
-              {(message.button_display ||
-                message.text.includes("verification code")) && (
-                <div
-                  className="w-1 h-auto mr-2"
-                  style={{
-                    background: "linear-gradient(90deg, #f7a8a8, #bf5fe1)",
-                    borderRadius: "4px",
-                  }}
-                ></div>
-              )}
-              <div>
-                <div className="flex items-center justify-start">
-                  <span className="text-sm font-semibold mr-2 text-black">
-                    BART Genie
-                  </span>
-                  <span className="w-1 h-1 bg-white rounded-full mx-1"></span>
-                  <span className="text-xs text-gray-400">
-                    {new Date(
-                      message.timestamp.replace("000", "Z")
-                    ).toLocaleString()}
-                  </span>
-                </div>
-                <div
-                  className="mt-2 text-sm text-black [&_a]:text-blue-400 [&_a]:underline [&_a:hover]:text-blue-300"
-                  dangerouslySetInnerHTML={createMarkup(message.text)}
-                />
-                {message.text.includes("verification code") && (
-                  <OtpInputCard
-                    onSubmitOTP={(otpString) => handleOtpSubmit(otpString)}
-                    otp={otp}
-                    setOtp={setOtp}
-                  />
+            <div className="flex-1">
+              <div className="flex items-center justify-start">
+                <span className="text-sm font-semibold mr-2 text-black">
+                  BART Buddy
+                </span>
+                <span className="w-1 h-1 bg-white rounded-full mx-1"></span>
+                <span className="text-xs text-gray-400">
+                  {new Date(
+                    message.timestamp.replace("000", "Z")
+                  ).toLocaleString()}
+                </span>
+              </div>
+              <div className="flex mt-2">
+                {(message.button_display ||
+                  message.text.includes("verification code")) && (
+                  <div
+                    className="w-1 h-auto mr-2"
+                    style={{
+                      background: "#523EC6",
+                      borderRadius: "4px",
+                    }}
+                  ></div>
                 )}
-                {message.button_display &&
-                  !message.text.includes("verification code") && (
-                    <ChatButtonCard
-                      buttons={message.button_text}
-                      onButtonClick={handleButtonClick}
-                      clickedButton={clickedButton}
+                <div className="flex-1">
+                  <div
+                    className="text-sm text-black mb-2 [&_a]:text-blue-400 [&_a]:underline [&_a:hover]:text-blue-300"
+                    dangerouslySetInnerHTML={createMarkup(message.text)}
+                  />
+                  {message.text.includes("verification code") && (
+                    <OtpInputCard
+                      onSubmitOTP={(otpString) => handleOtpSubmit(otpString)}
+                      otp={otp}
+                      setOtp={setOtp}
                     />
                   )}
-
-                {message.ticket && message.ticket_options && (
-                  <TicketCard
-                    name={message.ticket_options.name}
-                    description={message.ticket_options.description}
-                    ticket_id={message.ticket_options.ticket_id}
-                    assignee_name={message.ticket_options.assignee_name}
-                  />
-                )}
+                  {message.button_display &&
+                    !message.text.includes("verification code") && (
+                      <ChatButtonCard
+                        buttons={message.button_text}
+                        onButtonClick={handleButtonClick}
+                        clickedButton={clickedButton}
+                      />
+                    )}
+                  {message.ticket && message.ticket_options && (
+                    <TicketCard
+                      name={message.ticket_options.name}
+                      description={message.ticket_options.description}
+                      ticket_id={message.ticket_options.ticket_id}
+                      assignee_name={message.ticket_options.assignee_name}
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -249,8 +250,6 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
         {showAuthVideoCard && (
           <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
             <div className="relative w-[500px] bg-[#2C2C2E] rounded-3xl p-4">
-              {" "}
-              {/* Added background and rounded corners */}
               <button
                 onClick={() => setShowAuthVideoCard(false)}
                 className="absolute top-1 right-4 text-xl text-white hover:text-gray-400"
