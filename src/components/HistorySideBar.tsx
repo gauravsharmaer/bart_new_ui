@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { getUserChats } from "../Api/CommonApi";
 
+// Add this interface definition
+interface ChatHistory {
+  id: string;
+  name: string;
+  isActive?: boolean;
+}
+
 interface HistorySideBarProps {
   onChatSelect: (chatId: string) => void;
 }
 
 const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
   const [chatHistory, setChatHistory] = useState<
-    (chatHistory & { status?: string; timestamp?: string })[]
+    (ChatHistory & { status?: string; timestamp?: string })[]
   >([]);
 
   useEffect(() => {
@@ -21,7 +28,7 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
         let currentRepetition = 0;
 
         const updatedData = data.map((chat, index) => {
-          let timestamp =  `${dayCounter} day${dayCounter > 1 ? "s" : ""} ago`;
+          let timestamp = `${dayCounter} day${dayCounter > 1 ? "s" : ""} ago`;
 
           // Increment the dayCounter and reset repetitions when limit is reached
           if (currentRepetition >= repetitionCount) {
@@ -70,39 +77,38 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
       >
         {chatHistory.map((chat) => (
           <div
-          key={chat.id}
-          className={`text-black opacity-150 cursor-pointer p-2 rounded font-regular flex items-center justify-between ${
-            chat.isActive ? "shadow-md bg-[#f3f5f9]" : "hover:bg-[#f3f5f9]"
-          }`}
-        >
-          <span
-            onClick={() => onChatSelect(chat.id)}
-            className="truncate max-w-[140px]" // Add truncation styles
-            title={chat.name} // Tooltip to show full text on hover
+            key={chat.id}
+            className={`text-black opacity-150 cursor-pointer p-2 rounded font-regular flex items-center justify-between ${
+              chat.isActive ? "shadow-md bg-[#f3f5f9]" : "hover:bg-[#f3f5f9]"
+            }`}
           >
-            {chat.name}
-          </span>
-        
-          <div className="flex items-center gap-2">
-            {/* Add status */}
-            {chat.status && (
-              <span
-                className={`text-xs py-1 px-2 rounded-md font-medium ${
-                  chat.status === "Resolved"
-                    ? "bg-[#DEF3C1] text-[#385C25]"
-                    : "bg-[#ECE4FF] text-[#5232A0]"
-                }`}
-              >
-                {chat.status}
-              </span>
-            )}
-            {/* Add timestamp */}
-            {chat.timestamp && (
-              <span className="text-xs text-[#FF5600]">{chat.timestamp}</span>
-            )}
+            <span
+              onClick={() => onChatSelect(chat.id)}
+              className="truncate max-w-[140px]" // Add truncation styles
+              title={chat.name} // Tooltip to show full text on hover
+            >
+              {chat.name}
+            </span>
+
+            <div className="flex items-center gap-2">
+              {/* Add status */}
+              {chat.status && (
+                <span
+                  className={`text-xs py-1 px-2 rounded-md font-medium ${
+                    chat.status === "Resolved"
+                      ? "bg-[#DEF3C1] text-[#385C25]"
+                      : "bg-[#ECE4FF] text-[#5232A0]"
+                  }`}
+                >
+                  {chat.status}
+                </span>
+              )}
+              {/* Add timestamp */}
+              {chat.timestamp && (
+                <span className="text-xs text-[#FF5600]">{chat.timestamp}</span>
+              )}
+            </div>
           </div>
-        </div>
-        
         ))}
       </div>
       {/* Uncomment the below section if VerifyMailCard is needed */}
