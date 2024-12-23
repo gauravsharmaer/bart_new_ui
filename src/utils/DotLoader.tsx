@@ -5,7 +5,7 @@ const DotLoader: React.FC = React.memo(() => (
     {[0, 1, 2].map((i) => (
       <div
         key={i}
-        className={`dot w-2 h-2 bg-white rounded-full animate-pulse ${
+        className={`dot w-2 h-2 bg-black rounded-full animate-pulse ${
           i > 0 ? `delay-${i}00` : ""
         }`}
       ></div>

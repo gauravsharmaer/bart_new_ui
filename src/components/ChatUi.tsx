@@ -1,14 +1,12 @@
-import { useEffect, useState, useRef } from "react";
-import { askBart } from "../Api/CommonApi";
+import React, { useEffect, useState, useRef } from "react";
+import { askBart, getHistory } from "../Api/CommonApi";
 import ChatMessage from "./ChatMessage";
 import DotLoader from "../utils/DotLoader";
 import HistorySideBar from "./HistorySideBar";
 import ChatLogo from "../assets/Genie.svg";
-// import PlusIcon from "../assets/plus-circle.svg";
-// import IconArrow from "../assets/arrow-circle-up.svg";
 import ChatInputBar from "./ChatInputBar";
-// import { Message } from "./Interface/Interface";
-import { getHistory } from "../Api/CommonApi";
+import BackGround from "../assets/bg_frame.svg";
+
 interface Message {
   text: string;
   isUserMessage: boolean;
@@ -34,10 +32,9 @@ interface PasswordResetUiProps {
 const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
-  // const [inputMessage, setInputMessage] = useState("");
   const [chatId, setChatId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  console.log(messages);
+
   useEffect(() => {
     setLoading(true);
 
@@ -60,12 +57,10 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
           isUserMessage: false,
           timestamp: new Date().toISOString().replace("Z", "000"),
           button_display: result.display_settings?.button_display || false,
-          number_of_buttons:
-            result.display_settings?.options?.buttons?.length || 0,
+          number_of_buttons: result.display_settings?.options?.buttons?.length || 0,
           button_text: result.display_settings?.options?.buttons || [],
           ticket: result.display_settings?.ticket || false,
-          ticket_options:
-            result.display_settings?.options?.ticket_options || undefined,
+          ticket_options: result.display_settings?.options?.ticket_options || undefined,
         };
 
         setMessages([userMessage, botMessage]);
@@ -97,7 +92,6 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
       const data = await getHistory(chatId);
       const flattenedMessages = data.flat().map((message) => ({
         ...message,
-        // timestamp: new Date().toLocaleTimeString(),
       }));
       setMessages(flattenedMessages);
       setChatId(chatId);
@@ -106,84 +100,47 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
     }
   };
 
-  useEffect(() => {
-    // Auto-scroll to the latest message
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages, loading]);
-
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (!inputMessage.trim()) return;
-
-  //   const userMessage: Message = {
-  //     text: inputMessage,
-  //     isUserMessage: true,
-  //     timestamp: new Date().toISOString().replace("Z", "000"),
-  //     button_display: false,
-  //     number_of_buttons: 0,
-  //     button_text: [],
-  //   };
-
-  //   setMessages((prev) => [...prev, userMessage]);
-  //   setLoading(true);
-  //   setInputMessage("");
-
-  //   try {
-  //     const result = await askBart({
-  //       question: inputMessage,
-  //       user_id: localStorage.getItem("user_id") || "",
-  //       chat_id: localStorage.getItem("chat_id") || "",
-  //     });
-
-  //     localStorage.setItem("chat_id", result.chat_id);
-  //     const botMessage: Message = {
-  //       text: result.answer || "No response received",
-  //       isUserMessage: false,
-  //       timestamp: new Date().toISOString().replace("Z", "000"),
-  //       button_display: result.display_settings?.button_display || false,
-  //       number_of_buttons:
-  //         result.display_settings?.options?.buttons?.length || 0,
-  //       button_text: result.display_settings?.options?.buttons || [],
-  //     };
-
-  //     setMessages((prev) => [...prev, botMessage]);
-  //   } catch (error) {
-  //     const errorBotMessage: Message = {
-  //       text: error instanceof Error ? error.message : "An error occurred",
-  //       isUserMessage: false,
-  //       timestamp: new Date().toISOString().replace("Z", "000"),
-  //       button_display: false,
-  //       number_of_buttons: 0,
-  //       button_text: [],
-  //     };
-
-  //     setMessages((prev) => [...prev, errorBotMessage]);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleNewMessage = (message: Message) => {
     setMessages((prev) => [...prev, message]);
   };
 
-  return (
-    <div className="flex  h-screen w-full">
-      <div className="flex flex-row w-full">
-        <div className="w-[30%]">
-          <HistorySideBar onChatSelect={handleGetChat} />
-        </div>
-        <div className="w-full">
-          <div
-            className="w-full h-full overflow-y-auto p-4"
-            style={{
-              WebkitOverflowScrolling: "touch",
-              msOverflowStyle: "none",
-              scrollbarWidth: "none",
-            }}
-          >
+// Updated styles for the chat screen background
+const chatScreenStyle: React.CSSProperties = {
+  backgroundImage: `url(${BackGround})`, // SVG as background
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'center center',
+  backgroundSize: 'cover', // Ensures the background fills the entire container
+  borderRadius: '16px', // Same border radius as container for consistency
+  overflow: 'hidden',
+  height: 'calc(100% - 15px)',
+  width: '100%',
+  marginTop: '16px',
+};
+
+const containerStyle: React.CSSProperties = {
+  backgroundColor: '#f3f5f9', // Change surrounding color here
+  height: '100%', // Ensure it covers the full height
+  display: 'flex',
+  padding: '2px', // Adds equal space on all sides of the container
+  boxSizing: 'border-box', // Ensures padding doesn't affect the width/height
+};
+
+return (
+  <div className="absolute inset-x-0 bottom-0 top-10">
+    {/* Main container */}
+    <div style={containerStyle}>
+  {/* Sidebar */}
+  <div className="w-80 flex-shrink-0 border-r border-white">
+    <HistorySideBar onChatSelect={handleGetChat} />
+  </div>
+
+  {/* Main Chat Section */}
+  <div className="flex-grow p-4">
+    <div style={chatScreenStyle}>
+      <div className="flex flex-col h-full">
+        {/* Chat Messages */}
+        <div className="flex-grow overflow-hidden relative">
+          <div className="absolute inset-0 overflow-y-auto px-4 py-3">
             {messages.map((message, index) => (
               <ChatMessage
                 key={index}
@@ -192,97 +149,93 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
                 onNewMessage={handleNewMessage}
               />
             ))}
-
             {loading && (
-              <div className="flex items-start w-full">
-                <div className="flex items-start w-full">
-                  <img
-                    src={ChatLogo}
-                    alt="BART Genie"
-                    className="w-8 h-8 rounded-full object-cover mr-2"
-                  />
-                  <div className="flex-1 text-left">
-                    <div className="flex items-center">
-                      <span className="text-sm font-semibold mr-2">
-                        BART Genie
-                      </span>
-                      <span className="w-1 h-1 bg-white rounded-full mx-1"></span>
-                      <span className="text-xs text-gray-400">
-                        {new Date().toLocaleTimeString()}
-                      </span>
-                    </div>
-                    <div className="mt-2">
-                      <DotLoader />
-                    </div>
+              <div className="flex items-start w-full mt-2">
+                <img
+                  src={ChatLogo}
+                  alt="BART Genie"
+                  className="w-8 h-8 rounded-full object-cover mr-2"
+                />
+                <div className="flex-1">
+                  <div className="flex items-center">
+                    <span className="text-sm font-semibold mr-2">BART Genie</span>
+                    <span className="w-1 h-1 bg-gray-300 rounded-full mx-1"></span>
+                    <span className="text-xs text-gray-400">
+                      {new Date().toLocaleTimeString()}
+                    </span>
+                  </div>
+                  <div className="mt-2">
+                    <DotLoader />
                   </div>
                 </div>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
-
-          <ChatInputBar
-            onSubmit={async (message) => {
-              const userMessage: Message = {
-                text: message,
-                isUserMessage: true,
-                timestamp: new Date().toISOString().replace("Z", "000"),
-                button_display: false,
-                number_of_buttons: 0,
-                button_text: [],
-              };
-
-              setMessages((prev) => [...prev, userMessage]);
-              setLoading(true);
-
-              try {
-                const result = await askBart({
-                  question: message,
-                  user_id: localStorage.getItem("user_id") || "",
-                  chat_id: localStorage.getItem("chat_id") || "",
-                });
-
-                localStorage.setItem("chat_id", result.chat_id);
-                const botMessage: Message = {
-                  text: result.answer || "No response received",
-                  isUserMessage: false,
-                  timestamp: new Date().toISOString().replace("Z", "000"),
-                  button_display:
-                    result.display_settings?.button_display || false,
-                  number_of_buttons:
-                    result.display_settings?.options?.buttons?.length || 0,
-                  button_text: result.display_settings?.options?.buttons || [],
-                  ticket: result.display_settings?.ticket || false,
-                  ticket_options:
-                    result.display_settings?.options?.ticket_options ||
-                    undefined,
-                };
-
-                setMessages((prev) => [...prev, botMessage]);
-              } catch (error) {
-                const errorBotMessage: Message = {
-                  text:
-                    error instanceof Error
-                      ? error.message
-                      : "An error occurred",
-                  isUserMessage: false,
+        </div>
+        {/* Input Bar */}
+        <div className="flex-shrink-0 px-8 py-0">
+          <div className="max-w-full mx-auto h-14 w-full">
+            <ChatInputBar
+              onSubmit={async (message) => {
+                const userMessage = {
+                  text: message,
+                  isUserMessage: true,
                   timestamp: new Date().toISOString().replace("Z", "000"),
                   button_display: false,
                   number_of_buttons: 0,
                   button_text: [],
                 };
 
-                setMessages((prev) => [...prev, errorBotMessage]);
-              } finally {
-                setLoading(false);
-              }
-            }}
-            loading={loading}
-          />
+                setMessages((prev) => [...prev, userMessage]);
+                setLoading(true);
+
+                try {
+                  const result = await askBart({
+                    question: message,
+                    user_id: localStorage.getItem("user_id") || "",
+                    chat_id: localStorage.getItem("chat_id") || "",
+                  });
+
+                  localStorage.setItem("chat_id", result.chat_id);
+                  const botMessage = {
+                    text: result.answer || "No response received",
+                    isUserMessage: false,
+                    timestamp: new Date().toISOString().replace("Z", "000"),
+                    button_display: result.display_settings?.button_display || false,
+                    number_of_buttons: result.display_settings?.options?.buttons?.length || 0,
+                    button_text: result.display_settings?.options?.buttons || [],
+                    ticket: result.display_settings?.ticket || false,
+                    ticket_options: result.display_settings?.options?.ticket_options || undefined,
+                  };
+
+                  setMessages((prev) => [...prev, botMessage]);
+                } catch (error) {
+                  const errorBotMessage = {
+                    text: error instanceof Error ? error.message : "An error occurred",
+                    isUserMessage: false,
+                    timestamp: new Date().toISOString().replace("Z", "000"),
+                    button_display: false,
+                    number_of_buttons: 0,
+                    button_text: [],
+                  };
+
+                  setMessages((prev) => [...prev, errorBotMessage]);
+                } finally {
+                  setLoading(false);
+                }
+              }}
+              loading={loading}
+            />
+          </div>
         </div>
       </div>
     </div>
-  );
+  </div>
+  </div>
+  </div>
+);
+
 };
 
 export default PasswordResetUi;
