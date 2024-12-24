@@ -81,4 +81,16 @@
   input[type="search"]:hover {
     border: none;
   }
+  input[type="text"] {
+    border: none;
+    outline: none;
+  }
+  input[type="text"]:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
+  input[type="text"]:hover {
+    border: none;
+  }
 }
