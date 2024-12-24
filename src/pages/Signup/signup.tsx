@@ -1,5 +1,6 @@
 import SignUpCard from "./SignUpCard";
 import bgSignup from "../../assets/bg_signup.svg";
+
 const signup = () => {
   return (
     <div
@@ -14,6 +15,6 @@ const signup = () => {
       <SignUpCard />
     </div>
   );
-
 };
+
 export default signup;
