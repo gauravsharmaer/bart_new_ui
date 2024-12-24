@@ -30,6 +30,7 @@ export default function LoginCard() {
         "isFaceVerified",
         response.isFaceVerified.toString()
       );
+      localStorage.setItem("image", response.imagePath);
       dispatch(currentProfile());
     } catch (error) {
       toast.error(

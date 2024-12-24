@@ -4,6 +4,7 @@ interface LoginInterface {
   user_id: string;
   name: string;
   isFaceVerified: boolean;
+  imagePath: string;
 }
 
 export type { LoginInterface };

@@ -6,7 +6,6 @@ import bartLogo from "../../assets/bartLogo.svg";
 import { toast } from "react-toastify";
 import profilePlaceholder from "../../assets/profile_signup.svg";
 
-
 const Card = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -54,7 +53,9 @@ const Card = () => {
       formData.append("image", file);
 
       const response = await fetch(
-        `http://localhost:4000/api/users/upload-user-image?userId=674eaffe7cbb08e51f7adada`,
+        `http://localhost:4000/api/users/upload-user-image?userId=${localStorage.getItem(
+          "user_id"
+        )}`,
         {
           method: "POST",
           body: formData,
@@ -93,19 +94,19 @@ const Card = () => {
       </div>
 
       {/* <CardBackground> */}
-        <div className="p-5 space-y-7 w-full max-w-[450px]">
-          {/* Header Section */}
-          <div className="space-y-7 ">
-            {/* Drag/Select a photo */}
-            <div className="flex flex-col items-center gap-2">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="hidden"
-                id="profile-upload"
-              />
-             <label
+      <div className="p-5 space-y-7 w-full max-w-[450px]">
+        {/* Header Section */}
+        <div className="space-y-7 ">
+          {/* Drag/Select a photo */}
+          <div className="flex flex-col items-center gap-2">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+              id="profile-upload"
+            />
+            <label
               htmlFor="profile-upload"
               onDrop={handleDrop}
               className="w-32 h-32 rounded-full cursor-pointer overflow-hidden"
@@ -124,51 +125,51 @@ const Card = () => {
                 />
               )}
             </label>
-            </div>
-
-            {/* Form Section */}
-            <div className="space-y-4 ">
-              <div className="space-y-4 mb-4">
-                <div className="relative h-[63px] flex flex-col gap-2">
-                  <div className="text-[#202B3B] text-xs font-medium pl-2">
-                    First Name
-                  </div>
-                  <Input
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    className="rounded-full"
-                  />
-                </div>
-
-                <div className="relative h-[63px] flex flex-col gap-2">
-                  <div className="text-[#202B3B] text-xs font-medium pl-2">
-                    Last Name
-                  </div>
-                  <Input
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    className="rounded-full"
-                  />
-                </div>
-              </div>
-
-              <Button
-                variant="default"
-                className="w-full h-[49px] rounded-full text-white bg-gradient-to-b
-                 from-[#FF7855] to-[#FF3500] hover:opacity-100 transition-opacity"
-                onClick={handleSubmit}
-                disabled={!file || !firstName || !lastName}
-              >
-                {loading ? "Processing..." : "I'm Ready"}
-              </Button>
-            </div>
           </div>
 
-          {/* Footer Section */}
-          <div className="flex flex-col items-center gap-7 w-[311px] mx-auto"></div>
+          {/* Form Section */}
+          <div className="space-y-4 ">
+            <div className="space-y-4 mb-4">
+              <div className="relative h-[63px] flex flex-col gap-2">
+                <div className="text-[#202B3B] text-xs font-medium pl-2">
+                  First Name
+                </div>
+                <Input
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="rounded-full"
+                />
+              </div>
+
+              <div className="relative h-[63px] flex flex-col gap-2">
+                <div className="text-[#202B3B] text-xs font-medium pl-2">
+                  Last Name
+                </div>
+                <Input
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="rounded-full"
+                />
+              </div>
+            </div>
+
+            <Button
+              variant="default"
+              className="w-full h-[49px] rounded-full text-white bg-gradient-to-b
+                 from-[#FF7855] to-[#FF3500] hover:opacity-100 transition-opacity"
+              onClick={handleSubmit}
+              disabled={!file || !firstName || !lastName}
+            >
+              {loading ? "Processing..." : "I'm Ready"}
+            </Button>
+          </div>
         </div>
+
+        {/* Footer Section */}
+        <div className="flex flex-col items-center gap-7 w-[311px] mx-auto"></div>
+      </div>
       {/* </CardBackground> */}
     </div>
   );

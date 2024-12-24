@@ -10,6 +10,7 @@ import invite from "../../assets/invite.svg";
 import profileicon from "../../assets/profile.svg";
 import notificationicon from "../../assets/notification-bell.svg";
 import menubar from "../../assets/menu-bar.svg";
+import { BackendBaseUrl } from "../../config";
 
 export function SiteHeader() {
   const [isNotificationOpen, setNotificationOpen] = useState(false);
@@ -69,7 +70,7 @@ export function SiteHeader() {
           </div>
           <div className="flex flex-1 items-center justify-center px-4">
             <div className="flex w-full max-w-2xl items-center border border-gray-200 rounded-full relative">
-          <MagnifyingGlass
+              <MagnifyingGlass
                 size={20}
                 className="absolute left-3 text-muted-foreground"
               />
@@ -95,14 +96,23 @@ export function SiteHeader() {
               className="relative"
               onClick={toggleNotification}
             >
-              <img src={notificationicon} alt="Notifications" className="h-6 w-6" />
-              <span
-                className="absolute bottom-6 left-5 h-4 w-4"
-              >
-              </span>
+              <img
+                src={notificationicon}
+                alt="Notifications"
+                className="h-6 w-6"
+              />
+              <span className="absolute bottom-6 left-5 h-4 w-4"></span>
             </Button>
             <div className="flex items-center space-x-4">
-              <img src={profileicon} alt="Profile" className="h-10 w-10 rounded-full" />
+              <img
+                src={
+                  localStorage.getItem("image") != "undefined"
+                    ? `${BackendBaseUrl}/${localStorage.getItem("image")}`
+                    : profileicon
+                }
+                alt="Profile"
+                className="h-10 w-10 rounded-full"
+              />
               <Button variant="ghost" size="icon" onClick={toggleProfile}>
                 <img src={menubar} alt="Menu" className="h-7 w-7" />
               </Button>
