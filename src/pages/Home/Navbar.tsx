@@ -30,7 +30,7 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-full">
         <div className="flex items-center h-14 px-10">
           <div className="flex items-center space-x-6">
             <Link to="/" className="flex items-center space-x-2">
@@ -54,7 +54,7 @@ export function SiteHeader() {
               </Link>
               <Link
                 to="/tickets"
-                className={`relative flex items-center justify-center px-4 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary ${
+                className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary ${
                   location.pathname === "/tickets"
                     ? "text-primary bg-gray-100"
                     : "text-muted-foreground"
@@ -68,8 +68,8 @@ export function SiteHeader() {
             </nav>
           </div>
           <div className="flex flex-1 items-center justify-center px-4">
-            <div className="flex w-full max-w-2xl items-center relative">
-              <MagnifyingGlass
+            <div className="flex w-full max-w-2xl items-center border border-gray-200 rounded-full relative">
+          <MagnifyingGlass
                 size={20}
                 className="absolute left-3 text-muted-foreground"
               />
@@ -101,7 +101,7 @@ export function SiteHeader() {
               >
               </span>
             </Button>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-4">
               <img src={profileicon} alt="Profile" className="h-10 w-10 rounded-full" />
               <Button variant="ghost" size="icon" onClick={toggleProfile}>
                 <img src={menubar} alt="Menu" className="h-7 w-7" />

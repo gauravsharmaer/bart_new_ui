@@ -1,10 +1,10 @@
-import GradientBackground from "../../components/GradientBackground";
 import { SiteHeader } from "./Navbar";
 import { SearchSection } from "./SearchSection";
 import FacialConfirmationPopup from "./FacialConfirmationPopup";
 import { useState, useEffect } from "react";
-
 import VerifyAuthCapture from "./verifyAuthCapture";
+import bgHome from "../../assets/bg_home.svg"; // Import your SVG
+
 const Home = () => {
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
@@ -16,7 +16,16 @@ const Home = () => {
   }, []);
 
   return (
-    <GradientBackground>
+    <div
+      style={{
+        backgroundImage: `url(${bgHome})`,
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+        minHeight: "100vh", // Ensures it covers the full viewport height
+        width:"100%",
+      }}
+    >
       {showConfirmationPopup && (
         <FacialConfirmationPopup
           showConfirmationPopup={showConfirmationPopup}
@@ -60,7 +69,7 @@ const Home = () => {
             </div>
           </div>
         )}
-    </GradientBackground>
+    </div>
   );
 };
 
