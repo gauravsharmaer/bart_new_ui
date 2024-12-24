@@ -2,8 +2,10 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { useState } from "react";
 import bartLogo from "../../assets/bartLogo.svg";
-import CardBackground from "../../components/CardBackground";
+//import CardBackground from "../../components/CardBackground";
 import { toast } from "react-toastify";
+import profilePlaceholder from "../../assets/profile_signup.svg";
+
 
 const Card = () => {
   const [firstName, setFirstName] = useState("");
@@ -90,7 +92,7 @@ const Card = () => {
         </div>
       </div>
 
-      <CardBackground>
+      {/* <CardBackground> */}
         <div className="p-5 space-y-7 w-full max-w-[450px]">
           {/* Header Section */}
           <div className="space-y-7 ">
@@ -103,23 +105,25 @@ const Card = () => {
                 className="hidden"
                 id="profile-upload"
               />
-              <label
-                htmlFor="profile-upload"
-                onDrop={handleDrop}
-                className="w-32 h-32 rounded-full cursor-pointer overflow-hidden"
-              >
-                {imagePreview ? (
-                  <img
-                    src={imagePreview}
-                    alt="Profile Preview"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-white border-2 border-dashed border-[#202B3B] flex items-center justify-center text-[#202B3B] text-center opacity-30 hover:opacity-50 transition-opacity">
-                    Drag/Select a photo
-                  </div>
-                )}
-              </label>
+             <label
+              htmlFor="profile-upload"
+              onDrop={handleDrop}
+              className="w-32 h-32 rounded-full cursor-pointer overflow-hidden"
+            >
+              {imagePreview ? (
+                <img
+                  src={imagePreview}
+                  alt="Profile Preview"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <img
+                  src={profilePlaceholder}
+                  alt="Profile Placeholder"
+                  className="w-full h-full object-cover opacity-50 hover:opacity-75 transition-opacity"
+                />
+              )}
+            </label>
             </div>
 
             {/* Form Section */}
@@ -153,7 +157,7 @@ const Card = () => {
               <Button
                 variant="default"
                 className="w-full h-[49px] rounded-full text-white bg-gradient-to-b
-                 from-[#FE7855] to-[#FF0000] hover:opacity-90 transition-opacity"
+                 from-[#FF7855] to-[#FF3500] hover:opacity-100 transition-opacity"
                 onClick={handleSubmit}
                 disabled={!file || !firstName || !lastName}
               >
@@ -165,7 +169,7 @@ const Card = () => {
           {/* Footer Section */}
           <div className="flex flex-col items-center gap-7 w-[311px] mx-auto"></div>
         </div>
-      </CardBackground>
+      {/* </CardBackground> */}
     </div>
   );
 };
