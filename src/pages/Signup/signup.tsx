@@ -1,4 +1,4 @@
-import SignUpCard from "./SignUpCard";
+import SignUpCard from "./SignUpCard";//signup card
 import bgSignup from "../../assets/bg_signup.svg";
 
 const signup = () => {

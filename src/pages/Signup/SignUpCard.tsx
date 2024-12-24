@@ -31,7 +31,7 @@ const Card = () => {
     const droppedFile = e.dataTransfer.files?.[0];
     if (droppedFile && droppedFile.type.startsWith("image/")) {
       setFile(droppedFile);
-      // Create preview URL
+      
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
