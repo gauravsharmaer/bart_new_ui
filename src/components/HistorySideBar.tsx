@@ -16,6 +16,7 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
   const [chatHistory, setChatHistory] = useState<
     (ChatHistory & { status?: string; timestamp?: string })[]
   >([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchChatHistory = async () => {
@@ -24,17 +25,16 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
 
         // Add "days ago" timestamps with controlled repetition
         let dayCounter = 1;
-        let repetitionCount = Math.floor(Math.random() * 3) + 2; // Random repetitions (2-4 times)
+        let repetitionCount = Math.floor(Math.random() * 3) + 2;
         let currentRepetition = 0;
 
         const updatedData = data.map((chat, index) => {
           let timestamp = `${dayCounter} day${dayCounter > 1 ? "s" : ""} ago`;
 
-          // Increment the dayCounter and reset repetitions when limit is reached
           if (currentRepetition >= repetitionCount) {
             dayCounter++;
             currentRepetition = 0;
-            repetitionCount = Math.floor(Math.random() * 3) + 2; // New random repetition
+            repetitionCount = Math.floor(Math.random() * 3) + 2;
             timestamp = `${dayCounter} day${dayCounter > 1 ? "s" : ""} ago`;
           }
 
@@ -43,28 +43,40 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
           if (index === 0) {
             return {
               ...chat,
-              status: "", // First current chat will have blank status
+              status: "",
             };
           } else if (chat.name.startsWith("Hey") || chat.name.includes("h")) {
             return {
               ...chat,
-              status: "Resolved", // Add "Resolved" for other chats starting with "Hey" or containing "h"
+              status: "Resolved",
             };
           } else if ([1, 2, 5, 6].includes(index)) {
-            return { ...chat, status: "Ticket raised" }; // Specific indices get "Ticket raised"
+            return { ...chat, status: "Ticket raised" };
           } else {
-            return { ...chat, timestamp }; // Assign calculated timestamp
+            return { ...chat, timestamp };
           }
         });
 
         setChatHistory(updatedData);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching chat history:", error);
+        setIsLoading(false);
       }
     };
 
     fetchChatHistory();
   }, []);
+
+  if (isLoading) {
+    return (
+      <aside className="bg-white border-r border-gray-200 p-4 flex flex-col justify-between h-full w-[320px]">
+        <div className="flex items-center justify-center h-full">
+          <div className="w-12 h-12 rounded-full border-4 border-gray-200 border-t-purple-600 animate-spin"></div>
+        </div>
+      </aside>
+    );
+  }
 
   return (
     <aside className="bg-white border-r border-gray-200 p-4 flex flex-col justify-between h-full w-[320px]">

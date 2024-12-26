@@ -6,6 +6,7 @@ import { TicketHistoryData } from "./Interface/Interface";
 
 const SupportTicket = () => {
   const [ticketData, setTicketData] = useState<TicketHistoryData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const getTicketHistory = async () => {
@@ -14,21 +15,31 @@ const SupportTicket = () => {
           localStorage.getItem("user_id") || ""
         );
         setTicketData(data.ticketHistory);
-        console.log(data);
+        setIsLoading(false);
       } catch (error) {
         console.log(error);
+        setIsLoading(false);
       }
     };
     getTicketHistory();
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="w-12 h-12 rounded-full border-4 border-gray-200 border-t-purple-600 animate-spin"></div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="flex flex-wrap justify-around gap-3 h-[500px] overflow-y-auto ">
       {ticketData.map((ticket) => (
         <div
           key={ticket.id}
           className="w-full max-w-md bg-white rounded-3xl border border-gray-200 p-6"
         >
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-4 ">
             <div className="flex items-center text-sm text-gray-600">
               Jul 19, 06:30PM
               <span className="mx-0.5 text-gray-400">•</span>

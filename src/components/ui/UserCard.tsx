@@ -1,7 +1,7 @@
 import React from "react";
-import profileicon from "../../assets/profile.svg"; // Import the profile icon
 import { formatName } from "../../utils/NameFormatter";
-
+import { BackendBaseUrl } from "../../config";
+import { getInitials } from "../../utils/NameInitials";
 interface UserCardProps {
   name: string;
   text: string;
@@ -22,21 +22,31 @@ const UserCard: React.FC<UserCardProps> = ({ name, text }) => {
       <div className="bg-gray-100 shadow rounded-lg flex items-start gap-4 max-w-md w-auto p-4">
         {/* Profile Icon */}
         <div className="w-10 h-10 flex-shrink-0">
-          <img
+          {/* <img
             src={profileicon}
             alt={`${formattedName}'s avatar`}
             className="w-full h-full rounded-full object-cover"
-          />
+          /> */}
+
+          {localStorage.getItem("image") &&
+          localStorage.getItem("image") !== "undefined" ? (
+            <img
+              src={`${BackendBaseUrl}/${localStorage.getItem("image")}`}
+              alt="Profile"
+              className="h-10 w-10 rounded-full"
+            />
+          ) : (
+            <div className="w-12 h-12 rounded-full bg-[#FF6F61] flex justify-center items-center text-xl text-white mr-3">
+              {getInitials(localStorage.getItem("name") || "")}
+            </div>
+          )}
         </div>
 
         {/* Message Content */}
         <div className="flex-grow">
           <div className="flex items-center gap-1 mb-1">
             {/* User Name */}
-            <span
-              className="text-[12px]"
-              style={{ color: "#000000" }}
-            >
+            <span className="text-[12px]" style={{ color: "#000000" }}>
               {formattedName}
             </span>
             {/* Centered Dot */}

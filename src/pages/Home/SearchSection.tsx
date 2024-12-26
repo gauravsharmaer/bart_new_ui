@@ -14,10 +14,14 @@ export function SearchSection() {
       {ChatUiTrue ? (
         <ChatUi initialMessage={initialMessage} />
       ) : (
-        <div className="container max-w-4xl py-6 md:py-12"
-         style={{ marginTop: "80px" }}>
-          <h1 className="text-center text-3xl font-bold tracking-tighter mb-8 text-[#202B3B]"
-          style={{ marginBottom: "25px" }} >
+        <div
+          className="container max-w-4xl py-6 md:py-12"
+          style={{ marginTop: "80px" }}
+        >
+          <h1
+            className="text-center text-3xl font-bold tracking-tighter mb-8 text-[#202B3B]"
+            style={{ marginBottom: "25px" }}
+          >
             Got questions or need help?
           </h1>
           <div className="relative flex justify-center">
@@ -29,13 +33,15 @@ export function SearchSection() {
               }}
               placeholder=" Have any questions? Or choose a template below to get started"
               className="w-[75%] h-14 pl-4 pr-12 rounded-full py-3 bg-[#FFFFFF] text-[#000000]"
-             style={{
-              border: "1px solid #e8e8e8", // Gray border
-            }}/>
+              style={{
+                border: "1px solid #e8e8e8", // Gray border
+              }}
+            />
             <Button
               size="icon"
               variant="ghost"
               onClick={handleSearch}
+              disabled={initialMessage.length > 0 ? false : true}
               className="absolute bg-[#EF613C]
            p-6 rounded-full right-[13%] top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             >
