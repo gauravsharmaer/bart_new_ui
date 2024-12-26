@@ -69,6 +69,12 @@ export interface chatHistory {
   user_id: string;
 }
 
+export interface ImageUploadResponse {
+  message: string;
+  userId: string;
+  imagePath: string;
+}
+
 interface Message {
   text: string;
   isUserMessage: boolean;
@@ -238,5 +244,52 @@ export const logout = async () => {
     throw error instanceof Error
       ? error
       : new Error("An unexpected error occurred during logout");
+  }
+};
+
+export const uploadImage = async (
+  userId: string | null,
+  file: File
+): Promise<ImageUploadResponse> => {
+  try {
+    // Validate userId
+    if (!userId) {
+      throw new Error("User ID is required");
+    }
+
+    // Prepare FormData
+    const formData = new FormData();
+    formData.append("image", file);
+
+    // Make API Request
+    const response = await fetch(
+      `${NODE_API_URL}/upload-user-image?userId=${encodeURIComponent(userId)}`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    // Check for HTTP errors and parse JSON
+    if (!response.ok) {
+      const errorBody = await response.text(); // Handle non-JSON errors
+      throw new Error(
+        errorBody || `Image upload failed with status ${response.status}`
+      );
+    }
+
+    const responseData = await response.json();
+    return responseData;
+  } catch (error) {
+    // Handle Specific Errors
+    if (error instanceof SyntaxError) {
+      throw new Error("Invalid JSON response format");
+    } else if (error instanceof TypeError) {
+      throw new Error("Network error or server is unreachable");
+    } else if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("Unexpected error during image upload");
+    }
   }
 };

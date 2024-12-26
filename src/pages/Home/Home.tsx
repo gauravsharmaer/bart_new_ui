@@ -4,14 +4,19 @@ import FacialConfirmationPopup from "./FacialConfirmationPopup";
 import { useState, useEffect } from "react";
 import VerifyAuthCapture from "./verifyAuthCapture";
 import bgHome from "../../assets/bg_home.svg"; // Import your SVG
-
+import ImageUploadPopup from "../../components/ui/ImageUploadPopup";
 const Home = () => {
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
+  const [showImageUploadPopup, setShowImageUploadPopup] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     if (localStorage.getItem("isFaceVerified") === "false") {
       setShowConfirmationPopup(true);
+    }
+
+    if (localStorage.getItem("image") === "undefined") {
+      setShowImageUploadPopup(true);
     }
   }, []);
 
@@ -23,7 +28,7 @@ const Home = () => {
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
         minHeight: "100vh", // Ensures it covers the full viewport height
-        width:"100%",
+        width: "100%",
       }}
     >
       {showConfirmationPopup && (
@@ -32,6 +37,10 @@ const Home = () => {
           setShowPopup={setShowPopup}
           setShowConfirmationPopup={setShowConfirmationPopup}
         />
+      )}
+
+      {showImageUploadPopup && (
+        <ImageUploadPopup setShowImageUploadPopup={setShowImageUploadPopup} />
       )}
       <SiteHeader />
       <div className="flex flex-col items-center justify-center mt-[1%]">

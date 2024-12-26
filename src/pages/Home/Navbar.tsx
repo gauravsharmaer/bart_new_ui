@@ -7,15 +7,25 @@ import Notification from "./Notification";
 import Profile from "./Profile";
 import genie from "../../assets/Genie.svg";
 import invite from "../../assets/invite.svg";
-import profileicon from "../../assets/profile.svg";
+// import profileicon from "../../assets/profile.svg";
 import notificationicon from "../../assets/notification-bell.svg";
 import menubar from "../../assets/menu-bar.svg";
 import { BackendBaseUrl } from "../../config";
-
+import { getInitials } from "../../utils/NameInitials";
 export function SiteHeader() {
   const [isNotificationOpen, setNotificationOpen] = useState(false);
   const [isProfileOpen, setProfileOpen] = useState(false);
   const location = useLocation();
+
+  // const getInitials = (name: string): string => {
+  //   if (!name) return "";
+  //   return name
+  //     .split(" ")
+  //     .map((word) => word.charAt(0))
+  //     .join("")
+  //     .toUpperCase()
+  //     .slice(0, 2);
+  // };
 
   // Toggle notification sidebar
   const toggleNotification = () => {
@@ -104,7 +114,7 @@ export function SiteHeader() {
               <span className="absolute bottom-6 left-5 h-4 w-4"></span>
             </Button>
             <div className="flex items-center space-x-4">
-              <img
+              {/* <img
                 src={
                   localStorage.getItem("image") != "undefined"
                     ? `${BackendBaseUrl}/${localStorage.getItem("image")}`
@@ -112,7 +122,20 @@ export function SiteHeader() {
                 }
                 alt="Profile"
                 className="h-10 w-10 rounded-full"
-              />
+              /> */}
+              {localStorage.getItem("image") &&
+              localStorage.getItem("image") !== "undefined" ? (
+                <img
+                  src={`${BackendBaseUrl}/${localStorage.getItem("image")}`}
+                  alt="Profile"
+                  className="h-10 w-10 rounded-full"
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-full bg-[#FF6F61] flex justify-center items-center text-xl text-white mr-3">
+                  {getInitials(localStorage.getItem("name") || "")}
+                </div>
+              )}
+
               <Button variant="ghost" size="icon" onClick={toggleProfile}>
                 <img src={menubar} alt="Menu" className="h-7 w-7" />
               </Button>

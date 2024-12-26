@@ -6,20 +6,21 @@ import { Link } from "react-router-dom";
 import { logout } from "../../Api/CommonApi";
 import { useDispatch } from "react-redux";
 import { handleOneloginAuth } from "../../redux/authSlice";
-
+import { BackendBaseUrl } from "../../config";
+import { getInitials } from "../../utils/NameInitials";
 const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const getInitials = (name: string): string => {
-    if (!name) return "";
-    return name
-      .split(" ")
-      .map((word) => word.charAt(0))
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  };
+  // const getInitials = (name: string): string => {
+  //   if (!name) return "";
+  //   return name
+  //     .split(" ")
+  //     .map((word) => word.charAt(0))
+  //     .join("")
+  //     .toUpperCase()
+  //     .slice(0, 2);
+  // };
 
   const handleLogout = async () => {
     try {
@@ -43,12 +44,22 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
       <div
         className={`${
           isOpen ? "block" : "hidden"
-        } w-[280px] h-[734px] bg-white shadow-md z-[1000] rounded-lg overflow-hidden absolute top-4 left-4`}
+        } w-80 h-screen bg-white shadow-md z-[1000] rounded-xl overflow-hidden absolute right-[2px]`}
       >
         <div className="flex items-center p-4 border-b border-gray-100">
-          <div className="w-12 h-12 rounded-full bg-[#FF6F61] flex justify-center items-center text-xl text-white mr-3">
-            {getInitials(localStorage.getItem("name") || "")}
-          </div>
+          {localStorage.getItem("image") &&
+          localStorage.getItem("image") !== "undefined" ? (
+            <img
+              src={`${BackendBaseUrl}/${localStorage.getItem("image")}`}
+              alt="Profile"
+              className="w-12 h-12 rounded-full flex justify-center items-center mr-3"
+            />
+          ) : (
+            <div className="w-12 h-12 rounded-full bg-[#FF6F61] flex justify-center items-center text-xl text-white mr-3">
+              {getInitials(localStorage.getItem("name") || "")}
+            </div>
+          )}
+
           <div className="flex flex-col">
             <strong>{formatName(`${localStorage.getItem("name")}`)}</strong>
             <span className="text-sm text-gray-500">
