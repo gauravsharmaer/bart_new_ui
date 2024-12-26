@@ -175,7 +175,7 @@ return (
         </div>
         {/* Input Bar */}
         <div className="flex-shrink-0 px-8 py-0">
-          <div className="max-w-full mx-auto h-14 w-full">
+          <div className="max-w-full mx-auto h-16 w-full">
             <ChatInputBar
               onSubmit={async (message) => {
                 const userMessage = {

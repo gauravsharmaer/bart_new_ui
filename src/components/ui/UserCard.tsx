@@ -17,10 +17,10 @@ const UserCard: React.FC<UserCardProps> = ({ name, text }) => {
   const formattedName = formatName(name);
 
   return (
-    <div className="w-full py-4 px-4 flex justify-end">
+    <div className="w-full py-4 px-4 flex justify-end" style={{ marginRight: '0px' }}>
       {/* Main User Message Container */}
-      <div className="bg-gray-100 shadow rounded-lg flex items-start gap-4 max-w-md w-auto p-4">
-        {/* Profile Icon */}
+      <div className="rounded-lg flex items-start gap-4 max-w-md w-auto p-4"
+      style={{ backgroundColor: "rgba(163, 163, 163, 0.07)" }}>        {/* Profile Icon */}
         <div className="w-10 h-10 flex-shrink-0">
           <img
             src={profileicon}

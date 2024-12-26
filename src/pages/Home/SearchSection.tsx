@@ -21,17 +21,18 @@ export function SearchSection() {
             Got questions or need help?
           </h1>
           <div className="relative flex justify-center">
-            <Input
+          <Input
               type="search"
               value={initialMessage}
               onChange={(e) => {
                 setInitialMessage(e.target.value);
               }}
-              placeholder=" Have any questions? Or choose a template below to get started"
+              placeholder="Have any questions? Or choose a template below to get started"
               className="w-[75%] h-14 pl-4 pr-12 rounded-full py-3 bg-[#FFFFFF] text-[#000000]"
-             style={{
-              border: "1px solid #e8e8e8", // Gray border
-            }}/>
+              style={{
+                border: "1px solid #e8e8e8", // Gray border
+              }}
+            />
             <Button
               size="icon"
               variant="ghost"
@@ -53,28 +54,28 @@ export function SearchSection() {
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full bg-[#F1F1F1] opacity-60 border-2"
+              className="rounded-full bg-[#F1F1F1] opacity-60 border"
             >
               Equipment Request
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full bg-[#F1F1F1] opacity-60 border-2"
+              className="rounded-full bg-[#F1F1F1] opacity-60 border"
             >
               Software Support
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full bg-[#F1F1F1] opacity-60 border-2"
+              className="rounded-full bg-[#F1F1F1] opacity-60 border"
             >
               Printer Set-Up
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full bg-[#F1F1F1] opacity-60 border-2"
+              className="rounded-full bg-[#F1F1F1] opacity-60 border"
             >
               IT Security
             </Button>
