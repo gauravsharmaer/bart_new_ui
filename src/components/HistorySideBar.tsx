@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getUserChats } from "../Api/CommonApi";
+import { getUserChats, deleteChat } from "../Api/CommonApi";
 
 // Add this interface definition
 interface ChatHistory {
@@ -17,6 +17,16 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
     (ChatHistory & { status?: string; timestamp?: string })[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const deleteChatHandler = async (chatId: string) => {
+    try {
+      const data = await deleteChat(chatId);
+      setChatHistory(data);
+      console.log(data);
+    } catch (error) {
+      console.error("Error deleting chat:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchChatHistory = async () => {
@@ -101,6 +111,14 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
             >
               {chat.name}
             </span>
+            <div className="flex items-center gap-2">
+              <span
+                onClick={() => deleteChatHandler(chat.id)}
+                className="text-red-500 cursor-pointer"
+              >
+                Delete
+              </span>
+            </div>
 
             <div className="flex items-center gap-2">
               {/* Add status */}

@@ -293,3 +293,29 @@ export const uploadImage = async (
     }
   }
 };
+
+export const deleteChat = async (chatId: string): Promise<chatHistory[]> => {
+  try {
+    const response = await fetch(
+      `https://bart-api-bd05237bdea5.herokuapp.com/delete_chat/${localStorage.getItem(
+        "user_id"
+      )}/${chatId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to delete chat history");
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error instanceof Error
+      ? error
+      : new Error("An unexpected error occurred while deleting chat history");
+  }
+};
