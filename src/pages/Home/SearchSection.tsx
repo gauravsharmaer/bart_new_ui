@@ -59,28 +59,28 @@ export function SearchSection() {
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full bg-[#F1F1F1] opacity-60 border-2"
+              className="rounded-full bg-[#F1F1F1] opacity-60 border"
             >
               Equipment Request
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full bg-[#F1F1F1] opacity-60 border-2"
+              className="rounded-full bg-[#F1F1F1] opacity-60 border"
             >
               Software Support
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full bg-[#F1F1F1] opacity-60 border-2"
+              className="rounded-full bg-[#F1F1F1] opacity-60 border"
             >
               Printer Set-Up
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full bg-[#F1F1F1] opacity-60 border-2"
+              className="rounded-full bg-[#F1F1F1] opacity-60 border"
             >
               IT Security
             </Button>
