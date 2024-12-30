@@ -1,131 +1,13 @@
-// import React from "react";
-// import { useNavigate } from "react-router-dom";
-// import { ProfileProps } from "./Interface/Interface";
-// import { formatName } from "../../utils/NameFormatter";
-// import { Link } from "react-router-dom";
-// import { logout } from "../../Api/CommonApi";
-// import { useDispatch } from "react-redux";
-// import { handleOneloginAuth } from "../../redux/authSlice";
-// import { BackendBaseUrl } from "../../config";
-// import { getInitials } from "../../utils/NameInitials";
-// const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
-//   const navigate = useNavigate();
-//   const dispatch = useDispatch();
-
-//   // const getInitials = (name: string): string => {
-//   //   if (!name) return "";
-//   //   return name
-//   //     .split(" ")
-//   //     .map((word) => word.charAt(0))
-//   //     .join("")
-//   //     .toUpperCase()
-//   //     .slice(0, 2);
-//   // };
-
-//   const handleLogout = async () => {
-//     try {
-//       await logout();
-
-//       dispatch(handleOneloginAuth(false));
-//       localStorage.clear();
-//       navigate("/login");
-//     } catch (error) {
-//       console.error("Logout error:", error);
-//     }
-//   };
-//   return (
-//     <>
-//       <div
-//         className={`fixed inset-0 bg-black bg-opacity-50 z-[999] ${
-//           isOpen ? "block" : "hidden"
-//         }`}
-//         onClick={onClose}
-//       ></div>
-//       <div
-//         className={`${
-//           isOpen ? "block" : "hidden"
-//         } w-80 h-screen bg-white shadow-md z-[1000] rounded-xl overflow-hidden absolute right-[2px]`}
-//       >
-//         <div className="flex items-center p-4 border-b border-gray-100">
-//           {localStorage.getItem("image") &&
-//           localStorage.getItem("image") !== "undefined" ? (
-//             <img
-//               src={`${BackendBaseUrl}/${localStorage.getItem("image")}`}
-//               alt="Profile"
-//               className="w-12 h-12 rounded-full flex justify-center items-center mr-3"
-//             />
-//           ) : (
-//             <div className="w-12 h-12 rounded-full bg-[#FF6F61] flex justify-center items-center text-xl text-white mr-3">
-//               {getInitials(localStorage.getItem("name") || "")}
-//             </div>
-//           )}
-
-//           <div className="flex flex-col">
-//             <strong>{formatName(`${localStorage.getItem("name")}`)}</strong>
-//             <span className="text-sm text-gray-500">
-//               {localStorage.getItem("email")}
-//             </span>
-//           </div>
-//         </div>
-
-//         {/* Toggle Section */}
-//         <div className="flex justify-around px-2.5 py-1.5 border-b border-gray-100">
-//           <div className="p-1.5 rounded bg-gray-50 cursor-pointer flex items-center justify-center">
-//             🖥
-//           </div>
-//           <div className="p-1.5 rounded bg-gray-50 cursor-pointer flex items-center justify-center">
-//             🌞
-//           </div>
-//           <div className="p-1.5 rounded bg-gray-50 cursor-pointer flex items-center justify-center">
-//             🌙
-//           </div>
-//         </div>
-
-//         {/* Menu Items */}
-//         <ul className="list-none p-0 my-4">
-//           <li className="px-4 py-3 cursor-pointer text-gray-700 text-sm flex items-center">
-//             <Link to="/">
-//               <span className="mr-2">🖥</span> New chat
-//             </Link>
-//           </li>
-//           <li className="px-4 py-3 cursor-pointer text-gray-700 text-sm flex items-center">
-//             <span className="mr-2">📋</span> Templates
-//           </li>
-//           <li className="px-4 py-3 cursor-pointer text-gray-700 text-sm flex items-center">
-//             <span className="mr-2">⏳</span> History
-//           </li>
-//           <li className="px-4 py-3 cursor-pointer text-gray-700 text-sm flex items-center">
-//             <Link to="/tickets">
-//               <span className="mr-2">🎫</span> Tickets
-//             </Link>
-//           </li>
-//           <li className="px-4 py-3 cursor-pointer text-gray-700 text-sm flex items-center">
-//             <span className="mr-2">⚙</span> Setting
-//           </li>
-//         </ul>
-
-//         {/* Log Out Section */}
-//         <div
-//           className="absolute bottom-4 left-4 px-4 py-3 text-[#FF6F61] cursor-pointer text-center w-[calc(100%-32px)]"
-//           onClick={handleLogout}
-//         >
-//           <span>🔓 Log out</span>
-//         </div>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default Profile;
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ProfileProps } from "./Interface/Interface";
 import { formatName } from "../../utils/NameFormatter";
 import { Link } from "react-router-dom";
 import { logout } from "../../Api/CommonApi";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { handleOneloginAuth } from "../../redux/authSlice";
+import { setTheme } from "../../redux/themeSlice";
+import { RootState } from "../../redux/store";
 import { BackendBaseUrl } from "../../config";
 import { getInitials } from "../../utils/NameInitials";
 import CounterClockwiseIcon from "../../assets/CounterClockwise.svg";
@@ -138,30 +20,60 @@ import StickerIcon from "../../assets/Sticker.svg";
 import SystemIcon from "../../assets/system.svg";
 import Logouticon from "../../assets/log-out.svg";
 
-const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
+const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
   const [selected, setSelected] = useState<"system" | "light" | "dark">(
-    "light"
+    (localStorage.getItem("theme") as "system" | "light" | "dark") ||
+      (isDarkMode ? "dark" : "light")
   );
+
   const isSystem = selected === "system";
   const isLight = selected === "light";
   const isDark = selected === "dark";
 
-  // const getInitials = (name: string): string => {
-  //   if (!name) return "";
-  //   return name
-  //     .split(" ")
-  //     .map((word) => word.charAt(0))
-  //     .join("")
-  //     .toUpperCase()
-  //     .slice(0, 2);
-  // };
+  useEffect(() => {
+    if (selected === "dark") {
+      dispatch(setTheme(true));
+      localStorage.setItem("theme", "dark");
+      document.documentElement.classList.add("dark");
+    } else if (selected === "light") {
+      dispatch(setTheme(false));
+      localStorage.setItem("theme", "light");
+      document.documentElement.classList.remove("dark");
+    } else {
+      // Handle system preference
+      localStorage.setItem("theme", "system");
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      dispatch(setTheme(prefersDark));
+      if (prefersDark) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+
+      // Listen for system theme changes
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      const handleChange = (e: MediaQueryListEvent) => {
+        dispatch(setTheme(e.matches));
+        if (e.matches) {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+      };
+
+      mediaQuery.addEventListener("change", handleChange);
+      return () => mediaQuery.removeEventListener("change", handleChange);
+    }
+  }, [selected, dispatch]);
 
   const handleLogout = async () => {
     try {
       await logout();
-
       dispatch(handleOneloginAuth(false));
       localStorage.clear();
       navigate("/login");
@@ -169,6 +81,7 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
       console.error("Logout error:", error);
     }
   };
+
   return (
     <>
       <div
@@ -178,9 +91,9 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
         onClick={onClose}
       ></div>
       <div
-        className={`$ {
+        className={`${
           isOpen ? "block" : "hidden"
-        } w-80 h-screen bg-white shadow-md z-[1000] rounded-l-3xl overflow-hidden absolute right-[2px]`}
+        } w-80 h-screen bg-white dark:bg-gray-900 shadow-md z-[1000] rounded-l-3xl overflow-hidden absolute right-[2px]`}
       >
         {/* Profile Section */}
         <div className="flex items-center p-4">
@@ -198,21 +111,23 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
           )}
 
           <div className="flex flex-col">
-            <strong>{formatName(`${localStorage.getItem("name")}`)}</strong>
-            <span className="text-sm text-gray-500">
+            <strong className="dark:text-white">
+              {formatName(`${localStorage.getItem("name")}`)}
+            </strong>
+            <span className="text-sm text-gray-500 dark:text-gray-400">
               {localStorage.getItem("email")}
             </span>
           </div>
         </div>
 
         {/* Toggle Section */}
-        <div className="p-3 border border-[#DDE0E4]">
-          <div className="flex justify-between items-center gap-2 bg-[#EEEEEE] p-1 rounded-2xl">
+        <div className="p-3 border border-[#DDE0E4] dark:border-gray-700">
+          <div className="flex justify-between items-center gap-2 bg-[#EEEEEE] dark:bg-gray-800 p-1 rounded-2xl">
             <div
               className={`flex items-center justify-center w-14 h-14 rounded-lg transition-all duration-200 cursor-pointer ${
                 isSystem
-                  ? "bg-white w-28 h-10 shadow-md "
-                  : "text-gray-500 hover:text-gray-900 hover:bg-white/40"
+                  ? "bg-white dark:bg-gray-700 w-28 h-10 shadow-md"
+                  : "text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-white/40"
               }`}
               onClick={() => setSelected("system")}
             >
@@ -221,8 +136,8 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
             <div
               className={`flex items-center justify-center w-14 h-14 rounded-lg transition-all duration-200 cursor-pointer ${
                 isLight
-                  ? "bg-white w-28 h-10  shadow-md "
-                  : "text-gray-500 hover:text-gray-900 hover:bg-white/40"
+                  ? "bg-white dark:bg-gray-700 w-28 h-10 shadow-md"
+                  : "text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-white/40"
               }`}
               onClick={() => setSelected("light")}
             >
@@ -235,8 +150,8 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
             <div
               className={`flex items-center justify-center w-14 h-14 rounded-lg transition-all duration-200 cursor-pointer ${
                 isDark
-                  ? "bg-white w-28 h-10  shadow-md "
-                  : "text-gray-500 hover:text-gray-900 hover:bg-white/40"
+                  ? "bg-white dark:bg-gray-700 w-28 h-10 shadow-md"
+                  : "text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-white/40"
               }`}
               onClick={() => setSelected("dark")}
             >
@@ -251,13 +166,13 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
 
         {/* Menu Items */}
         <ul className="list-none p-0 my-4">
-          <li className="px-4 py-3 cursor-pointer text-[#16283F] text-sm flex items-center">
+          <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-white text-sm flex items-center">
             <Link to="/" className="flex items-center">
               <img src={PlusIcon} alt="New Chat" className="mr-3 w-5 h-5" />
               New chat
             </Link>
           </li>
-          <li className="px-4 py-3 cursor-pointer text-[#16283F] text-sm flex items-center">
+          <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-white text-sm flex items-center">
             <Link to="/" className="flex items-center">
               <img
                 src={DashboardIcon}
@@ -267,7 +182,7 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
               Templates
             </Link>
           </li>
-          <li className="px-4 py-3 cursor-pointer text-[#16283F] text-sm flex items-center">
+          <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-white text-sm flex items-center">
             <Link to="/" className="flex items-center">
               <img
                 src={CounterClockwiseIcon}
@@ -277,13 +192,13 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
               History
             </Link>
           </li>
-          <li className="px-4 py-3 cursor-pointer text-[#16283F] text-sm flex items-center">
+          <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-white text-sm flex items-center">
             <Link to="/" className="flex items-center">
               <img src={StickerIcon} alt="Tickets" className="mr-3 w-5 h-5" />
               Tickets
             </Link>
           </li>
-          <li className="px-4 py-3 cursor-pointer text-[#16283F] text-sm flex items-center">
+          <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-white text-sm flex items-center">
             <Link to="/" className="flex items-center">
               <img src={SettingIcon} alt="Settings" className="mr-3 w-5 h-5" />
               Setting
@@ -292,9 +207,8 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
         </ul>
 
         {/* Log Out Section */}
-
         <div
-          className="absolute bottom-2 left-4 w-full px-4 py-3 text-[#16283F] cursor-pointer text-sm flex items-center border-t border-[#DDE0E4]"
+          className="absolute bottom-2 left-4 w-full px-4 py-3 text-[#16283F] dark:text-white cursor-pointer text-sm flex items-center border-t border-[#DDE0E4] dark:border-gray-700"
           style={{ left: 0 }}
           onClick={handleLogout}
         >

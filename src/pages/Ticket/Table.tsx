@@ -83,7 +83,13 @@ export const Table = () => {
                 </td>
                 <td className="px-6 py-4">
                   <Link to={item.link} target="_blank" className="block w-full">
-                    <span className="text-sm text-red-500 font-medium">
+                    <span
+                      className={`text-sm font-medium ${
+                        item.status?.toLowerCase() === "resolved"
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }`}
+                    >
                       {item.status}
                     </span>
                   </Link>

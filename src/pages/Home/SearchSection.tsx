@@ -6,9 +6,19 @@ import ChatUi from "../../components/ChatUi";
 export function SearchSection() {
   const [initialMessage, setInitialMessage] = useState("");
   const [ChatUiTrue, setChatUiTrue] = useState(false);
+
   const handleSearch = () => {
-    setChatUiTrue(true);
+    if (initialMessage.length > 0) {
+      setChatUiTrue(true);
+    }
   };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   return (
     <>
       {ChatUiTrue ? (
@@ -31,10 +41,11 @@ export function SearchSection() {
               onChange={(e) => {
                 setInitialMessage(e.target.value);
               }}
+              onKeyDown={handleKeyDown}
               placeholder=" Have any questions? Or choose a template below to get started"
               className="w-[75%] h-14 pl-4 pr-12 rounded-full py-3 bg-[#FFFFFF] text-[#000000]"
               style={{
-                border: "1px solid #e8e8e8", // Gray border
+                border: "1px solid #e8e8e8",
               }}
             />
             <Button
@@ -52,7 +63,7 @@ export function SearchSection() {
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full bg-[#F1F1F1] opacity-60 border"
+              className="rounded-full bg-[#F1F1F1] opacity-60 border dark:bg-gray-700"
             >
               Password Management
             </Button>

@@ -36,6 +36,15 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isInitializedRef = useRef(false);
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Add effect for auto-scrolling
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, loading]);
+
   useEffect(() => {
     if (isInitializedRef.current) return;
     isInitializedRef.current = true;
