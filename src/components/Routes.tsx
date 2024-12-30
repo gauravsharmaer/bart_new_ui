@@ -8,6 +8,9 @@ import Chat from "../pages/Chat/Chat";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import OneLoginCallBack from "../pages/Callback/OneLoginCallBack";
+import Templates from "../pages/Templates/Templates";
+import History from "../pages/History/History";
+import Settings from "../pages/Settings/Settings";
 const AppRoutes = () => {
   const authenticated = useSelector<RootState>(
     (state) => state.auth.authenticated
@@ -41,6 +44,18 @@ const AppRoutes = () => {
       <Route
         path="/tickets"
         element={authenticated ? <Tickets /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/templates"
+        element={authenticated ? <Templates /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/history"
+        element={authenticated ? <History /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/settings"
+        element={authenticated ? <Settings /> : <Navigate to="/login" />}
       />
     </Routes>
   );

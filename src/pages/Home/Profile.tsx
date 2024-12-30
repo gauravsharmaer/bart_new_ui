@@ -173,7 +173,7 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
             </Link>
           </li>
           <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-white text-sm flex items-center">
-            <Link to="/" className="flex items-center">
+            <Link to="/templates" className="flex items-center">
               <img
                 src={DashboardIcon}
                 alt="Templates"
@@ -183,7 +183,7 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
             </Link>
           </li>
           <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-white text-sm flex items-center">
-            <Link to="/" className="flex items-center">
+            <Link to="/history" className="flex items-center">
               <img
                 src={CounterClockwiseIcon}
                 alt="History"
@@ -193,13 +193,13 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
             </Link>
           </li>
           <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-white text-sm flex items-center">
-            <Link to="/" className="flex items-center">
+            <Link to="/tickets" className="flex items-center">
               <img src={StickerIcon} alt="Tickets" className="mr-3 w-5 h-5" />
               Tickets
             </Link>
           </li>
           <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-white text-sm flex items-center">
-            <Link to="/" className="flex items-center">
+            <Link to="/settings" className="flex items-center">
               <img src={SettingIcon} alt="Settings" className="mr-3 w-5 h-5" />
               Setting
             </Link>

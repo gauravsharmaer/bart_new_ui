@@ -64,6 +64,10 @@ export function SearchSection() {
               variant="outline"
               size="sm"
               className="rounded-full bg-[#F1F1F1] opacity-60 border dark:bg-gray-700"
+              onClick={() => {
+                setInitialMessage("Password Management");
+                setChatUiTrue(true);
+              }}
             >
               Password Management
             </Button>
@@ -71,6 +75,10 @@ export function SearchSection() {
               variant="outline"
               size="sm"
               className="rounded-full bg-[#F1F1F1] opacity-60 border"
+              onClick={() => {
+                setInitialMessage("Equipment Request");
+                setChatUiTrue(true);
+              }}
             >
               Equipment Request
             </Button>
@@ -78,6 +86,10 @@ export function SearchSection() {
               variant="outline"
               size="sm"
               className="rounded-full bg-[#F1F1F1] opacity-60 border"
+              onClick={() => {
+                setInitialMessage("Software Support");
+                setChatUiTrue(true);
+              }}
             >
               Software Support
             </Button>
@@ -85,6 +97,10 @@ export function SearchSection() {
               variant="outline"
               size="sm"
               className="rounded-full bg-[#F1F1F1] opacity-60 border"
+              onClick={() => {
+                setInitialMessage("Printer Set-Up");
+                setChatUiTrue(true);
+              }}
             >
               Printer Set-Up
             </Button>
@@ -92,6 +108,10 @@ export function SearchSection() {
               variant="outline"
               size="sm"
               className="rounded-full bg-[#F1F1F1] opacity-60 border"
+              onClick={() => {
+                setInitialMessage("IT Security");
+                setChatUiTrue(true);
+              }}
             >
               IT Security
             </Button>
