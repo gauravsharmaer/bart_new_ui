@@ -21,6 +21,7 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
   >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [chatToDelete, setChatToDelete] = useState<ChatHistory | null>(null);
 
   const handleDeleteClick = (chat: ChatHistory) => {
@@ -42,13 +43,19 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
     }
   };
 
-  const toggleMenu = (chatId: string) => {
+  const toggleMenu = (chatId: string, event: React.MouseEvent<HTMLButtonElement>) => {
+    const buttonRect = event.currentTarget.getBoundingClientRect();
+    setDropdownPosition({
+      top: buttonRect.bottom + window.scrollY,
+      left: buttonRect.left + window.scrollX,
+    });
+
     setActiveMenu((prevMenu) => (prevMenu === chatId ? null : chatId));
   };
 
   const closeMenu = () => {
     setActiveMenu(null);
-  };
+  }
 
   useEffect(() => {
     const fetchChatHistory = async () => {
@@ -123,10 +130,10 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
           {chatHistory.map((chat) => (
             <div
               key={chat.id}
-              className={`text-black opacity-150 cursor-pointer p-2 rounded font-regular flex items-center justify-between group ${
+              className={`text-black opacity-150 cursor-pointer p-2 rounded font-regular flex items-center justify-between group relative ${
                 chat.isActive ? "shadow-md bg-[#f3f5f9]" : "hover:bg-[#f3f5f9]"
               }`}
-              onMouseLeave={closeMenu} // Close menu on mouse leave
+              onMouseLeave={closeMenu}
             >
               {/* Left section: Chat details */}
               <div className="flex flex-col flex-grow">
@@ -158,7 +165,7 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
               </div>
               <div className="relative">
                 <button
-                  onClick={() => toggleMenu(chat.id)}
+                  onClick={(event) => toggleMenu(chat.id, event)}
                   className="focus:outline-none p-1 rounded-full invisible group-hover:visible"
                 >
                   <img
@@ -169,10 +176,13 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
                 </button>
                 {activeMenu === chat.id && (
                   <div
-                    className="fixed bg-white rounded-lg shadow-lg w-[130px]"
+                    className="absolute bg-white rounded-lg shadow-lg w-[130px]"
                     style={{
-                      boxShadow: "0px 4px 6px rgba(68, 68, 68, 0.1)", 
-                      zIndex:9999,
+                      position: "fixed",
+                      top: dropdownPosition.top,
+                      left: dropdownPosition.left,
+                      boxShadow: "0px 4px 6px rgba(68, 68, 68, 0.1)",
+                      zIndex: 9999,
                     }}
                   >
                     <ul className="text-sm">
