@@ -19,6 +19,8 @@ import SettingIcon from "../../assets/setting.svg";
 import StickerIcon from "../../assets/Sticker.svg";
 import SystemIcon from "../../assets/system.svg";
 import Logouticon from "../../assets/log-out.svg";
+import DeleteChat from "../../assets/delete-chat.svg"
+import ChatHistoryTable from "../../components/ChatHistoryTable.tsx"; 
 
 const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
   const navigate = useNavigate();
@@ -32,6 +34,16 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
   const isSystem = selected === "system";
   const isLight = selected === "light";
   const isDark = selected === "dark";
+
+  const [isChatHistoryOpen, setChatHistoryOpen] = useState(false); // State for ChatHistoryTable
+
+  const handleOpenChatHistory = () => {
+    setChatHistoryOpen(true);
+  };
+
+  const handleCloseChatHistory = () => {
+    setChatHistoryOpen(false);
+  };
 
   useEffect(() => {
     if (selected === "dark") {
@@ -110,6 +122,8 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
             </div>
           )}
 
+          
+
           <div className="flex flex-col">
             <strong className="dark:text-white">
               {formatName(`${localStorage.getItem("name")}`)}
@@ -164,8 +178,8 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
           </div>
         </div>
 
-        {/* Menu Items */}
-        <ul className="list-none p-0 my-4">
+          {/* Menu Items */}
+          <ul className="list-none p-0 my-4">
           <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-white text-sm flex items-center">
             <Link to="/" className="flex items-center">
               <img src={PlusIcon} alt="New Chat" className="mr-3 w-5 h-5" />
@@ -174,22 +188,8 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
           </li>
           <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-white text-sm flex items-center">
             <Link to="/templates" className="flex items-center">
-              <img
-                src={DashboardIcon}
-                alt="Templates"
-                className="mr-3 w-5 h-5"
-              />
+              <img src={DashboardIcon} alt="Templates" className="mr-3 w-5 h-5" />
               Templates
-            </Link>
-          </li>
-          <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-white text-sm flex items-center">
-            <Link to="/history" className="flex items-center">
-              <img
-                src={CounterClockwiseIcon}
-                alt="History"
-                className="mr-3 w-5 h-5"
-              />
-              History
             </Link>
           </li>
           <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-white text-sm flex items-center">
@@ -198,13 +198,40 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
               Tickets
             </Link>
           </li>
+          <li
+            className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-white text-sm flex items-center"
+            onClick={handleOpenChatHistory}
+          >
+            <div className="flex items-center">
+              <img src={CounterClockwiseIcon} alt="History" className="mr-3 w-5 h-5" />
+              Chat History
+            </div>
+          </li>     
           <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-white text-sm flex items-center">
             <Link to="/settings" className="flex items-center">
               <img src={SettingIcon} alt="Settings" className="mr-3 w-5 h-5" />
               Setting
             </Link>
           </li>
+          <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-white text-sm flex items-center">
+            <Link to="/settings" className="flex items-center">
+              <img src={DeleteChat} alt="Settings" className="mr-3 w-5 h-5" />
+              Deleted Chat
+            </Link>
+          </li>
         </ul>
+
+        {/* Chat History Side Panel */}
+        {isChatHistoryOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-[999]">
+            <div className="w-80 h-screen bg-white dark:bg-gray-900 shadow-md z-[1000] rounded-l-3xl overflow-hidden absolute right-0">
+              <ChatHistoryTable onClose={handleCloseChatHistory} />
+              <button onClick={handleCloseChatHistory} className="absolute top-4 right-4 text-gray-500">
+                Close
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Log Out Section */}
         <div
@@ -212,8 +239,8 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
           style={{ left: 0 }}
           onClick={handleLogout}
         >
-          <img src={Logouticon} alt="Log Out" className="mr-2 w-6 h-6" />
-          <span className="font-semibold">Log out</span>
+          <img src={Logouticon} alt="Log Out" className="mr-3 w-5 h-5" />
+          Log out
         </div>
       </div>
     </>
