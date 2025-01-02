@@ -2,11 +2,7 @@ import React from "react";
 import { formatName } from "../../utils/NameFormatter";
 import { BackendBaseUrl } from "../../config";
 import { getInitials } from "../../utils/NameInitials";
-interface UserCardProps {
-  name: string;
-  text: string;
-}
-
+import { UserCardProps } from "../../props/Props";
 const UserCard: React.FC<UserCardProps> = ({ name, text }) => {
   const currentTime = new Date().toLocaleTimeString([], {
     hour: "2-digit",

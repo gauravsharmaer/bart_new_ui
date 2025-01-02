@@ -1,9 +1,9 @@
 import React from "react";
-
-interface TimelineProps {
-  isOpen: boolean;
-  onClose: () => void; // Callback to handle closing
-}
+import { TimelineProps } from "../../props/Props";
+// interface TimelineProps {
+//   isOpen: boolean;
+//   onClose: () => void; // Callback to handle closing
+// }
 
 const Timeline: React.FC<TimelineProps> = ({ isOpen, onClose }) => {
   const styles = {
@@ -28,10 +28,8 @@ const Timeline: React.FC<TimelineProps> = ({ isOpen, onClose }) => {
     //   alignItems: "center",
     // },
 
-    header: {
+    header: {},
 
-    },
-    
     closeButton: {
       background: "none",
       border: "none",

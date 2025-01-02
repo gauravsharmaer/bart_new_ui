@@ -1,10 +1,5 @@
 import React from "react";
-
-interface OtpInputCardProps {
-  onSubmitOTP: (otp: string) => void;
-  otp: string[];
-  setOtp: React.Dispatch<React.SetStateAction<string[]>>;
-}
+import { OtpInputCardProps } from "../../props/Props";
 
 const OtpInputCard: React.FC<OtpInputCardProps> = ({
   onSubmitOTP,

@@ -1,4 +1,4 @@
-import { LoginInterface } from "./Interface/Interface";
+import { LoginInterface } from "../../Interface/Interface";
 import { NODE_API_URL } from "../../config";
 import { toast } from "react-toastify";
 export const LoginApiService = {

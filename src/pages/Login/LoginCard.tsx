@@ -13,10 +13,12 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store";
 import { currentProfile } from "../../redux/authSlice";
 import AuthvideoCard from "./AuthvideoCard";
+
 export default function LoginCard() {
   const [email, setEmail] = useState("");
   const [showAuthVideo, setShowAuthVideo] = useState(false);
   const [password, setPassword] = useState("");
+
   const dispatch = useDispatch<AppDispatch>();
 
   const handleLogin = async (email: string, password: string) => {

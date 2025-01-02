@@ -18,11 +18,8 @@ import {
   ANALYSIS_INTERVAL,
   ANALYSIS_OPTIONS,
 } from "../../utils/CommonAuthValues";
-import {
-  ApiError,
-  Instructions,
-  AuthVideoCardProps,
-} from "../../CommonInterface/Interface";
+import { ApiError, Instructions } from "../../Interface/Interface";
+import { AuthVideoCardProps } from "../../props/Props";
 import FaceVerification from "../../components/ui/FacialAuthenticationCard";
 
 export const AuthVideoCard: React.FC<AuthVideoCardProps> = ({

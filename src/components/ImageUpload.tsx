@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
-
-interface ImageUploadProps {
-  onUploadSuccess?: (imageId: string) => void;
-}
+import { ImageUploadProps } from "../props/Props";
+// interface ImageUploadProps {
+//   onUploadSuccess?: (imageId: string) => void;
+// }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({ onUploadSuccess }) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);

@@ -7,29 +7,31 @@ import createMarkup from "../utils/chatUtils";
 import ChatButtonCard from "./ui/ChatButtonCard";
 import UserCard from "./ui/UserCard";
 import TicketCard from "./ui/ticketcard";
-interface Message {
-  text: string;
-  isUserMessage: boolean;
-  button_display: boolean;
-  number_of_buttons: number;
-  button_text: string[];
-  id?: string;
-  vertical_bar?: boolean;
-  timestamp: string; // Make this optional
-  ticket?: boolean;
-  ticket_options?: {
-    name: string | undefined;
-    description: string | undefined;
-    ticket_id: string | undefined;
-    assignee_name: string | undefined;
-  };
-}
+import { ChatMessageProps } from "../props/Props";
+import { Message } from "../Interface/Interface";
+// interface Message {
+//   text: string;
+//   isUserMessage: boolean;
+//   button_display: boolean;
+//   number_of_buttons: number;
+//   button_text: string[];
+//   id?: string;
+//   vertical_bar?: boolean;
+//   timestamp: string; // Make this optional
+//   ticket?: boolean;
+//   ticket_options?: {
+//     name: string | undefined;
+//     description: string | undefined;
+//     ticket_id: string | undefined;
+//     assignee_name: string | undefined;
+//   };
+// }
 
-interface ChatMessageProps {
-  message: Message;
-  chatId: string;
-  onNewMessage: (message: Message) => void;
-}
+// interface ChatMessageProps {
+//   message: Message;
+//   chatId: string;
+//   onNewMessage: (message: Message) => void;
+// }
 
 const ChatMessage: React.FC<ChatMessageProps> = React.memo(
   ({ message, onNewMessage }) => {

@@ -1,9 +1,10 @@
-interface ChatButtonCardProps {
-  buttons: string[];
-  onButtonClick: (button: string) => void;
-  clickedButton: string | null;
-}
+// interface ChatButtonCardProps {
+//   buttons: string[];
+//   onButtonClick: (button: string) => void;
+//   clickedButton: string | null;
+// }
 
+import { ChatButtonCardProps } from "../../props/Props";
 const ChatButtonCard: React.FC<ChatButtonCardProps> = ({
   buttons,
   onButtonClick,

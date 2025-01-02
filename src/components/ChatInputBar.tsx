@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import plusIcon from "../assets/plus.png";
 import arrowIcon from "../assets/arrow-up-right.png";
-
-interface ChatInputBarProps {
-  onSubmit: (message: string) => void;
-  loading?: boolean;
-}
+import { ChatInputBarProps } from "../props/Props";
+// interface ChatInputBarProps {
+//   onSubmit: (message: string) => void;
+//   loading?: boolean;
+// }
 
 const ChatInputBar: React.FC<ChatInputBarProps> = ({
   onSubmit,

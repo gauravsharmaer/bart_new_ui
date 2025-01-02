@@ -1,6 +1,7 @@
-interface GradientBackgroundProps {
-  children?: React.ReactNode;
-}
+// interface GradientBackgroundProps {
+//   children?: React.ReactNode;
+// }
+import { GradientBackgroundProps } from "../props/Props";
 
 export default function GradientBackground({
   children,

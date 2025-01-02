@@ -115,7 +115,7 @@
 // export default Notification;
 
 import React, { useEffect, useRef, useState } from "react";
-import { NotificationProps } from "./Interface/Interface";
+import { NotificationProps } from "../../props/Props";
 
 const Notification: React.FC<NotificationProps> = ({ isOpen, onClose }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);

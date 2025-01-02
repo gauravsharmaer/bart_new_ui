@@ -1,6 +1,6 @@
 import { API_URL } from "../../config";
 // import { toast } from "react-toastify";
-import { CallbackInterface } from "./Interface/Interface";
+import { CallbackInterface } from "../../Interface/Interface";
 export const CallbackApiService = {
   postCallback: async (code: string): Promise<CallbackInterface> => {
     try {

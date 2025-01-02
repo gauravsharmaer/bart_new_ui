@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ProfileProps } from "./Interface/Interface";
+import { ProfileProps } from "../../props/Props";
 import { formatName } from "../../utils/NameFormatter";
 import { Link } from "react-router-dom";
 import { logout } from "../../Api/CommonApi";
@@ -19,8 +19,8 @@ import SettingIcon from "../../assets/setting.svg";
 import StickerIcon from "../../assets/Sticker.svg";
 import SystemIcon from "../../assets/system.svg";
 import Logouticon from "../../assets/log-out.svg";
-import DeleteChat from "../../assets/delete-chat.svg"
-import ChatHistoryTable from "../../components/ChatHistoryTable.tsx"; 
+import DeleteChat from "../../assets/delete-chat.svg";
+import ChatHistoryTable from "../../components/ChatHistoryTable.tsx";
 
 const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
   const navigate = useNavigate();
@@ -122,8 +122,6 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
             </div>
           )}
 
-          
-
           <div className="flex flex-col">
             <strong className="dark:text-white">
               {formatName(`${localStorage.getItem("name")}`)}
@@ -178,8 +176,8 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
           </div>
         </div>
 
-          {/* Menu Items */}
-          <ul className="list-none p-0 my-4">
+        {/* Menu Items */}
+        <ul className="list-none p-0 my-4">
           <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-white text-sm flex items-center">
             <Link to="/" className="flex items-center">
               <img src={PlusIcon} alt="New Chat" className="mr-3 w-5 h-5" />
@@ -188,7 +186,11 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
           </li>
           <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-white text-sm flex items-center">
             <Link to="/templates" className="flex items-center">
-              <img src={DashboardIcon} alt="Templates" className="mr-3 w-5 h-5" />
+              <img
+                src={DashboardIcon}
+                alt="Templates"
+                className="mr-3 w-5 h-5"
+              />
               Templates
             </Link>
           </li>
@@ -203,10 +205,14 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
             onClick={handleOpenChatHistory}
           >
             <div className="flex items-center">
-              <img src={CounterClockwiseIcon} alt="History" className="mr-3 w-5 h-5" />
+              <img
+                src={CounterClockwiseIcon}
+                alt="History"
+                className="mr-3 w-5 h-5"
+              />
               Chat History
             </div>
-          </li>     
+          </li>
           <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-white text-sm flex items-center">
             <Link to="/settings" className="flex items-center">
               <img src={SettingIcon} alt="Settings" className="mr-3 w-5 h-5" />
@@ -226,7 +232,10 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
           <div className="fixed inset-0 bg-black bg-opacity-50 z-[999]">
             <div className="w-80 h-screen bg-white dark:bg-gray-900 shadow-md z-[1000] rounded-l-3xl overflow-hidden absolute right-0">
               <ChatHistoryTable onClose={handleCloseChatHistory} />
-              <button onClick={handleCloseChatHistory} className="absolute top-4 right-4 text-gray-500">
+              <button
+                onClick={handleCloseChatHistory}
+                className="absolute top-4 right-4 text-gray-500"
+              >
                 Close
               </button>
             </div>

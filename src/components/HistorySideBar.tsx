@@ -4,16 +4,17 @@ import DeleteChatModal from "./DeleteChatModal";
 import DeleteIcon from "../assets/delete.svg";
 import RenameIcon from "../assets/rename.svg";
 import DotsMenuIcon from "../assets/dots-menu.svg";
+import { ChatHistory } from "../Interface/Interface";
+import { HistorySideBarProps } from "../props/Props";
+// interface ChatHistory {
+//   id: string;
+//   name: string;
+//   isActive?: boolean;
+// }
 
-interface ChatHistory {
-  id: string;
-  name: string;
-  isActive?: boolean;
-}
-
-interface HistorySideBarProps {
-  onChatSelect: (chatId: string) => void;
-}
+// interface HistorySideBarProps {
+//   onChatSelect: (chatId: string) => void;
+// }
 
 const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
   const [chatHistory, setChatHistory] = useState<
@@ -43,7 +44,10 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
     }
   };
 
-  const toggleMenu = (chatId: string, event: React.MouseEvent<HTMLButtonElement>) => {
+  const toggleMenu = (
+    chatId: string,
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
     const buttonRect = event.currentTarget.getBoundingClientRect();
     setDropdownPosition({
       top: buttonRect.bottom + window.scrollY,
@@ -55,7 +59,7 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
 
   const closeMenu = () => {
     setActiveMenu(null);
-  }
+  };
 
   useEffect(() => {
     const fetchChatHistory = async () => {
@@ -160,7 +164,9 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
                   </span>
                 )}
                 {chat.timestamp && (
-                  <span className="text-xs text-[#FF5600]">{chat.timestamp}</span>
+                  <span className="text-xs text-[#FF5600]">
+                    {chat.timestamp}
+                  </span>
                 )}
               </div>
               <div className="relative">
@@ -168,11 +174,7 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
                   onClick={(event) => toggleMenu(chat.id, event)}
                   className="focus:outline-none p-1 rounded-full invisible group-hover:visible"
                 >
-                  <img
-                    src={DotsMenuIcon}
-                    alt="Menu"
-                    className="w-3.5 h-3.5"
-                  />
+                  <img src={DotsMenuIcon} alt="Menu" className="w-3.5 h-3.5" />
                 </button>
                 {activeMenu === chat.id && (
                   <div
@@ -190,14 +192,22 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
                         onClick={() => console.log("Rename clicked")}
                         className="px-4 py-3 cursor-pointer flex items-center gap-2"
                       >
-                        <img src={RenameIcon} alt="Rename" className="w-6 h-6" />
+                        <img
+                          src={RenameIcon}
+                          alt="Rename"
+                          className="w-6 h-6"
+                        />
                         Rename
                       </li>
                       <li
                         onClick={() => handleDeleteClick(chat)}
                         className="px-4 py-3 cursor-pointer text-red-600 flex items-center gap-2"
                       >
-                        <img src={DeleteIcon} alt="Delete" className="w-6 h-6" />
+                        <img
+                          src={DeleteIcon}
+                          alt="Delete"
+                          className="w-6 h-6"
+                        />
                         Delete
                       </li>
                     </ul>

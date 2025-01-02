@@ -1,7 +1,7 @@
 // Table.tsx
 import { useState, useEffect } from "react";
 import genie from "../../assets/Genie.svg";
-import { TicketHistoryData } from "./Interface/Interface";
+import { TicketHistoryData } from "../../Interface/Interface";
 import TicketApiService from "./api";
 import { Link } from "react-router-dom";
 

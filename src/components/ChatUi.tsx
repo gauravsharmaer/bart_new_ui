@@ -6,28 +6,29 @@ import HistorySideBar from "./HistorySideBar";
 import ChatLogo from "../assets/Genie.svg";
 import ChatInputBar from "./ChatInputBar";
 import BackGround from "../assets/bg_frame.svg";
+import { Message } from "../Interface/Interface";
+import { PasswordResetUiProps } from "../props/Props";
+// interface Message {
+//   text: string;
+//   isUserMessage: boolean;
+//   button_display: boolean;
+//   number_of_buttons: number;
+//   button_text: string[];
+//   id?: string;
+//   vertical_bar?: boolean;
+//   timestamp: string;
+//   ticket?: boolean;
+//   ticket_options?: {
+//     name: string | undefined;
+//     description: string | undefined;
+//     ticket_id: string | undefined;
+//     assignee_name: string | undefined;
+//   };
+// }
 
-interface Message {
-  text: string;
-  isUserMessage: boolean;
-  button_display: boolean;
-  number_of_buttons: number;
-  button_text: string[];
-  id?: string;
-  vertical_bar?: boolean;
-  timestamp: string;
-  ticket?: boolean;
-  ticket_options?: {
-    name: string | undefined;
-    description: string | undefined;
-    ticket_id: string | undefined;
-    assignee_name: string | undefined;
-  };
-}
-
-interface PasswordResetUiProps {
-  initialMessage: string;
-}
+// interface PasswordResetUiProps {
+//   initialMessage: string;
+// }
 
 const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
   const [messages, setMessages] = useState<Message[]>([]);

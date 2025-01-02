@@ -2,20 +2,7 @@
 
 import { ArrowLeft } from "lucide-react";
 import { Button } from "./button";
-
-interface FaceVerificationProps {
-  progress?: number;
-  instruction?: string | JSX.Element;
-  error?: string;
-  webcamComponent?: React.ReactNode;
-  onBackClick?: () => void;
-  showCamera?: boolean;
-  isModelLoaded?: boolean;
-  isWebcamReady?: boolean;
-  isAnalyzing?: boolean;
-  showGif?: boolean;
-  hasFaceDescriptors?: boolean;
-}
+import { FaceVerificationProps } from "../../props/Props";
 
 export default function FaceVerification({
   progress = 0,

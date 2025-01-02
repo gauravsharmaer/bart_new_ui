@@ -5,10 +5,7 @@ import profilePlaceholder from "../../assets/profile_signup.svg";
 import { uploadImage } from "../../Api/CommonApi";
 import { Camera, Upload } from "lucide-react";
 import Webcam from "react-webcam";
-
-export type ImageUploadPopupProps = {
-  setShowImageUploadPopup: (value: boolean) => void;
-};
+import { ImageUploadPopupProps } from "../../props/Props";
 
 const ImageUploadPopup = ({
   setShowImageUploadPopup,

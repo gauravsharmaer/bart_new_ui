@@ -1,11 +1,5 @@
 import React from "react";
-
-interface CardProps {
-  name: string | undefined;
-  description: string | undefined;
-  ticket_id: string | undefined;
-  assignee_name: string | undefined;
-}
+import { CardProps } from "../../props/Props";
 
 const TicketCard: React.FC<CardProps> = ({
   name,

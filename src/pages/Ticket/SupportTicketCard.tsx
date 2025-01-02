@@ -2,7 +2,7 @@ import icon from "../../assets/Genie.svg";
 import { History } from "lucide-react";
 import { useState, useEffect } from "react";
 import TicketApiService from "./api";
-import { TicketHistoryData } from "./Interface/Interface";
+import { TicketHistoryData } from "../../Interface/Interface";
 import { Link } from "react-router-dom";
 
 const SupportTicket = () => {

@@ -1,4 +1,4 @@
-import { TicketHistory } from "./Interface/Interface";
+import { TicketHistory } from "../../Interface/Interface";
 
 const TicketApiService = {
   getTicketHistory: async (userId: string): Promise<TicketHistory> => {

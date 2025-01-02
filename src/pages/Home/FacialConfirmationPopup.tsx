@@ -1,4 +1,4 @@
-import { FacialConfirmationPopupProps } from "./Interface/Interface";
+import { FacialConfirmationPopupProps } from "../../props/Props";
 
 const FacialConfirmationPopup = ({
   setShowConfirmationPopup,

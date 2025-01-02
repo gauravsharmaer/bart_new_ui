@@ -5,11 +5,8 @@ import Webcam from "react-webcam";
 import * as faceapi from "face-api.js";
 import Eye from "../../assets/eye.svg";
 
-import {
-  ApiError,
-  VerifyAuthProps,
-  Instructions,
-} from "../../CommonInterface/Interface";
+import { ApiError, Instructions } from "../../Interface/Interface";
+import { VerifyAuthProps } from "../../props/Props";
 import { useDispatch } from "react-redux";
 import { handleFacialAuth } from "../../redux/authSlice";
 import { AppDispatch } from "../../redux/store";
