@@ -21,7 +21,6 @@ const ChatHistorySidebar = ({ onClose }: { onClose: () => void }) => {
   const [chatToDelete, setChatToDelete] = useState<ChatHistory | null>(null);
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false); // State for delete all modal
   
-
   useEffect(() => {
     const fetchChatHistory = async () => {
       try {
