@@ -14,10 +14,10 @@ const PasswordManagement = () => {
     console.log("Selected Template:", selectedTemplate);
     switch (selectedTemplate) {
       case "Password Management":
-        return <PasswordPage />;
+        return <PasswordPage />; // Background applied within PasswordPage
       case "Equipment Requests":
         return <EquipmentPage />;
-      case "Software Support":
+      case "Software & Application Support":
         return <SoftwarePage />;
       default:
         return null;
@@ -25,7 +25,7 @@ const PasswordManagement = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen flex flex-col bg-gray-100">
       {/* Header Section */}
       <SiteHeader />
 
@@ -38,8 +38,11 @@ const PasswordManagement = () => {
             onTemplateSelect={setSelectedTemplate}
           />
         </div>
+
         {/* Content Section */}
-        <div className="flex-1 flex flex-col p-5">{renderPage()}</div>
+        <div className="flex-1 flex flex-col p-4">
+          {renderPage()}
+        </div>
       </div>
     </div>
   );

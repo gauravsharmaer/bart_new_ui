@@ -1,26 +1,51 @@
-import genie from "../../assets/Genie.svg";
 import { CardProps } from "./Interface/Interface";
-
-const Card = ({ title, description }: CardProps) => {
+import Arrow from "../../assets/arrow.svg"
+import BackGround from "../../assets/bg_card.svg"
+import Hover from "../../assets/hover_arrow.svg"
+ 
+const Card = ({ title, description, icon }: CardProps) => {
   return (
-    <div className="flex-1 min-w-[288px] h-[176px] rounded-xl bg-white p-5 shadow-md flex flex-col justify-between text-left border-t-[9px] border-t-[#7b5cff] relative mb-4">
+    <div className="relative flex-1 min-w-[290px] h-[176px] rounded-xl bg-white p-5 flex flex-col justify-between text-left mb-4 group overflow-hidden border-t-0 border-l border-r border-b border-solid border-[#D7D7D7]">
+      {/* Gradient Bar */}
+      <div className="absolute top-0 left-0 w-full h-[9px] rounded-t-xl bg-gradient-to-r from-[#BEA4FD] to-[#786AFF]"></div>
+      
+      {/* Background on Hover */}
       <img
-        src={genie}
-        alt="Genie Icon"
-        className="absolute top-3 left-3 w-[29px] h-[29px]"
+        src={BackGround}
+        alt="Background"
+        className="absolute top-0 right-0 w-[280px] h-[200px] object-cover rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"
       />
-      <div>
-        <h3 className="mt-[30px] mb-2 text-[15px] font-semibold text-[#262626]">
+      
+      {/* Icon */}
+      <img
+        src={icon}
+        alt={`${title} Icon`}
+        className="absolute top-6 left-4.5 w-[29px] h-[29px] z-10"
+      />
+      
+      {/* Title and Description */}
+
+       <div className="z-10">
+        <h3 className="mt-[40px] mb-3 text-[15px] font-semibold text-[#262626]"> {/* Increased margin bottom */}
           {title}
         </h3>
-        <p className="m-0 text-[15px] text-[#6c6f76] leading-5">
+        <p className="m-0 text-[15px] text-[#6c6f76] leading-5 line-clamp-2">
           {description}
         </p>
       </div>
-      <div className="flex justify-start items-center mt-auto">
-        <span className="text-[#7b5cff] text-[25px] cursor-pointer">
-          &rarr;
-        </span>
+      
+      {/* Arrow with Hover Effect */}
+      <div className="absolute bottom-3 left-3 flex justify-start items-center z-10">
+        <img
+          src={Arrow}
+          alt="Arrow"
+          className="w-[25px] h-[25px] cursor-pointer group-hover:opacity-0 transition-opacity duration-300"
+        />
+        <img
+          src={Hover}
+          alt="Hover Arrow"
+          className="absolute w-[25px] h-[25px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        />
       </div>
     </div>
   );
