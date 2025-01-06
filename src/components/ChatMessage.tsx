@@ -1,3 +1,4 @@
+//chatmessage
 import React, { useState, useCallback } from "react";
 import ChatLogo from "../assets/Genie.svg";
 import VerifyAuth from "../pages/Home/verifyAuth";
@@ -9,34 +10,15 @@ import UserCard from "./ui/UserCard";
 import TicketCard from "./ui/ticketcard";
 import { ChatMessageProps } from "../props/Props";
 import { Message } from "../Interface/Interface";
-// interface Message {
-//   text: string;
-//   isUserMessage: boolean;
-//   button_display: boolean;
-//   number_of_buttons: number;
-//   button_text: string[];
-//   id?: string;
-//   vertical_bar?: boolean;
-//   timestamp: string; // Make this optional
-//   ticket?: boolean;
-//   ticket_options?: {
-//     name: string | undefined;
-//     description: string | undefined;
-//     ticket_id: string | undefined;
-//     assignee_name: string | undefined;
-//   };
-// }
-
-// interface ChatMessageProps {
-//   message: Message;
-//   chatId: string;
-//   onNewMessage: (message: Message) => void;
-// }
+import { ThumbsUp, ThumbsDown } from "lucide-react";
+import { likeChat, unlikeChat } from "../Api/CommonApi";
 
 const ChatMessage: React.FC<ChatMessageProps> = React.memo(
-  ({ message, onNewMessage }) => {
+  ({ message, onNewMessage, setMessages }) => {
     // const profilePhoto = "https://avatar.vercel.sh/jill";
     const [showAuthVideoCard, setShowAuthVideoCard] = useState(false);
+    const [liked, setLiked] = useState(false);
+    const [disliked, setDisliked] = useState(false);
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
     const [clickedButton, setClickedButton] = useState<string | null>(null);
     console.log(message);
@@ -73,6 +55,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           ticket: result.display_settings?.ticket || false,
           ticket_options:
             result.display_settings?.options?.ticket_options || {},
+          history_id: result.display_settings?.message_history[0]?.history_id,
         };
 
         onNewMessage(botMessage);
@@ -116,6 +99,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
             ticket: result.display_settings?.ticket || false,
             ticket_options:
               result.display_settings?.options?.ticket_options || {},
+            history_id: result.display_settings?.message_history[0]?.history_id,
           };
 
           onNewMessage(botMessage);
@@ -155,6 +139,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           ticket: result.display_settings?.ticket || false,
           ticket_options:
             result.display_settings?.options?.ticket_options || {},
+          history_id: result.display_settings?.message_history[0]?.history_id,
         };
 
         onNewMessage(botMessage);
@@ -170,6 +155,50 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           ticket: false,
         };
         onNewMessage(errorMessage);
+      }
+    };
+
+    const handleLike = async (history_id: string) => {
+      if (!history_id) {
+        console.error("History ID is required");
+        return;
+      }
+      try {
+        const result = await likeChat(history_id);
+        setLiked(true);
+        setDisliked(false);
+        setMessages((prevMessages) =>
+          prevMessages.map((msg) =>
+            msg.history_id === history_id
+              ? { ...msg, like: true, un_like: false }
+              : msg
+          )
+        );
+        console.log(result);
+      } catch (error) {
+        console.error("Error liking chat:", error);
+      }
+    };
+
+    const handleDislike = async (history_id: string) => {
+      if (!history_id) {
+        console.error("History ID is required");
+        return;
+      }
+      try {
+        const result = await unlikeChat(history_id);
+        setLiked(false);
+        setDisliked(true);
+        setMessages((prevMessages) =>
+          prevMessages.map((msg) =>
+            msg.history_id === history_id
+              ? { ...msg, like: false, un_like: true }
+              : msg
+          )
+        );
+        console.log(result);
+      } catch (error) {
+        console.error("Error disliking chat:", error);
       }
     };
 
@@ -217,7 +246,8 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                 )}
                 <div className="flex-1">
                   <div
-                    className="text-sm text-black mb-2 [&_a]:text-blue-400 [&_a]:underline [&_a:hover]:text-blue-300"
+                    className="text-sm text-black mb-2 [&_a]:text-blue-400 [&_a]:underline [&_a:hover]:text-blue-300 
+                    [&_ol]:list-decimal [&_ul]:list-disc [&_li]:ml-4 [&_li]:block [&_li]:my-1"
                     dangerouslySetInnerHTML={createMarkup(message.text)}
                   />
                   {message.text.includes("verification code") && (
@@ -241,6 +271,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                       description={message.ticket_options.description}
                       ticket_id={message.ticket_options.ticket_id}
                       assignee_name={message.ticket_options.assignee_name}
+                      ticket_link={message.ticket_options.link}
                     />
                   )}
                 </div>
@@ -267,6 +298,31 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                 </div>
               </div>
             </div>
+          </div>
+        )}
+
+        {!message.isUserMessage && (
+          <div className="flex items-center gap-2 mt-2 text-gray-500 text-sm">
+            <button
+              className={`p-1 rounded transition-colors hover:bg-gray-100 
+                ${message.like || liked ? "text-green-600" : ""}`}
+              onClick={() => {
+                handleLike(message.history_id || "");
+              }}
+              aria-label="Like message"
+            >
+              <ThumbsUp size={16} />
+            </button>
+            <button
+              className={`p-1 rounded transition-colors hover:bg-gray-100 
+                ${message.un_like || disliked ? "text-red-600" : ""}`}
+              onClick={() => {
+                handleDislike(message.history_id || "");
+              }}
+              aria-label="Dislike message"
+            >
+              <ThumbsDown size={16} />
+            </button>
           </div>
         )}
       </div>

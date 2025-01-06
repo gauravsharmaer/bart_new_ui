@@ -5,9 +5,14 @@ import { SiteHeader } from "../Home/Navbar";
 import { Table } from "./Table";
 import { useState } from "react";
 import { CaretDown } from "phosphor-react";
+import { ResolvedTicketTable } from "./ResolvedTicketTable";
+import { UnResolvedTicketTable } from "./UnResolvedTicketTable";
 import SupportTicket from "./SupportTicketCard";
+import SupportResolvedTicketCard from "./SupportResolvedTicketCard";
+import SupportUnResolvedTicketCard from "./SupportUnResolvedTicketCard";
 const Tickets = () => {
   const [gridViewEnabled, setGridViewEnabled] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -30,13 +35,34 @@ const Tickets = () => {
 
           <div className="flex flex-col sm:flex-row justify-between gap-4">
             <div className="flex gap-8 border-b border-gray-200 w-full sm:w-auto">
-              <button className="px-1 py-2 text-sm font-medium border-b-2 border-purple-600 text-black">
+              <button
+                className={`px-1 py-2 text-sm font-medium ${
+                  activeTab === "all"
+                    ? "border-b-2 border-purple-600 text-black"
+                    : "text-gray-600"
+                }`}
+                onClick={() => setActiveTab("all")}
+              >
                 All tickets
               </button>
-              <button className="px-1 py-2 text-sm font-medium text-gray-600">
+              <button
+                className={`px-1 py-2 text-sm font-medium ${
+                  activeTab === "unresolved"
+                    ? "border-b-2 border-purple-600 text-black"
+                    : "text-gray-600"
+                }`}
+                onClick={() => setActiveTab("unresolved")}
+              >
                 Ticket not resolved
               </button>
-              <button className="px-1 py-2 text-sm font-medium text-gray-600">
+              <button
+                className={`px-1 py-2 text-sm font-medium ${
+                  activeTab === "resolved"
+                    ? "border-b-2 border-purple-600 text-black"
+                    : "text-gray-600"
+                }`}
+                onClick={() => setActiveTab("resolved")}
+              >
                 Resolved Ticket
               </button>
             </div>
@@ -84,7 +110,19 @@ const Tickets = () => {
             </div>
           </div>
 
-          {gridViewEnabled ? <SupportTicket /> : <Table />}
+          {gridViewEnabled ? (
+            <>
+              {activeTab === "all" && <SupportTicket />}
+              {activeTab === "resolved" && <SupportResolvedTicketCard />}
+              {activeTab === "unresolved" && <SupportUnResolvedTicketCard />}
+            </>
+          ) : (
+            <>
+              {activeTab === "all" && <Table />}
+              {activeTab === "resolved" && <ResolvedTicketTable />}
+              {activeTab === "unresolved" && <UnResolvedTicketTable />}
+            </>
+          )}
         </div>
       </main>
     </div>

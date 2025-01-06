@@ -24,11 +24,13 @@ interface AskResponse {
         description: string | undefined;
         ticket_id: string | undefined;
         assignee_name: string | undefined;
+        link: string | undefined;
       };
     };
     message_history: {
       question: string;
       answer: string;
+      history_id: string;
     }[];
   };
 }
@@ -54,11 +56,13 @@ interface VerifyOTPResponse {
         description: string | undefined;
         ticket_id: string | undefined;
         assignee_name: string | undefined;
+        link: string | undefined;
       };
     };
     message_history: {
       question: string;
       answer: string;
+      history_id: string;
     }[];
   };
 }
@@ -84,6 +88,8 @@ interface Message {
   id?: string;
   vertical_bar?: boolean;
   timestamp: string;
+  like?: boolean;
+  un_like?: boolean;
 }
 
 import { NODE_API_URL } from "../config";
@@ -317,5 +323,80 @@ export const deleteChat = async (chatId: string): Promise<chatHistory[]> => {
     throw error instanceof Error
       ? error
       : new Error("An unexpected error occurred while deleting chat history");
+  }
+};
+
+export const renameChat = async (
+  chatId: string,
+  newName: string
+): Promise<chatHistory[]> => {
+  try {
+    const response = await fetch(
+      `https://bart-api-bd05237bdea5.herokuapp.com/rename_chat/${chatId}/${newName}`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to rename chat");
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error instanceof Error
+      ? error
+      : new Error("An unexpected error occurred while renaming chat");
+  }
+};
+
+export const likeChat = async (chatId: string): Promise<HistoryInterface> => {
+  try {
+    const response = await fetch(
+      `https://bart-api-bd05237bdea5.herokuapp.com/like_chat/${chatId}`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to like chat");
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error instanceof Error
+      ? error
+      : new Error("An unexpected error occurred while liking chat");
+  }
+};
+
+export const unlikeChat = async (chatId: string): Promise<HistoryInterface> => {
+  try {
+    const response = await fetch(
+      `https://bart-api-bd05237bdea5.herokuapp.com/un_like_chat/${chatId}`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to unlike chat");
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error instanceof Error
+      ? error
+      : new Error("An unexpected error occurred while unliking chat");
   }
 };

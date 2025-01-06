@@ -77,6 +77,7 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
           ticket: result.display_settings?.ticket || false,
           ticket_options:
             result.display_settings?.options?.ticket_options || undefined,
+          history_id: result.display_settings?.message_history[0]?.history_id,
         };
 
         setMessages([userMessage, botMessage]);
@@ -163,6 +164,7 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
                       message={message}
                       chatId={chatId || ""}
                       onNewMessage={handleNewMessage}
+                      setMessages={setMessages}
                     />
                   ))}
                   {loading && (
@@ -233,6 +235,9 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
                           ticket_options:
                             result.display_settings?.options?.ticket_options ||
                             undefined,
+                          history_id:
+                            result.display_settings?.message_history[0]
+                              ?.history_id,
                         };
 
                         setMessages((prev) => [...prev, botMessage]);

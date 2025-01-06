@@ -1,20 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { getUserChats, deleteChat } from "../Api/CommonApi";
+import { getUserChats, deleteChat, renameChat } from "../Api/CommonApi";
 import DeleteChatModal from "./DeleteChatModal";
 import DeleteIcon from "../assets/delete.svg";
 import RenameIcon from "../assets/rename.svg";
 import DotsMenuIcon from "../assets/dots-menu.svg";
 import { ChatHistory } from "../Interface/Interface";
 import { HistorySideBarProps } from "../props/Props";
-// interface ChatHistory {
-//   id: string;
-//   name: string;
-//   isActive?: boolean;
-// }
-
-// interface HistorySideBarProps {
-//   onChatSelect: (chatId: string) => void;
-// }
 
 const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
   const [chatHistory, setChatHistory] = useState<
@@ -24,6 +15,8 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [chatToDelete, setChatToDelete] = useState<ChatHistory | null>(null);
+  const [editingChatId, setEditingChatId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
 
   const handleDeleteClick = (chat: ChatHistory) => {
     setChatToDelete(chat);
@@ -41,6 +34,26 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
       } catch (error) {
         console.error("Error deleting chat:", error);
       }
+    }
+  };
+
+  const handleRenameClick = (chat: ChatHistory) => {
+    setEditingChatId(chat.id);
+    setEditingName(chat.name);
+    setActiveMenu(null);
+  };
+
+  const handleRenameSubmit = async (chatId: string) => {
+    try {
+      await renameChat(chatId, editingName);
+      setChatHistory((prevChats) =>
+        prevChats.map((chat) =>
+          chat.id === chatId ? { ...chat, name: editingName } : chat
+        )
+      );
+      setEditingChatId(null);
+    } catch (error) {
+      console.error("Error renaming chat:", error);
     }
   };
 
@@ -141,13 +154,29 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
             >
               {/* Left section: Chat details */}
               <div className="flex flex-col flex-grow">
-                <span
-                  onClick={() => onChatSelect(chat.id)}
-                  className="truncate max-w-[140px]"
-                  title={chat.name}
-                >
-                  {chat.name}
-                </span>
+                {editingChatId === chat.id ? (
+                  <input
+                    type="text"
+                    value={editingName}
+                    onChange={(e) => setEditingName(e.target.value)}
+                    onBlur={() => handleRenameSubmit(chat.id)}
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") {
+                        handleRenameSubmit(chat.id);
+                      }
+                    }}
+                    className="border rounded px-2 py-1 text-sm w-[140px]"
+                    autoFocus
+                  />
+                ) : (
+                  <span
+                    onClick={() => onChatSelect(chat.id)}
+                    className="truncate max-w-[140px]"
+                    title={chat.name}
+                  >
+                    {chat.name}
+                  </span>
+                )}
               </div>
 
               {/* Right section: Tags */}
@@ -189,7 +218,7 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
                   >
                     <ul className="text-sm">
                       <li
-                        onClick={() => console.log("Rename clicked")}
+                        onClick={() => handleRenameClick(chat)}
                         className="px-4 py-3 cursor-pointer flex items-center gap-2"
                       >
                         <img

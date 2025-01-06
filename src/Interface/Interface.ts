@@ -64,10 +64,14 @@ export interface Message {
   vertical_bar?: boolean;
   timestamp: string; // Make this optional
   ticket?: boolean;
+  like?: boolean;
+  history_id?: string;
+  un_like?: boolean;
   ticket_options?: {
     name: string | undefined;
     description: string | undefined;
     ticket_id: string | undefined;
     assignee_name: string | undefined;
+    link: string | undefined;
   };
 }

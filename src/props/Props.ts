@@ -63,6 +63,7 @@ export interface CardProps {
   description: string | undefined;
   ticket_id: string | undefined;
   assignee_name: string | undefined;
+  ticket_link: string | undefined;
 }
 export interface UserCardProps {
   name: string;
@@ -80,6 +81,7 @@ export interface ChatMessageProps {
   message: Message;
   chatId: string;
   onNewMessage: (message: Message) => void;
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
 }
 export interface PasswordResetUiProps {
   initialMessage: string;

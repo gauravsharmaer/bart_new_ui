@@ -1,23 +1,53 @@
 import DOMPurify from "dompurify";
 
-const createMarkup = (htmlContent: string) => {
-  // Configure DOMPurify
-  DOMPurify.setConfig({
-    ADD_ATTR: ["target", "rel"], // Allow target and rel attributes
-    ALLOWED_TAGS: ["p", "a", "b", "br", "strong", "em", "span"], // Specify allowed tags
-    ALLOWED_ATTR: ["href", "target", "rel", "class"], // Specify allowed attributes
+const createMarkup = (text: string) => {
+  // Add <br> tags between list items
+  const textWithBreaks = text.replace(/<\/li><li>/g, "</li><br><li>");
+
+  // First sanitize the HTML to prevent XSS attacks
+  const sanitizedHtml = DOMPurify.sanitize(textWithBreaks, {
+    ALLOWED_TAGS: [
+      "a",
+      "ol",
+      "ul",
+      "li",
+      "p",
+      "br",
+      "strong",
+      "em",
+      "b",
+      "i",
+      "span",
+      "div",
+    ],
+    ALLOWED_ATTR: ["href", "target", "class"],
   });
 
-  // Process the HTML content to add rel="noopener noreferrer" to all links
-  const doc = new DOMParser().parseFromString(htmlContent, "text/html");
-  doc.querySelectorAll('a[target="_blank"]').forEach((link) => {
-    link.setAttribute("rel", "noopener noreferrer");
-  });
+  // Create a temporary div to manipulate the HTML
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = sanitizedHtml;
 
-  // Get the processed HTML and sanitize it
-  const processedHtml = doc.body.innerHTML;
+  // Process text nodes and list items
+  const processNodes = (node: Node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const newContent = node.textContent
+        ?.replace(/\n-/g, "<br>•")
+        .replace(/(?<!\n)-/g, "")
+        .replace(/\n/g, "<br>");
+      if (newContent) {
+        const span = document.createElement("span");
+        span.innerHTML = newContent;
+        node.parentNode?.replaceChild(span, node);
+      }
+    } else {
+      node.childNodes.forEach(processNodes);
+    }
+  };
+
+  processNodes(tempDiv);
+
   return {
-    __html: DOMPurify.sanitize(processedHtml),
+    __html: tempDiv.innerHTML,
   };
 };
 
