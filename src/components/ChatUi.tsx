@@ -29,12 +29,19 @@ interface PasswordResetUiProps {
   initialMessage: string;
 }
 
+interface ChatMessageRef {
+  startVoiceRecognition: () => void;
+  stopVoiceRecognition: () => void;
+}
+
 const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [chatId, setChatId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isInitializedRef = useRef(false);
+  const [isListening, setIsListening] = useState(false);
+  const latestMessageRef = useRef<ChatMessageRef | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -140,6 +147,18 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
     boxSizing: "border-box", // Ensures padding doesn't affect the width/height
   };
 
+  // Add this function to handle voice toggle
+  const handleVoiceToggle = () => {
+    if (latestMessageRef.current) {
+      if (isListening) {
+        latestMessageRef.current.stopVoiceRecognition();
+      } else {
+        latestMessageRef.current.startVoiceRecognition();
+      }
+      setIsListening(!isListening);
+    }
+  };
+
   return (
     <div className="absolute inset-x-0 bottom-0 top-10">
       {/* Main container */}
@@ -162,6 +181,11 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
                       message={message}
                       chatId={chatId || ""}
                       onNewMessage={handleNewMessage}
+                      ref={(el) => {
+                        if (index === messages.length - 1) {
+                          latestMessageRef.current = el;
+                        }
+                      }}
                     />
                   ))}
                   {loading && (
@@ -256,6 +280,8 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
                       }
                     }}
                     loading={loading}
+                    onVoiceToggle={handleVoiceToggle}
+                    isVoiceActive={isListening}
                   />
                 </div>
               </div>

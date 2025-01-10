@@ -1,14 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
-import plusIcon from "../assets/plus.png";
+import { FiMic, FiMicOff } from "react-icons/fi"; // Import microphone icons
 import arrowIcon from "../assets/arrow-up-right.png";
 
 interface ChatInputBarProps {
   onSubmit: (message: string) => void;
+  onVoiceToggle?: () => void; // Add prop for voice button toggle
+  isVoiceActive?: boolean; // Track voice chat state
   loading?: boolean;
 }
 
 const ChatInputBar: React.FC<ChatInputBarProps> = ({
   onSubmit,
+  onVoiceToggle,
+  isVoiceActive = false,
   loading = false,
 }) => {
   const [inputMessage, setInputMessage] = useState("");
@@ -47,14 +51,20 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative mb-5 ">
+    <form onSubmit={handleSubmit} className="relative mb-5">
       <div className="flex items-center p-1 bg-white rounded-[15px] mx-[-15px] mb-10 border border-gray-200">
-        <div className="w-14 h-10 flex justify-center items-center bg-[#f9f9f9] shadow-[inset_0_0_1px_rgba(128,128,128,0.5)] rounded-[10px]">
-          <div className="relative">
-            <img src={plusIcon} alt="Plus" className="w-6 h-6" />
-            <div className="absolute top-0 right-0 w-1 h-1 bg-green-500 rounded-full" />
-          </div>
-        </div>
+        <button
+          type="button"
+          onClick={onVoiceToggle} // Trigger voice toggle
+          className="w-14 h-10 flex justify-center items-center bg-[#f9f9f9] shadow-[inset_0_0_1px_rgba(128,128,128,0.5)] rounded-[10px] cursor-pointer"
+          title="Toggle Voice Chat"
+        >
+          {isVoiceActive ? (
+            <FiMic className="text-xl text-green-500" />
+          ) : (
+            <FiMicOff className="text-xl text-gray-500" />
+          )}
+        </button>
 
         <textarea
           ref={textareaRef}
