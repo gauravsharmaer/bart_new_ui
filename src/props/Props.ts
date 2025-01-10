@@ -82,6 +82,8 @@ export interface ChatMessageProps {
   chatId: string;
   onNewMessage: (message: Message) => void;
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  onLike: (history_id: string) => Promise<void>;
+  onDislike: (history_id: string) => Promise<void>;
 }
 export interface PasswordResetUiProps {
   initialMessage: string;
@@ -108,4 +110,8 @@ export interface HistorySideBarProps {
 
 export interface ImageUploadProps {
   onUploadSuccess?: (imageId: string) => void;
+}
+
+export interface ChatUiProps {
+  initialMessage?: string;
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { askBart, getHistory } from "../Api/CommonApi";
+import { askBart, getHistory, likeChat, unlikeChat } from "../Api/CommonApi";
 import ChatMessage from "./ChatMessage";
 import DotLoader from "../utils/DotLoader";
 import HistorySideBar from "./HistorySideBar";
@@ -7,35 +7,61 @@ import ChatLogo from "../assets/Genie.svg";
 import ChatInputBar from "./ChatInputBar";
 import BackGround from "../assets/bg_frame.svg";
 import { Message } from "../Interface/Interface";
-import { PasswordResetUiProps } from "../props/Props";
-// interface Message {
-//   text: string;
-//   isUserMessage: boolean;
-//   button_display: boolean;
-//   number_of_buttons: number;
-//   button_text: string[];
-//   id?: string;
-//   vertical_bar?: boolean;
-//   timestamp: string;
-//   ticket?: boolean;
-//   ticket_options?: {
-//     name: string | undefined;
-//     description: string | undefined;
-//     ticket_id: string | undefined;
-//     assignee_name: string | undefined;
-//   };
-// }
+import { ChatUiProps } from "../props/Props";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../redux/store";
+import { resetNewChatFlag } from "../redux/chatSlice";
 
-// interface PasswordResetUiProps {
-//   initialMessage: string;
-// }
-
-const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
+const ChatUi = ({ initialMessage }: ChatUiProps) => {
+  const dispatch = useDispatch();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [chatId, setChatId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isInitializedRef = useRef(false);
+  const { isNewChat, selectedChatId } = useSelector(
+    (state: RootState) => state.chat
+  );
+  console.log(chatId);
+  const handleLike = async (history_id: string) => {
+    if (!history_id) {
+      console.error("History ID is required");
+      return;
+    }
+    try {
+      const result = await likeChat(history_id);
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.history_id === history_id
+            ? { ...msg, like: true, un_like: false }
+            : msg
+        )
+      );
+      console.log(result);
+    } catch (error) {
+      console.error("Error liking chat:", error);
+    }
+  };
+
+  const handleDislike = async (history_id: string) => {
+    if (!history_id) {
+      console.error("History ID is required");
+      return;
+    }
+    try {
+      const result = await unlikeChat(history_id);
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.history_id === history_id
+            ? { ...msg, like: false, un_like: true }
+            : msg
+        )
+      );
+      console.log(result);
+    } catch (error) {
+      console.error("Error disliking chat:", error);
+    }
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -46,8 +72,29 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
     scrollToBottom();
   }, [messages, loading]);
 
+  const resetChat = () => {
+    setMessages([]);
+    setChatId(null);
+    localStorage.removeItem("chat_id");
+    isInitializedRef.current = false;
+    setLoading(false);
+  };
+
+  // Handle new chat initialization from Redux state
   useEffect(() => {
-    if (isInitializedRef.current) return;
+    if (isNewChat) {
+      resetChat();
+      localStorage.removeItem("chat_id");
+      setMessages([]);
+      setChatId(null);
+      isInitializedRef.current = false;
+      // Reset the isNewChat flag after handling the new chat initialization
+      dispatch(resetNewChatFlag());
+    }
+  }, [isNewChat, dispatch]);
+
+  useEffect(() => {
+    if (!initialMessage || isInitializedRef.current) return;
     isInitializedRef.current = true;
 
     setLoading(true);
@@ -77,7 +124,17 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
           ticket: result.display_settings?.ticket || false,
           ticket_options:
             result.display_settings?.options?.ticket_options || undefined,
-          history_id: result.display_settings?.message_history[0]?.history_id,
+          history_id:
+            result.display_settings?.message_history[
+              result.display_settings.message_history.length - 1
+            ]?.history_id,
+          like: result.display_settings?.message_history[
+            result.display_settings.message_history.length - 1
+          ]?.like,
+          un_like:
+            result.display_settings?.message_history[
+              result.display_settings.message_history.length - 1
+            ]?.un_like,
         };
 
         setMessages([userMessage, botMessage]);
@@ -112,6 +169,7 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
       }));
       setMessages(flattenedMessages);
       setChatId(chatId);
+      localStorage.setItem("chat_id", chatId);
     } catch (error) {
       console.error("Error fetching chat:", error);
     }
@@ -142,6 +200,13 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
     boxSizing: "border-box", // Ensures padding doesn't affect the width/height
   };
 
+  // Add effect to handle selectedChatId changes
+  useEffect(() => {
+    if (selectedChatId) {
+      handleGetChat(selectedChatId);
+    }
+  }, [selectedChatId]);
+
   return (
     <div className="absolute inset-x-0 bottom-0 top-10">
       {/* Main container */}
@@ -165,6 +230,8 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
                       chatId={chatId || ""}
                       onNewMessage={handleNewMessage}
                       setMessages={setMessages}
+                      onLike={handleLike}
+                      onDislike={handleDislike}
                     />
                   ))}
                   {loading && (
@@ -236,8 +303,16 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
                             result.display_settings?.options?.ticket_options ||
                             undefined,
                           history_id:
-                            result.display_settings?.message_history[0]
-                              ?.history_id,
+                            result.display_settings?.message_history[
+                              result.display_settings.message_history.length - 1
+                            ]?.history_id,
+                          like: result.display_settings?.message_history[
+                            result.display_settings.message_history.length - 1
+                          ]?.like,
+                          un_like:
+                            result.display_settings?.message_history[
+                              result.display_settings.message_history.length - 1
+                            ]?.un_like,
                         };
 
                         setMessages((prev) => [...prev, botMessage]);
@@ -273,4 +348,4 @@ const PasswordResetUi = ({ initialMessage }: PasswordResetUiProps) => {
   );
 };
 
-export default PasswordResetUi;
+export default ChatUi;

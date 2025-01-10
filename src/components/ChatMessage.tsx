@@ -4,24 +4,35 @@ import ChatLogo from "../assets/Genie.svg";
 import VerifyAuth from "../pages/Home/verifyAuth";
 import { askBart, verifyOTP } from "../Api/CommonApi";
 import OtpInputCard from "./ui/OtpInputCard";
-import createMarkup from "../utils/chatUtils";
+import createMarkup, { speakText, stopSpeaking } from "../utils/chatUtils";
 import ChatButtonCard from "./ui/ChatButtonCard";
 import UserCard from "./ui/UserCard";
 import TicketCard from "./ui/ticketcard";
 import { ChatMessageProps } from "../props/Props";
 import { Message } from "../Interface/Interface";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
-import { likeChat, unlikeChat } from "../Api/CommonApi";
+import { SpeakerHigh, SpeakerX } from "@phosphor-icons/react";
 
 const ChatMessage: React.FC<ChatMessageProps> = React.memo(
-  ({ message, onNewMessage, setMessages }) => {
+  ({ message, onNewMessage, onLike, onDislike }) => {
     // const profilePhoto = "https://avatar.vercel.sh/jill";
     const [showAuthVideoCard, setShowAuthVideoCard] = useState(false);
-    const [liked, setLiked] = useState(false);
-    const [disliked, setDisliked] = useState(false);
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
     const [clickedButton, setClickedButton] = useState<string | null>(null);
-    console.log(message);
+    const [isSpeaking, setIsSpeaking] = useState(false);
+    const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(
+      null
+    );
+
+    // Clean up speech synthesis when component unmounts
+    React.useEffect(() => {
+      return () => {
+        if (utterance) {
+          window.speechSynthesis.cancel();
+        }
+      };
+    }, [utterance]);
+
     const handleVerificationComplete = useCallback(async () => {
       setShowAuthVideoCard(false);
 
@@ -56,6 +67,8 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           ticket_options:
             result.display_settings?.options?.ticket_options || {},
           history_id: result.display_settings?.message_history[0]?.history_id,
+          like: result.display_settings?.message_history[0]?.like,
+          un_like: result.display_settings?.message_history[0]?.un_like,
         };
 
         onNewMessage(botMessage);
@@ -100,6 +113,8 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
             ticket_options:
               result.display_settings?.options?.ticket_options || {},
             history_id: result.display_settings?.message_history[0]?.history_id,
+            like: result.display_settings?.message_history[0]?.like,
+            un_like: result.display_settings?.message_history[0]?.un_like,
           };
 
           onNewMessage(botMessage);
@@ -140,6 +155,8 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           ticket_options:
             result.display_settings?.options?.ticket_options || {},
           history_id: result.display_settings?.message_history[0]?.history_id,
+          like: result.display_settings?.message_history[0]?.like,
+          un_like: result.display_settings?.message_history[0]?.un_like,
         };
 
         onNewMessage(botMessage);
@@ -158,47 +175,27 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
       }
     };
 
-    const handleLike = async (history_id: string) => {
-      if (!history_id) {
-        console.error("History ID is required");
-        return;
-      }
-      try {
-        const result = await likeChat(history_id);
-        setLiked(true);
-        setDisliked(false);
-        setMessages((prevMessages) =>
-          prevMessages.map((msg) =>
-            msg.history_id === history_id
-              ? { ...msg, like: true, un_like: false }
-              : msg
-          )
-        );
-        console.log(result);
-      } catch (error) {
-        console.error("Error liking chat:", error);
-      }
-    };
+    const handleSpeak = () => {
+      if (isSpeaking) {
+        stopSpeaking();
+        setIsSpeaking(false);
+        setUtterance(null);
+      } else {
+        const newUtterance = speakText(message.text);
 
-    const handleDislike = async (history_id: string) => {
-      if (!history_id) {
-        console.error("History ID is required");
-        return;
-      }
-      try {
-        const result = await unlikeChat(history_id);
-        setLiked(false);
-        setDisliked(true);
-        setMessages((prevMessages) =>
-          prevMessages.map((msg) =>
-            msg.history_id === history_id
-              ? { ...msg, like: false, un_like: true }
-              : msg
-          )
-        );
-        console.log(result);
-      } catch (error) {
-        console.error("Error disliking chat:", error);
+        newUtterance.onend = () => {
+          setIsSpeaking(false);
+          setUtterance(null);
+        };
+
+        newUtterance.onerror = () => {
+          setIsSpeaking(false);
+          setUtterance(null);
+        };
+
+        window.speechSynthesis.speak(newUtterance);
+        setUtterance(newUtterance);
+        setIsSpeaking(true);
       }
     };
 
@@ -218,13 +215,13 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           <div className="flex items-start w-full">
             <img
               src={ChatLogo}
-              alt="BART Buddy"
+              alt="BART Genie"
               className="w-8 h-8 rounded-full object-cover mx-2"
             />
             <div className="flex-1">
               <div className="flex items-center justify-start">
                 <span className="text-sm font-semibold mr-2 text-black">
-                  BART Buddy
+                  BART Genie
                 </span>
                 <span className="w-1 h-1 bg-white rounded-full mx-1"></span>
                 <span className="text-xs text-gray-400">
@@ -246,8 +243,10 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                 )}
                 <div className="flex-1">
                   <div
-                    className="text-sm text-black mb-2 [&_a]:text-blue-400 [&_a]:underline [&_a:hover]:text-blue-300 
-                    [&_ol]:list-decimal [&_ul]:list-disc [&_li]:ml-4 [&_li]:block [&_li]:my-1"
+                    className="text-sm text-black mb-2 
+                      [&_a:hover]:text-blue-300 
+                    [&_ol]:list-decimal [&_ul]:list-disc [&_li]:ml-4 [&_li]:block [&_li]:my-1
+                    "
                     dangerouslySetInnerHTML={createMarkup(message.text)}
                   />
                   {message.text.includes("verification code") && (
@@ -305,23 +304,31 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           <div className="flex items-center gap-2 mt-2 text-gray-500 text-sm">
             <button
               className={`p-1 rounded transition-colors hover:bg-gray-100 
-                ${message.like || liked ? "text-green-600" : ""}`}
-              onClick={() => {
-                handleLike(message.history_id || "");
-              }}
+                ${message.like ? "text-green-600" : ""}`}
+              onClick={() => onLike(message.history_id || "")}
               aria-label="Like message"
             >
               <ThumbsUp size={16} />
             </button>
             <button
               className={`p-1 rounded transition-colors hover:bg-gray-100 
-                ${message.un_like || disliked ? "text-red-600" : ""}`}
-              onClick={() => {
-                handleDislike(message.history_id || "");
-              }}
+                ${message.un_like ? "text-red-600" : ""}`}
+              onClick={() => onDislike(message.history_id || "")}
               aria-label="Dislike message"
             >
               <ThumbsDown size={16} />
+            </button>
+            <button
+              className={`p-1 rounded transition-colors hover:bg-gray-100 
+                ${isSpeaking ? "text-blue-600" : ""}`}
+              onClick={handleSpeak}
+              aria-label={isSpeaking ? "Stop speaking" : "Speak message"}
+            >
+              {isSpeaking ? (
+                <SpeakerX size={16} weight="fill" />
+              ) : (
+                <SpeakerHigh size={16} />
+              )}
             </button>
           </div>
         )}

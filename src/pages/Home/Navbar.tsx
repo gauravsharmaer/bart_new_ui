@@ -1,21 +1,90 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { MagnifyingGlass } from "@phosphor-icons/react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Notification from "./Notification";
 import Profile from "./Profile";
 import genie from "../../assets/Genie.svg";
 import invite from "../../assets/invite.svg";
-// import profileicon from "../../assets/profile.svg";
 import notificationicon from "../../assets/notification-bell.svg";
 import menubar from "../../assets/menu-bar.svg";
 import { BackendBaseUrl } from "../../config";
 import { getInitials } from "../../utils/NameInitials";
+import { useDispatch } from "react-redux";
+import {
+  resetChat,
+  startNewChat,
+  setSelectedChatId,
+} from "../../redux/chatSlice";
+import { searchChatHistory } from "../../Api/CommonApi";
+import { chatHistory } from "../../Interface/Interface";
+
 export function SiteHeader() {
   const [isNotificationOpen, setNotificationOpen] = useState(false);
   const [isProfileOpen, setProfileOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<chatHistory[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const initialFocusRef = useRef(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleSearch = async (query: string) => {
+    try {
+      setIsSearching(true);
+      const userId = localStorage.getItem("user_id");
+      if (!userId) return;
+
+      const results = await searchChatHistory(userId, query || undefined);
+      setSearchResults(results || []);
+    } catch (error) {
+      console.error("Search failed:", error);
+      setSearchResults([]); // Clear results on error
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  // Debounced search function
+  const debouncedSearch = useCallback(
+    (query: string) => {
+      const timeoutId = setTimeout(() => {
+        handleSearch(query);
+      }, 1000);
+
+      return () => clearTimeout(timeoutId);
+    },
+    [] // Empty dependency array since handleSearch is stable
+  );
+
+  // Effect to handle debounced search
+  useEffect(() => {
+    const cleanup = debouncedSearch(searchQuery);
+    return cleanup;
+  }, [searchQuery, debouncedSearch]);
+
+  const handleInputFocus = async () => {
+    setShowSuggestions(true);
+    if (!initialFocusRef.current) {
+      initialFocusRef.current = true;
+      await handleSearch("");
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+  };
+
+  const handleSuggestionClick = (chatId: string) => {
+    setShowSuggestions(false);
+    setSearchQuery("");
+    dispatch(setSelectedChatId(chatId));
+    // navigate(`/chat/${chatId}`);
+  };
 
   // const getInitials = (name: string): string => {
   //   if (!name) return "";
@@ -50,8 +119,11 @@ export function SiteHeader() {
               </div>
             </Link>
             <nav className="flex items-center space-x-4">
-              <Link
-                to="/"
+              <button
+                onClick={() => {
+                  navigate("/");
+                  dispatch(resetChat());
+                }}
                 className={`relative flex items-center justify-center px-4 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary ${
                   location.pathname === "/"
                     ? "text-primary bg-gray-100"
@@ -62,7 +134,17 @@ export function SiteHeader() {
                 {location.pathname === "/" && (
                   <div className="absolute inset-0 rounded-full bg-gray-100 pointer-events-none"></div>
                 )}
-              </Link>
+              </button>
+              <button
+                onClick={() => dispatch(startNewChat())}
+                className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary ${
+                  location.pathname === "/new-chat"
+                    ? "text-primary bg-gray-100"
+                    : "text-muted-foreground"
+                }`}
+              >
+                <span className="z-10">New Chat</span>
+              </button>
               <Link
                 to="/tickets"
                 className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary ${
@@ -86,9 +168,35 @@ export function SiteHeader() {
               />
               <Input
                 type="search"
+                value={searchQuery}
+                onChange={handleInputChange}
+                onFocus={handleInputFocus}
                 placeholder="Search chats, ticket id and more..."
                 className="h-9 lg:w-[600px] rounded-full pl-10"
               />
+              {showSuggestions && (
+                <div className="absolute top-full left-0 w-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 max-h-[300px] overflow-y-auto z-50">
+                  {isSearching ? (
+                    <div className="flex items-center justify-center p-4">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+                    </div>
+                  ) : searchResults.length > 0 ? (
+                    searchResults.map((result) => (
+                      <div
+                        key={result.id}
+                        onClick={() => handleSuggestionClick(result.id)}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      >
+                        <p className="text-sm font-medium">{result.name}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="px-4 py-2 text-sm text-gray-500">
+                      No results found
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
           <div className="flex items-center space-x-4">
@@ -160,6 +268,12 @@ export function SiteHeader() {
       >
         <Profile isOpen={isProfileOpen} onClose={() => setProfileOpen(false)} />
       </div>
+      {showSuggestions && (
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => setShowSuggestions(false)}
+        ></div>
+      )}
     </>
   );
 }

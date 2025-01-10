@@ -1,96 +1,111 @@
-interface AskRequest {
-  question: string;
-  user_id: string;
-  chat_id?: string;
-}
+// interface AskRequest {
+//   question: string;
+//   user_id: string;
+//   chat_id?: string;
+// }
 
-interface APIError {
-  message: string;
-  status?: number;
-}
+// interface APIError {
+//   message: string;
+//   status?: number;
+// }
 
-interface AskResponse {
-  question: string;
-  answer: string;
-  chat_id: string;
-  display_settings: {
-    vertical_bar: boolean;
-    button_display: boolean;
-    ticket: boolean;
-    options: {
-      buttons: string[];
-      ticket_options: {
-        name: string | undefined;
-        description: string | undefined;
-        ticket_id: string | undefined;
-        assignee_name: string | undefined;
-        link: string | undefined;
-      };
-    };
-    message_history: {
-      question: string;
-      answer: string;
-      history_id: string;
-    }[];
-  };
-}
+// interface AskResponse {
+//   question: string;
+//   answer: string;
+//   chat_id: string;
+//   display_settings: {
+//     vertical_bar: boolean;
+//     button_display: boolean;
+//     ticket: boolean;
+//     options: {
+//       buttons: string[];
+//       ticket_options: {
+//         name: string | undefined;
+//         description: string | undefined;
+//         ticket_id: string | undefined;
+//         assignee_name: string | undefined;
+//         link: string | undefined;
+//       };
+//     };
+//     message_history: {
+//       question: string;
+//       answer: string;
+//       history_id: string;
+//       like: boolean;
+//       un_like: boolean;
+//     }[];
+//   };
+// }
 
-interface VerifyOTPRequest {
-  otp: number;
-  email: string;
-  chat_id: string;
-}
+// interface VerifyOTPRequest {
+//   otp: number;
+//   email: string;
+//   chat_id: string;
+// }
 
-interface VerifyOTPResponse {
-  question: string;
-  answer: string;
-  chat_id: string;
-  display_settings: {
-    vertical_bar: boolean;
-    button_display: boolean;
-    ticket: boolean;
-    options: {
-      buttons: string[];
-      ticket_options: {
-        name: string | undefined;
-        description: string | undefined;
-        ticket_id: string | undefined;
-        assignee_name: string | undefined;
-        link: string | undefined;
-      };
-    };
-    message_history: {
-      question: string;
-      answer: string;
-      history_id: string;
-    }[];
-  };
-}
+// interface VerifyOTPResponse {
+//   question: string;
+//   answer: string;
+//   chat_id: string;
+//   display_settings: {
+//     vertical_bar: boolean;
+//     button_display: boolean;
+//     ticket: boolean;
+//     options: {
+//       buttons: string[];
+//       ticket_options: {
+//         name: string | undefined;
+//         description: string | undefined;
+//         ticket_id: string | undefined;
+//         assignee_name: string | undefined;
+//         link: string | undefined;
+//       };
+//     };
+//     message_history: {
+//       question: string;
+//       answer: string;
+//       history_id: string;
+//       like: boolean;
+//       un_like: boolean;
+//     }[];
+//   };
+// }
 
-export interface chatHistory {
-  id: string;
-  name: string;
-  user_id: string;
-}
+// export interface chatHistory {
+//   id: string;
+//   name: string;
+//   user_id: string;
+// }
 
-export interface ImageUploadResponse {
-  message: string;
-  userId: string;
-  imagePath: string;
-}
+// export interface ImageUploadResponse {
+//   message: string;
+//   userId: string;
+//   imagePath: string;
+// }
 
-interface Message {
-  text: string;
-  isUserMessage: boolean;
-  button_display: boolean;
-  number_of_buttons: number;
-  button_text: string[];
-  id?: string;
-  vertical_bar?: boolean;
-  timestamp: string;
-  like?: boolean;
-  un_like?: boolean;
-}
+// interface Message {
+//   text: string;
+//   isUserMessage: boolean;
+//   button_display: boolean;
+//   number_of_buttons: number;
+//   button_text: string[];
+//   id?: string;
+//   vertical_bar?: boolean;
+//   timestamp: string;
+//   like?: boolean;
+//   un_like?: boolean;
+// }
+
+import {
+  Message,
+  AskRequest,
+  AskResponse,
+  APIError,
+  VerifyOTPRequest,
+  VerifyOTPResponse,
+  chatHistory,
+  ImageUploadResponse,
+} from "../Interface/Interface";
 
 import { NODE_API_URL } from "../config";
 type HistoryInterface = Message[][];
@@ -398,5 +413,36 @@ export const unlikeChat = async (chatId: string): Promise<HistoryInterface> => {
     throw error instanceof Error
       ? error
       : new Error("An unexpected error occurred while unliking chat");
+  }
+};
+
+export const searchChatHistory = async (
+  userId: string,
+  name?: string
+): Promise<chatHistory[]> => {
+  try {
+    const url = new URL(
+      `https://bart-api-bd05237bdea5.herokuapp.com/chat_search/${userId}`
+    );
+    if (name) {
+      url.searchParams.append("name", name);
+    }
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to search chat history");
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error instanceof Error
+      ? error
+      : new Error("An unexpected error occurred while searching chat history");
   }
 };
