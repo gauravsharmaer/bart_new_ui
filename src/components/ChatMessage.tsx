@@ -4,7 +4,7 @@ import ChatLogo from "../assets/Genie.svg";
 import VerifyAuth from "../pages/Home/verifyAuth";
 import { askBart, verifyOTP } from "../Api/CommonApi";
 import OtpInputCard from "./ui/OtpInputCard";
-import createMarkup, { speakText, stopSpeaking } from "../utils/chatUtils";
+import { speakText, stopSpeaking, createTimestamp } from "../utils/chatUtils";
 import ChatButtonCard from "./ui/ChatButtonCard";
 import UserCard from "./ui/UserCard";
 import TicketCard from "./ui/ticketcard";
@@ -12,6 +12,7 @@ import { ChatMessageProps } from "../props/Props";
 import { Message } from "../Interface/Interface";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { SpeakerHigh, SpeakerX } from "@phosphor-icons/react";
+import TypingEffect from "./TypingEffect";
 
 const ChatMessage: React.FC<ChatMessageProps> = React.memo(
   ({ message, onNewMessage, onLike, onDislike }) => {
@@ -40,7 +41,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
         const userMessage: Message = {
           text: "Facial Recognition Verified",
           isUserMessage: true,
-          timestamp: new Date().toISOString().replace("Z", "000"),
+          timestamp: createTimestamp(),
           button_display: false,
           number_of_buttons: 0,
           button_text: [],
@@ -58,7 +59,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
         const botMessage: Message = {
           text: result.answer || "No response received",
           isUserMessage: false,
-          timestamp: new Date().toISOString().replace("Z", "000"),
+          timestamp: createTimestamp(),
           button_display: result.display_settings?.button_display || false,
           number_of_buttons:
             result.display_settings?.options?.buttons?.length || 0,
@@ -85,7 +86,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
         const userMessage: Message = {
           text: button,
           isUserMessage: true,
-          timestamp: new Date().toISOString().replace("Z", "000"),
+          timestamp: createTimestamp(),
           button_display: false,
           number_of_buttons: 0,
           button_text: [],
@@ -104,7 +105,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           const botMessage: Message = {
             text: result.answer || "No response received",
             isUserMessage: false,
-            timestamp: new Date().toISOString().replace("Z", "000"),
+            timestamp: createTimestamp(),
             button_display: result.display_settings?.button_display || false,
             number_of_buttons:
               result.display_settings?.options?.buttons?.length || 0,
@@ -129,7 +130,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
         const userMessage: Message = {
           text: "Done",
           isUserMessage: true,
-          timestamp: new Date().toISOString().replace("Z", "000"),
+          timestamp: createTimestamp(),
           button_display: false,
           number_of_buttons: 0,
           button_text: [],
@@ -146,7 +147,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
         const botMessage: Message = {
           text: result.answer || "No response received",
           isUserMessage: false,
-          timestamp: new Date().toISOString().replace("Z", "000"),
+          timestamp: createTimestamp(),
           button_display: result.display_settings?.button_display || false,
           number_of_buttons:
             result.display_settings?.options?.buttons?.length || 0,
@@ -165,7 +166,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           text:
             error instanceof Error ? error.message : "OTP verification failed",
           isUserMessage: false,
-          timestamp: new Date().toISOString().replace("Z", "000"),
+          timestamp: createTimestamp(),
           button_display: false,
           number_of_buttons: 0,
           button_text: [],
@@ -225,9 +226,14 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                 </span>
                 <span className="w-1 h-1 bg-white rounded-full mx-1"></span>
                 <span className="text-xs text-gray-400">
-                  {new Date(
-                    message.timestamp.replace("000", "Z")
-                  ).toLocaleString()}
+                  {(() => {
+                    try {
+                      const date = new Date(message.timestamp);
+                      return date.toLocaleString();
+                    } catch {
+                      return "Invalid date";
+                    }
+                  })()}
                 </span>
               </div>
               <div className="flex mt-2">
@@ -242,13 +248,27 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                   ></div>
                 )}
                 <div className="flex-1">
-                  <div
+                  {/* <div
                     className="text-sm text-black mb-2 
                       [&_a:hover]:text-blue-300 
                     [&_ol]:list-decimal [&_ul]:list-disc [&_li]:ml-4 [&_li]:block [&_li]:my-1
                     "
-                    dangerouslySetInnerHTML={createMarkup(message.text)}
-                  />
+                    dangerouslySetInnerHTML={createMarkup(
+                      message.text
+                        .replace(/^## Response\n\n/g, "")
+                        .replace(/\n*## Sources\n\n/g, "\n\n")
+                    )}
+                  /> */}
+
+                  <div className="flex-1">
+                    <TypingEffect
+                      text={message.text
+                        .replace(/^## Response\n\n/g, "")
+                        .replace(/\n*## Sources\n\n/g, "\n\n")}
+                      speed={1}
+                    />
+                  </div>
+
                   {message.text.includes("verification code") && (
                     <OtpInputCard
                       onSubmitOTP={(otpString) => handleOtpSubmit(otpString)}

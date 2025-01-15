@@ -11,6 +11,7 @@ import { ChatUiProps } from "../props/Props";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../redux/store";
 import { resetNewChatFlag } from "../redux/chatSlice";
+import { createTimestamp } from "../utils/chatUtils";
 
 const ChatUi = ({ initialMessage }: ChatUiProps) => {
   const dispatch = useDispatch();
@@ -107,7 +108,7 @@ const ChatUi = ({ initialMessage }: ChatUiProps) => {
         const userMessage: Message = {
           text: initialMessage,
           isUserMessage: true,
-          timestamp: new Date().toISOString().replace("Z", "000"),
+          timestamp: createTimestamp(),
           button_display: false,
           number_of_buttons: 0,
           button_text: [],
@@ -116,7 +117,7 @@ const ChatUi = ({ initialMessage }: ChatUiProps) => {
         const botMessage: Message = {
           text: result.answer || "No response received",
           isUserMessage: false,
-          timestamp: new Date().toISOString().replace("Z", "000"),
+          timestamp: createTimestamp(),
           button_display: result.display_settings?.button_display || false,
           number_of_buttons:
             result.display_settings?.options?.buttons?.length || 0,
@@ -148,7 +149,7 @@ const ChatUi = ({ initialMessage }: ChatUiProps) => {
         const errorBotMessage: Message = {
           text: error instanceof Error ? error.message : "An error occurred",
           isUserMessage: false,
-          timestamp: new Date().toISOString().replace("Z", "000"),
+          timestamp: createTimestamp(),
           button_display: false,
           number_of_buttons: 0,
           button_text: [],
@@ -268,7 +269,7 @@ const ChatUi = ({ initialMessage }: ChatUiProps) => {
                       const userMessage = {
                         text: message,
                         isUserMessage: true,
-                        timestamp: new Date().toISOString().replace("Z", "000"),
+                        timestamp: createTimestamp(),
                         button_display: false,
                         number_of_buttons: 0,
                         button_text: [],
@@ -288,9 +289,7 @@ const ChatUi = ({ initialMessage }: ChatUiProps) => {
                         const botMessage = {
                           text: result.answer || "No response received",
                           isUserMessage: false,
-                          timestamp: new Date()
-                            .toISOString()
-                            .replace("Z", "000"),
+                          timestamp: createTimestamp(),
                           button_display:
                             result.display_settings?.button_display || false,
                           number_of_buttons:
@@ -323,9 +322,7 @@ const ChatUi = ({ initialMessage }: ChatUiProps) => {
                               ? error.message
                               : "An error occurred",
                           isUserMessage: false,
-                          timestamp: new Date()
-                            .toISOString()
-                            .replace("Z", "000"),
+                          timestamp: createTimestamp(),
                           button_display: false,
                           number_of_buttons: 0,
                           button_text: [],
