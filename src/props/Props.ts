@@ -76,6 +76,7 @@ export interface CardBackgroundProps {
 export interface ChatInputBarProps {
   onSubmit: (message: string) => void;
   loading?: boolean;
+  onPdfUpload?: (file: File) => Promise<void>;
 }
 export interface ChatMessageProps {
   message: Message;

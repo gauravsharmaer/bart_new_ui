@@ -225,6 +225,11 @@ const createMarkup = (text: string) => {
     '<a href="$2" target="_blank" class="text-blue-500 hover:text-blue-700">$1</a>'
   );
 
+  // processedText = processedText.replace(
+  //   /\[(.*?)\]\((.*?)\)/g,
+  //   '<a href="$2" target="_blank" class=" border border-gray-300  p-2 bg-white rounded-md font-bold flex w-[300px]">$1</a>'
+  // );
+
   // Convert newlines to <br> tags
   processedText = processedText.replace(/\n/g, "<br>");
 
