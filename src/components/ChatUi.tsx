@@ -167,6 +167,7 @@ const ChatUi = ({ initialMessage }: ChatUiProps) => {
       const data = await getHistory(chatId);
       const flattenedMessages = data.flat().map((message) => ({
         ...message,
+        isFromHistory: true,
       }));
       setMessages(flattenedMessages);
       setChatId(chatId);

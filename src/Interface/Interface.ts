@@ -62,18 +62,19 @@ export interface Message {
   button_text: string[];
   id?: string;
   vertical_bar?: boolean;
-  timestamp: string; // Make this optional
-  ticket?: boolean;
+  timestamp: string;
   like?: boolean;
-  history_id?: string;
   un_like?: boolean;
+  history_id?: string;
+  ticket?: boolean;
   ticket_options?: {
-    name: string | undefined;
-    description: string | undefined;
-    ticket_id: string | undefined;
-    assignee_name: string | undefined;
-    link: string | undefined;
+    name?: string;
+    description?: string;
+    ticket_id?: string;
+    assignee_name?: string;
+    link?: string;
   };
+  isFromHistory?: boolean;
 }
 
 export interface AskRequest {
