@@ -1,10 +1,10 @@
-//chatmessage
+//New Chatmessage.tsx
 import React, { useState, useCallback } from "react";
 import ChatLogo from "../assets/Genie.svg";
 import VerifyAuth from "../pages/Home/verifyAuth";
 import { askBart, verifyOTP } from "../Api/CommonApi";
 import OtpInputCard from "./ui/OtpInputCard";
-import { speakText, stopSpeaking, createTimestamp } from "../utils/chatUtils";
+import { speakText, stopSpeaking, createTimestamp, resumeSpeaking, cancelSpeaking, getCurrentSpeakingMessageId, setActiveMessageComponent } from "../utils/chatUtils";
 import ChatButtonCard from "./ui/ChatButtonCard";
 import UserCard from "./ui/UserCard";
 import TicketCard from "./ui/ticketcard";
@@ -24,15 +24,35 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(
       null
     );
+    const [isPaused, setIsPaused] = useState(false);
+    const messageId = message.history_id || message.timestamp;
 
-    // Clean up speech synthesis when component unmounts
+    // Add resetSpeakingState function
+    const resetSpeakingState = useCallback(() => {
+      setIsSpeaking(false);
+      setIsPaused(false);
+      setUtterance(null); 
+    }, []);
+
+    // Register this component as active when mounted
     React.useEffect(() => {
+      setActiveMessageComponent({ resetSpeakingState });
+      return () => {
+        if (getCurrentSpeakingMessageId() === messageId) {
+          cancelSpeaking();
+        }
+      };
+    }, [messageId, resetSpeakingState]);
+
+    React.useEffect(() => {
+      // Cleanup function for component unmount and page refresh
       return () => {
         if (utterance) {
           window.speechSynthesis.cancel();
+          resetSpeakingState();
         }
       };
-    }, [utterance]);
+    }, [utterance, resetSpeakingState]);
 
     const handleVerificationComplete = useCallback(async () => {
       setShowAuthVideoCard(false);
@@ -177,27 +197,42 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     };
 
     const handleSpeak = () => {
-      if (isSpeaking) {
-        stopSpeaking();
-        setIsSpeaking(false);
-        setUtterance(null);
-      } else {
-        const newUtterance = speakText(message.text);
+      const currentSpeakingId = getCurrentSpeakingMessageId();
+      
+      // If we're already speaking this message
+      if (currentSpeakingId === messageId && isSpeaking) {
+        if (isPaused) {
+          resumeSpeaking();
+          setIsPaused(false);
+        } else {
+          stopSpeaking();
+          setIsPaused(true);
+        }
+        return;
+      }
+
+      // Reset states before starting new speech
+      setIsSpeaking(false);
+      setIsPaused(false);
+      
+      // Cancel any existing speech
+      cancelSpeaking();
+      
+      // Start new speech after a small delay to ensure previous speech is cancelled
+      setTimeout(() => {
+        const newUtterance = speakText(message.text, messageId);
 
         newUtterance.onend = () => {
-          setIsSpeaking(false);
-          setUtterance(null);
+          resetSpeakingState();
         };
 
         newUtterance.onerror = () => {
-          setIsSpeaking(false);
-          setUtterance(null);
+          resetSpeakingState();
         };
 
-        window.speechSynthesis.speak(newUtterance);
-        setUtterance(newUtterance);
         setIsSpeaking(true);
-      }
+        setUtterance(newUtterance);
+      }, 100);
     };
 
     console.log("Message data:", {
@@ -342,9 +377,9 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
               className={`p-1 rounded transition-colors hover:bg-gray-100 
                 ${isSpeaking ? "text-blue-600" : ""}`}
               onClick={handleSpeak}
-              aria-label={isSpeaking ? "Stop speaking" : "Speak message"}
+              aria-label={isSpeaking ? (isPaused ? "Resume speaking" : "Pause speaking") : "Speak message"}
             >
-              {isSpeaking ? (
+              {isSpeaking && !isPaused ? (
                 <SpeakerX size={16} weight="fill" />
               ) : (
                 <SpeakerHigh size={16} />

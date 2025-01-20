@@ -1,4 +1,4 @@
-"use client";
+//VoiceChatCard.tsx"use client";
 
 import avatar from "../assets/avatar.gif";
 
@@ -35,3 +35,4 @@ export default function VoiceChatCard({ text = "" }: VoiceChatCardProps) {
     </div>
   );
 }
+
