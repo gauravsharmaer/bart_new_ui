@@ -1,15 +1,28 @@
 "use client";
 
+import { X } from "lucide-react";
 import avatar from "../assets/avatar.gif";
 
 interface VoiceChatCardProps {
   text: string;
+  onClose: () => void;
 }
 
-export default function VoiceChatCard({ text = "" }: VoiceChatCardProps) {
+export default function VoiceChatCard({
+  text = "",
+  onClose,
+}: VoiceChatCardProps) {
   return (
     <div className="fixed inset-0 flex items-center justify-center z-90 bg-black/30">
-      <div className="bg-white rounded-[32px] p-8 max-w-md w-[350px] h-[350px] shadow-lg flex flex-col items-center justify-center">
+      <div className="relative bg-white rounded-[32px] p-8 max-w-md w-[350px] h-[350px] shadow-lg flex flex-col items-center justify-center">
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+        >
+          <X className="w-5 h-5 text-gray-500" />
+        </button>
+
         {/* Avatar Container */}
         <div className="mb-6">
           <div className="relative w-24 h-24 flex items-center justify-center">

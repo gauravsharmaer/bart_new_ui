@@ -18,6 +18,7 @@ const ChatUi = ({ initialMessage }: ChatUiProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [chatId, setChatId] = useState<string | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isInitializedRef = useRef(false);
   const { isNewChat, selectedChatId } = useSelector(
@@ -214,8 +215,12 @@ const ChatUi = ({ initialMessage }: ChatUiProps) => {
       {/* Main container */}
       <div style={containerStyle}>
         {/* Sidebar */}
-        <div className="w-80 flex-shrink-0 border-r border-white">
-          <HistorySideBar onChatSelect={handleGetChat} />
+        <div className="flex-shrink-0 border-r border-white">
+          <HistorySideBar
+            onChatSelect={handleGetChat}
+            isSidebarOpen={isSidebarOpen}
+            onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+          />
         </div>
 
         {/* Main Chat Section */}

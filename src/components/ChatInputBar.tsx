@@ -188,7 +188,20 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({
           </div>
         </form>
       </div>
-      {showVoiceCard && <VoiceChatCard text={voiceInput} />}
+      {showVoiceCard && (
+        <VoiceChatCard
+          text={voiceInput}
+          onClose={() => {
+            setShowVoiceCard(false);
+            setIsListening(false);
+            stopSpeechRecognition();
+            if (silenceTimer) {
+              clearTimeout(silenceTimer);
+              setSilenceTimer(null);
+            }
+          }}
+        />
+      )}
     </div>
   );
 };

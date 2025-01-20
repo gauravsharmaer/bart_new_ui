@@ -4,6 +4,10 @@ export default {
   content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        passenger: ["PassengerSans", "sans-serif"],
+        graphik: ["Graphik", "sans-serif"],
+      },
       transitionProperty: {
         right: "right",
       },

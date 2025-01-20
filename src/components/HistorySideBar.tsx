@@ -6,8 +6,15 @@ import RenameIcon from "../assets/rename.svg";
 import DotsMenuIcon from "../assets/dots-menu.svg";
 import { ChatHistory } from "../Interface/Interface";
 import { HistorySideBarProps } from "../props/Props";
+// import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Tooltip } from "@mui/material";
+import { Sidebar, SquareHalf } from "phosphor-react";
 
-const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
+const HistorySideBar: React.FC<HistorySideBarProps> = ({
+  onChatSelect,
+  isSidebarOpen,
+  onToggleSidebar,
+}) => {
   const [chatHistory, setChatHistory] = useState<
     (ChatHistory & { status?: string; timestamp?: string })[]
   >([]);
@@ -136,115 +143,153 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({ onChatSelect }) => {
 
   return (
     <>
-      <aside className="bg-white border-r border-gray-200 p-4 flex flex-col justify-between h-full w-[320px] pt-7">
+      <aside className="bg-white border-r border-gray-200 flex flex-col justify-between h-full">
+        {/* Toggle Button - Always visible */}
         <div
-          className="overflow-y-auto"
-          style={{
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-          }}
+          className={`flex items-center border-b border-gray-200 pt-4 ${
+            isSidebarOpen ? "w-[320px]" : "w-[50px]"
+          } transition-all duration-300`}
         >
-          {chatHistory.map((chat) => (
-            <div
-              key={chat.id}
-              className={`text-black opacity-150 cursor-pointer p-2 rounded font-regular flex items-center justify-between group relative ${
-                chat.isActive ? "shadow-md bg-[#f3f5f9]" : "hover:bg-[#f3f5f9]"
-              }`}
-              onMouseLeave={closeMenu}
-            >
-              {/* Left section: Chat details */}
-              <div className="flex flex-col flex-grow">
-                {editingChatId === chat.id ? (
-                  <input
-                    type="text"
-                    value={editingName}
-                    onChange={(e) => setEditingName(e.target.value)}
-                    onBlur={() => handleRenameSubmit(chat.id)}
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter") {
-                        handleRenameSubmit(chat.id);
-                      }
-                    }}
-                    className="border rounded px-2 py-1 text-sm w-[140px]"
-                    autoFocus
-                  />
-                ) : (
-                  <span
-                    onClick={() => onChatSelect(chat.id)}
-                    className="truncate max-w-[140px]"
-                    title={chat.name}
-                  >
-                    {chat.name}
-                  </span>
-                )}
-              </div>
+          <button
+            onClick={onToggleSidebar}
+            className="p-4 hover:bg-gray-100 transition-colors font"
+          >
+            {isSidebarOpen ? (
+              <Tooltip title="Collapse Sidebar">
+                <Sidebar size={20} weight="bold" />
+              </Tooltip>
+            ) : (
+              <Tooltip title="Expand Sidebar">
+                <SquareHalf size={20} weight="bold" />
+              </Tooltip>
+            )}
+          </button>
+          <div
+            className={`overflow-hidden transition-all duration-300  ${
+              isSidebarOpen ? "w-auto opacity-100" : "w-0 opacity-0"
+            }`}
+          >
+            <span className="whitespace-nowrap font-passenger font-medium text-[#000000]">
+              Chat History
+            </span>
+          </div>
+        </div>
 
-              {/* Right section: Tags */}
-              <div className="flex items-center gap-2">
-                {chat.status && (
-                  <span
-                    className={`text-xs py-1 px-2 rounded-md font-medium ${
-                      chat.status === "Resolved"
-                        ? "bg-[#DEF3C1] text-[#385C25]"
-                        : "bg-[#ECE4FF] text-[#5232A0]"
-                    }`}
+        {/* Chat History List - Collapsible */}
+        <div
+          className={`flex-1 overflow-hidden transition-all duration-300 ${
+            isSidebarOpen ? "w-[320px] opacity-100" : "w-0 opacity-0"
+          }`}
+        >
+          <div className="h-full overflow-y-auto p-4">
+            {chatHistory.map((chat) => (
+              <div
+                key={chat.id}
+                className={`text-black opacity-150 cursor-pointer p-2 rounded font-regular flex items-center justify-between group relative ${
+                  chat.isActive
+                    ? "shadow-md bg-[#f3f5f9]"
+                    : "hover:bg-[#f3f5f9]"
+                }`}
+                onMouseLeave={closeMenu}
+              >
+                {/* Left section: Chat details */}
+                <div className="flex flex-col flex-grow">
+                  {editingChatId === chat.id ? (
+                    <input
+                      type="text"
+                      value={editingName}
+                      onChange={(e) => setEditingName(e.target.value)}
+                      onBlur={() => handleRenameSubmit(chat.id)}
+                      onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                          handleRenameSubmit(chat.id);
+                        }
+                      }}
+                      className="border rounded px-2 py-1 text-sm w-[140px]"
+                      autoFocus
+                    />
+                  ) : (
+                    <span
+                      onClick={() => onChatSelect(chat.id)}
+                      className="truncate max-w-[140px] font-passenger font-light text-[#000000] text-sm"
+                      title={chat.name}
+                    >
+                      {chat.name}
+                    </span>
+                  )}
+                </div>
+
+                {/* Right section: Tags */}
+                <div className="flex items-center gap-2">
+                  {chat.status && (
+                    <span
+                      className={`text-xs py-1 px-2 rounded-md font-medium ${
+                        chat.status === "Resolved"
+                          ? "bg-[#DEF3C1] text-[#385C25]"
+                          : "bg-[#ECE4FF] text-[#5232A0]"
+                      }`}
+                    >
+                      {chat.status}
+                    </span>
+                  )}
+                  {chat.timestamp && (
+                    <span className="text-xs text-[#FF5600]">
+                      {chat.timestamp}
+                    </span>
+                  )}
+                </div>
+                <div className="relative">
+                  <button
+                    onClick={(event) => toggleMenu(chat.id, event)}
+                    className="focus:outline-none p-1 rounded-full invisible group-hover:visible"
                   >
-                    {chat.status}
-                  </span>
-                )}
-                {chat.timestamp && (
-                  <span className="text-xs text-[#FF5600]">
-                    {chat.timestamp}
-                  </span>
-                )}
+                    <img
+                      src={DotsMenuIcon}
+                      alt="Menu"
+                      className="w-3.5 h-3.5"
+                    />
+                  </button>
+                  {activeMenu === chat.id && (
+                    <div
+                      className="absolute bg-white rounded-lg shadow-lg w-[130px]"
+                      style={{
+                        position: "fixed",
+                        top: dropdownPosition.top,
+                        left: dropdownPosition.left,
+                        boxShadow: "0px 4px 6px rgba(68, 68, 68, 0.1)",
+                        zIndex: 9999,
+                      }}
+                    >
+                      <ul className="text-sm">
+                        <li
+                          onClick={() => handleRenameClick(chat)}
+                          className="px-4 py-3 cursor-pointer flex items-center gap-2"
+                        >
+                          <img
+                            src={RenameIcon}
+                            alt="Rename"
+                            className="w-6 h-6"
+                          />
+                          Rename
+                        </li>
+                        <li
+                          onClick={() => handleDeleteClick(chat)}
+                          className="px-4 py-3 cursor-pointer text-red-600 flex items-center gap-2"
+                        >
+                          <img
+                            src={DeleteIcon}
+                            alt="Delete"
+                            className="w-6 h-6"
+                          />
+                          Delete
+                        </li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="relative">
-                <button
-                  onClick={(event) => toggleMenu(chat.id, event)}
-                  className="focus:outline-none p-1 rounded-full invisible group-hover:visible"
-                >
-                  <img src={DotsMenuIcon} alt="Menu" className="w-3.5 h-3.5" />
-                </button>
-                {activeMenu === chat.id && (
-                  <div
-                    className="absolute bg-white rounded-lg shadow-lg w-[130px]"
-                    style={{
-                      position: "fixed",
-                      top: dropdownPosition.top,
-                      left: dropdownPosition.left,
-                      boxShadow: "0px 4px 6px rgba(68, 68, 68, 0.1)",
-                      zIndex: 9999,
-                    }}
-                  >
-                    <ul className="text-sm">
-                      <li
-                        onClick={() => handleRenameClick(chat)}
-                        className="px-4 py-3 cursor-pointer flex items-center gap-2"
-                      >
-                        <img
-                          src={RenameIcon}
-                          alt="Rename"
-                          className="w-6 h-6"
-                        />
-                        Rename
-                      </li>
-                      <li
-                        onClick={() => handleDeleteClick(chat)}
-                        className="px-4 py-3 cursor-pointer text-red-600 flex items-center gap-2"
-                      >
-                        <img
-                          src={DeleteIcon}
-                          alt="Delete"
-                          className="w-6 h-6"
-                        />
-                        Delete
-                      </li>
-                    </ul>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </aside>
       {chatToDelete && (

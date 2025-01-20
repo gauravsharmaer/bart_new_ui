@@ -107,6 +107,8 @@ export interface GradientBackgroundProps {
 
 export interface HistorySideBarProps {
   onChatSelect: (chatId: string) => void;
+  isSidebarOpen: boolean;
+  onToggleSidebar: () => void;
 }
 
 export interface ImageUploadProps {

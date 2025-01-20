@@ -126,36 +126,42 @@ export function SiteHeader() {
                 }}
                 className={`relative flex items-center justify-center px-4 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary ${
                   location.pathname === "/"
-                    ? "text-primary bg-gray-100"
+                    ? "text-primary bg-[#F3F5F9]"
                     : "text-muted-foreground"
                 }`}
               >
-                <span className="z-10">Home</span>
+                <span className="z-10 font-passenger font-medium text-[#000000]">
+                  Home
+                </span>
                 {location.pathname === "/" && (
-                  <div className="absolute inset-0 rounded-full bg-gray-100 pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-full bg-[#F3F5F9] pointer-events-none"></div>
                 )}
               </button>
               <button
                 onClick={() => dispatch(startNewChat())}
                 className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary ${
                   location.pathname === "/new-chat"
-                    ? "text-primary bg-gray-100"
+                    ? "text-primary bg-[#F3F5F9]"
                     : "text-muted-foreground"
                 }`}
               >
-                <span className="z-10">New Chat</span>
+                <span className="z-10 font-passenger font-medium text-[#000000]">
+                  New Chat
+                </span>
               </button>
               <Link
                 to="/tickets"
                 className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary ${
                   location.pathname === "/tickets"
-                    ? "text-primary bg-gray-100"
+                    ? "text-primary bg-[#F3F5F9]"
                     : "text-muted-foreground"
                 }`}
               >
-                <span className="z-10">My tickets</span>
+                <span className="z-10 font-passenger font-medium text-[#000000]">
+                  My tickets
+                </span>
                 {location.pathname === "/tickets" && (
-                  <div className="absolute inset-0 rounded-full bg-gray-100 pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-full bg-[#F3F5F9] pointer-events-none"></div>
                 )}
               </Link>
             </nav>
@@ -164,7 +170,7 @@ export function SiteHeader() {
             <div className="flex w-full max-w-2xl items-center border border-gray-200 rounded-full relative">
               <MagnifyingGlass
                 size={20}
-                className="absolute left-3 text-muted-foreground"
+                className="absolute left-3 text-muted-foreground text-[#8F9099]"
               />
               <Input
                 type="search"
@@ -172,7 +178,7 @@ export function SiteHeader() {
                 onChange={handleInputChange}
                 onFocus={handleInputFocus}
                 placeholder="Search chats, ticket id and more..."
-                className="h-9 lg:w-[600px] rounded-full pl-10"
+                className="h-9 lg:w-[600px] rounded-full pl-10 font-passenger font-normal text-[#606775]"
               />
               {showSuggestions && (
                 <div className="absolute top-full left-0 w-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 max-h-[300px] overflow-y-auto z-50">
@@ -203,7 +209,7 @@ export function SiteHeader() {
             <Button
               variant="outline"
               size="sm"
-              className="flex items-center gap-2 bg-[#fafafa]"
+              className="flex items-center gap-2 border border-[#EDEDED] bg-[#FAFAFA] font-passenger font-medium text-[#33343C]"
             >
               <img src={invite} alt="Invite" className="h-4 w-4" />
               Invite team-mate

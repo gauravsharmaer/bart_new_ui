@@ -299,11 +299,11 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
             />
             <div className="flex-1">
               <div className="flex items-center justify-start">
-                <span className="text-sm font-semibold mr-2 text-black">
+                <span className="text-[14px] font-passenger font-light text-[#000000] mr-2 ">
                   BART Genie
                 </span>
                 <span className="w-1 h-1 bg-white rounded-full mx-1"></span>
-                <span className="text-xs text-gray-400">
+                <span className="text-[12px] font-passenger font-light text-[#000000] opacity-60">
                   {(() => {
                     try {
                       const date = new Date(message.timestamp);
@@ -329,7 +329,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                   <div className="flex-1">
                     {message.isFromHistory ? (
                       <div
-                        className="text-sm text-black mb-2 [&_a:hover]:text-blue-300 [&_ol]:list-decimal [&_ul]:list-disc [&_li]:ml-4 [&_li]:block [&_li]:my-1"
+                        className="text-sm opacity-80 font-passenger text-[#00000] mb-2 [&_a:hover]:text-blue-300 [&_ol]:list-decimal [&_ul]:list-disc [&_li]:ml-4 [&_li]:block [&_li]:my-1"
                         dangerouslySetInnerHTML={createMarkup(
                           message.text
                             .replace(/^## Response\n\n/g, "")
