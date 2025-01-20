@@ -1,20 +1,9 @@
-//chatmessage
 import React, { useState, useCallback } from "react";
 import ChatLogo from "../assets/Genie.svg";
 import VerifyAuth from "../pages/Home/verifyAuth";
 import { askBart, verifyOTP } from "../Api/CommonApi";
 import OtpInputCard from "./ui/OtpInputCard";
-// import { speakText, stopSpeaking, createTimestamp } from "../utils/chatUtils";
-import {
-  speakText,
-  stopSpeaking,
-  createTimestamp,
-  resumeSpeaking,
-  cancelSpeaking,
-  getCurrentSpeakingMessageId,
-  setActiveMessageComponent,
-} from "../utils/chatUtils";
-
+import { speakText, stopSpeaking, createTimestamp, resumeSpeaking, cancelSpeaking, getCurrentSpeakingMessageId, setActiveMessageComponent } from "../utils/chatUtils";
 import ChatButtonCard from "./ui/ChatButtonCard";
 import UserCard from "./ui/UserCard";
 import TicketCard from "./ui/ticketcard";
@@ -23,7 +12,7 @@ import { Message } from "../Interface/Interface";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { SpeakerHigh, SpeakerX } from "@phosphor-icons/react";
 import TypingEffect from "./TypingEffect";
-import createMarkup from "../utils/chatUtils";
+import AvatarVideo from "../assets/speaking-avatar.mp4";
 
 const ChatMessage: React.FC<ChatMessageProps> = React.memo(
   ({ message, onNewMessage, onLike, onDislike }) => {
@@ -37,20 +26,13 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     );
     const [isPaused, setIsPaused] = useState(false);
     const messageId = message.history_id || message.timestamp;
-    // Clean up speech synthesis when component unmounts
-    React.useEffect(() => {
-      return () => {
-        if (utterance) {
-          window.speechSynthesis.cancel();
-        }
-      };
-    }, [utterance]);
+    const [showAvatarCard, setShowAvatarCard] = useState(false);
 
     // Add resetSpeakingState function
     const resetSpeakingState = useCallback(() => {
       setIsSpeaking(false);
       setIsPaused(false);
-      setUtterance(null);
+      setUtterance(null); 
     }, []);
 
     // Register this component as active when mounted
@@ -62,7 +44,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
         }
       };
     }, [messageId, resetSpeakingState]);
-
+ 
     React.useEffect(() => {
       // Cleanup function for component unmount and page refresh
       return () => {
@@ -215,33 +197,9 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
       }
     };
 
-    // const handleSpeak = () => {
-    //   if (isSpeaking) {
-    //     stopSpeaking();
-    //     setIsSpeaking(false);
-    //     setUtterance(null);
-    //   } else {
-    //     const newUtterance = speakText(message.text);
-
-    //     newUtterance.onend = () => {
-    //       setIsSpeaking(false);
-    //       setUtterance(null);
-    //     };
-
-    //     newUtterance.onerror = () => {
-    //       setIsSpeaking(false);
-    //       setUtterance(null);
-    //     };
-
-    //     window.speechSynthesis.speak(newUtterance);
-    //     setUtterance(newUtterance);
-    //     setIsSpeaking(true);
-    //   }
-    // };
-
     const handleSpeak = () => {
       const currentSpeakingId = getCurrentSpeakingMessageId();
-
+      
       // If we're already speaking this message
       if (currentSpeakingId === messageId && isSpeaking) {
         if (isPaused) {
@@ -257,25 +215,121 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
       // Reset states before starting new speech
       setIsSpeaking(false);
       setIsPaused(false);
-
+      
       // Cancel any existing speech
       cancelSpeaking();
-
+      
       // Start new speech after a small delay to ensure previous speech is cancelled
       setTimeout(() => {
         const newUtterance = speakText(message.text, messageId);
 
         newUtterance.onend = () => {
           resetSpeakingState();
+          setShowAvatarCard(false);
         };
 
         newUtterance.onerror = () => {
           resetSpeakingState();
+          setShowAvatarCard(false);
         };
 
         setIsSpeaking(true);
         setUtterance(newUtterance);
+        setShowAvatarCard(true);
       }, 100);
+    };
+
+    // Add Avatar Card Component
+    const AvatarCard = () => {
+      const videoRef = React.useRef<HTMLVideoElement | null>(null);
+
+      React.useEffect(() => {
+        if (videoRef.current) {
+          if (isSpeaking) {
+            videoRef.current.play();
+          } else {
+            videoRef.current.pause();
+          }
+        }
+      }, [isSpeaking]);
+
+      React.useEffect(() => {
+        if (videoRef.current) {
+          videoRef.current.loop = true;
+        }
+      }, []);
+
+      React.useEffect(() => {
+        if (videoRef.current) {
+          if (isPaused) {
+            videoRef.current.pause();
+          } else if (isSpeaking) {
+            videoRef.current.play();
+          }
+        }
+      }, [isPaused, isSpeaking]);
+
+      return (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="relative w-[400px] bg-gradient-to-b from-gray-900 to-gray-800 rounded-3xl p-6 shadow-2xl border border-gray-700">
+            <button
+              onClick={() => {
+                setShowAvatarCard(false);
+                cancelSpeaking();
+                resetSpeakingState();
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors duration-200 text-xl"
+              aria-label="Close modal"
+            >
+              ×
+            </button>
+            <div className="space-y-6">
+              <div className="flex flex-col items-center">
+                <div className="relative">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg blur opacity-25"></div>
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    loop
+                    muted
+                    className="relative w-full rounded-lg shadow-xl"
+                    style={{ maxWidth: '300px' }}
+                  >
+                    <source src={AvatarVideo} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+                <div className="flex items-center justify-center mt-6">
+                  <button
+                    onClick={() => {
+                      if (isPaused) {
+                        resumeSpeaking();
+                        setIsPaused(false);
+                      } else {
+                        stopSpeaking();
+                        setIsPaused(true);
+                      }
+                    }}
+                    className="px-4 py-2 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                  >
+                    {isPaused ? (
+                      <span className="flex items-center gap-2">
+                        <span className="text-xl">▶️</span>
+                        Resume
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        <span className="text-xl">⏸</span>
+                        Pause
+                      </span>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
     };
 
     console.log("Message data:", {
@@ -326,24 +380,25 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                   ></div>
                 )}
                 <div className="flex-1">
-                  <div className="flex-1">
-                    {message.isFromHistory ? (
-                      <div
-                        className="text-sm text-black mb-2 [&_a:hover]:text-blue-300 [&_ol]:list-decimal [&_ul]:list-disc [&_li]:ml-4 [&_li]:block [&_li]:my-1"
-                        dangerouslySetInnerHTML={createMarkup(
-                          message.text
-                            .replace(/^## Response\n\n/g, "")
-                            .replace(/\n*## Sources\n\n/g, "\n\n")
-                        )}
-                      />
-                    ) : (
-                      <TypingEffect
-                        text={message.text
-                          .replace(/^## Response\n\n/g, "")
-                          .replace(/\n*## Sources\n\n/g, "\n\n")}
-                        speed={1}
-                      />
+                  {/* <div
+                    className="text-sm text-black mb-2 
+                      [&_a:hover]:text-blue-300 
+                    [&_ol]:list-decimal [&_ul]:list-disc [&_li]:ml-4 [&_li]:block [&_li]:my-1
+                    "
+                    dangerouslySetInnerHTML={createMarkup(
+                      message.text
+                        .replace(/^## Response\n\n/g, "")
+                        .replace(/\n*## Sources\n\n/g, "\n\n")
                     )}
+                  /> */}
+
+                  <div className="flex-1">
+                    <TypingEffect
+                      text={message.text
+                        .replace(/^## Response\n\n/g, "")
+                        .replace(/\n*## Sources\n\n/g, "\n\n")}
+                      speed={1}
+                    />
                   </div>
 
                   {message.text.includes("verification code") && (
@@ -397,6 +452,8 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           </div>
         )}
 
+        {showAvatarCard && <AvatarCard />}
+
         {!message.isUserMessage && (
           <div className="flex items-center gap-2 mt-2 text-gray-500 text-sm">
             <button
@@ -415,30 +472,11 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
             >
               <ThumbsDown size={16} />
             </button>
-            {/* <button
-              className={`p-1 rounded transition-colors hover:bg-gray-100 
-                ${isSpeaking ? "text-blue-600" : ""}`}
-              onClick={handleSpeak}
-              aria-label={isSpeaking ? "Stop speaking" : "Speak message"}
-            >
-              {isSpeaking ? (
-                <SpeakerX size={16} weight="fill" />
-              ) : (
-                <SpeakerHigh size={16} />
-              )}
-            </button> */}
-
             <button
               className={`p-1 rounded transition-colors hover:bg-gray-100 
                 ${isSpeaking ? "text-blue-600" : ""}`}
               onClick={handleSpeak}
-              aria-label={
-                isSpeaking
-                  ? isPaused
-                    ? "Resume speaking"
-                    : "Pause speaking"
-                  : "Speak message"
-              }
+              aria-label={isSpeaking ? (isPaused ? "Resume speaking" : "Pause speaking") : "Speak message"}
             >
               {isSpeaking && !isPaused ? (
                 <SpeakerX size={16} weight="fill" />
