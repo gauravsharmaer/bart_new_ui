@@ -46,39 +46,46 @@ export const createTimestamp = (): string => {
 };
 
 const createMarkup = (text: string) => {
-  // First convert all dashes to dots
-  let processedText = text.replace(/^-/gm, "•");
+  // First sanitize the HTML to prevent XSS attacks
+  const sanitizedHtml = DOMPurify.sanitize(text, {
+    ALLOWED_TAGS: ["h2", "a", "br", "p", "ul", "li"],
+    ALLOWED_ATTR: ["href", "target", "class"],
+  });
 
-  // Convert markdown headers (##) to HTML
-  processedText = processedText.replace(
-    /^## (.*$)/gm,
-    '<h2 class="text-xl font-bold">$1</h2>'
-  );
-
-  processedText = processedText.replace(/-/g, "•");
-
-  // Convert links [text](url) to anchor tags
-  processedText = processedText.replace(
-    /\[(.*?)\]\((.*?)\)/g,
-    '<a href="$2" target="_blank" class="text-blue-500 hover:text-blue-700">$1</a>'
-  );
-
-  // processedText = processedText.replace(
-  //   /\[(.*?)\]\((.*?)\)/g,
-  //   '<a href="$2" target="_blank" class=" border border-gray-300  p-2 bg-white rounded-md font-bold flex w-[300px]">$1</a>'
-  // );
+  // Remove Sources header
+  let processedText = sanitizedHtml.replace(/<h2>Sources<\/h2>/, "");
 
   // Convert newlines to <br> tags
   processedText = processedText.replace(/\n/g, "<br>");
 
-  // Sanitize the HTML to prevent XSS attacks
-  const sanitizedHtml = DOMPurify.sanitize(processedText, {
-    ALLOWED_TAGS: ["h2", "a", "br"],
-    ALLOWED_ATTR: ["href", "target", "class"],
-  });
+  // Process any markdown-style headers that weren't already HTML
+  processedText = processedText.replace(
+    /^## (.*$)/gm,
+    '<h2 class="text-xl font-bold mb-2">$1</h2>'
+  );
+
+  // Process links if they're in markdown format
+  processedText = processedText.replace(
+    /\[(.*?)\]\((.*?)\)/g,
+    '<a href="$2" target="_blank" class="border border-gray-300 flex p-1 bg-white rounded-md font-bold w-[300px]">$1</a>'
+  );
+
+  // Add classes to existing HTML elements
+  processedText = processedText
+    // Style paragraphs
+    .replace(/<p>/g, '<p class="mb-2">')
+    // Style unordered lists
+    .replace(/<ul>/g, '<ul class="list-none  mb-2">')
+    // Style list items
+    .replace(/<li>/g, '<li class="mb-2">')
+    // Style links that aren't already styled
+    .replace(
+      /<a(?![^>]*class=)/g,
+      '<a class="border border-gray-300 flex p-1 bg-white rounded-md font-bold w-[300px]"'
+    );
 
   return {
-    __html: sanitizedHtml,
+    __html: processedText,
   };
 };
 

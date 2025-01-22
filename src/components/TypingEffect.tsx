@@ -37,8 +37,7 @@ const TypingEffect: React.FC<TypingEffectProps> = ({ text, speed = 50 }) => {
     //   dangerouslySetInnerHTML={createMarkup(displayedText)}
     // />
     <div
-      className="text-sm opacity-80 font-passenger text-[#00000] [&_a:hover]:text-blue-500
-     "
+      className="text-sm opacity-80 font-passenger text-[#00000]"
       dangerouslySetInnerHTML={createMarkup(displayedText)}
     />
   );

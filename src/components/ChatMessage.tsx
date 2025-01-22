@@ -329,20 +329,12 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                   <div className="flex-1">
                     {message.isFromHistory ? (
                       <div
-                        className="text-sm opacity-80 font-passenger text-[#00000] mb-2 [&_a:hover]:text-blue-300 [&_ol]:list-decimal [&_ul]:list-disc [&_li]:ml-4 [&_li]:block [&_li]:my-1"
-                        dangerouslySetInnerHTML={createMarkup(
-                          message.text
-                            .replace(/^## Response\n\n/g, "")
-                            .replace(/\n*## Sources\n\n/g, "\n\n")
-                        )}
+                        className="text-sm opacity-80 font-passenger
+                         "
+                        dangerouslySetInnerHTML={createMarkup(message.text)}
                       />
                     ) : (
-                      <TypingEffect
-                        text={message.text
-                          .replace(/^## Response\n\n/g, "")
-                          .replace(/\n*## Sources\n\n/g, "\n\n")}
-                        speed={1}
-                      />
+                      <TypingEffect text={message.text} speed={1} />
                     )}
                   </div>
 
