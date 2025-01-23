@@ -27,7 +27,6 @@ import createMarkup from "../utils/chatUtils";
 
 const ChatMessage: React.FC<ChatMessageProps> = React.memo(
   ({ message, onNewMessage, onLike, onDislike }) => {
-    // const profilePhoto = "https://avatar.vercel.sh/jill";
     const [showAuthVideoCard, setShowAuthVideoCard] = useState(false);
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
     const [clickedButton, setClickedButton] = useState<string | null>(null);
@@ -37,6 +36,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     );
     const [isPaused, setIsPaused] = useState(false);
     const messageId = message.history_id || message.timestamp;
+
     // Clean up speech synthesis when component unmounts
     React.useEffect(() => {
       return () => {
@@ -215,30 +215,6 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
       }
     };
 
-    // const handleSpeak = () => {
-    //   if (isSpeaking) {
-    //     stopSpeaking();
-    //     setIsSpeaking(false);
-    //     setUtterance(null);
-    //   } else {
-    //     const newUtterance = speakText(message.text);
-
-    //     newUtterance.onend = () => {
-    //       setIsSpeaking(false);
-    //       setUtterance(null);
-    //     };
-
-    //     newUtterance.onerror = () => {
-    //       setIsSpeaking(false);
-    //       setUtterance(null);
-    //     };
-
-    //     window.speechSynthesis.speak(newUtterance);
-    //     setUtterance(newUtterance);
-    //     setIsSpeaking(true);
-    //   }
-    // };
-
     const handleSpeak = () => {
       const currentSpeakingId = getCurrentSpeakingMessageId();
 
@@ -284,7 +260,11 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     });
 
     return (
-      <div className="flex items-start mb-8 w-full text-left">
+      <div
+        className={`flex ${
+          message.isUserMessage ? "justify-end" : "justify-start"
+        } mb-4`}
+      >
         {message.isUserMessage ? (
           <UserCard
             name={localStorage.getItem("name") || "User"}
@@ -407,19 +387,6 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
             >
               <ThumbsDown size={16} />
             </button>
-            {/* <button
-              className={`p-1 rounded transition-colors hover:bg-gray-100 
-                ${isSpeaking ? "text-blue-600" : ""}`}
-              onClick={handleSpeak}
-              aria-label={isSpeaking ? "Stop speaking" : "Speak message"}
-            >
-              {isSpeaking ? (
-                <SpeakerX size={16} weight="fill" />
-              ) : (
-                <SpeakerHigh size={16} />
-              )}
-            </button> */}
-
             <button
               className={`p-1 rounded transition-colors hover:bg-gray-100 
                 ${isSpeaking ? "text-blue-600" : ""}`}

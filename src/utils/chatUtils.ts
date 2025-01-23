@@ -64,6 +64,12 @@ const createMarkup = (text: string) => {
     '<h2 class="text-xl font-bold mb-2">$1</h2>'
   );
 
+  // Process text enclosed in ** as headings
+  processedText = processedText.replace(
+    /\*\*(.*?)\*\*/g,
+    '<span class="font-bold ">$1</span>'
+  );
+
   // Process links if they're in markdown format
   processedText = processedText.replace(
     /\[(.*?)\]\((.*?)\)/g,
@@ -120,15 +126,10 @@ export const speakText = (
 ): SpeechSynthesisUtterance => {
   // Clean the text - remove HTML tags and hyperlinks
   const cleanText = text
-    // Remove HTML tags
     .replace(/<[^>]*>/g, "")
-    // Remove markdown links [text](url) - keep only the text part
     .replace(/\[(.*?)\]\(.*?\)/g, "$1")
-    // Remove URLs
     .replace(/https?:\/\/\S+/g, "")
-    // Remove Source references
     .replace(/[•\s]*Source[^\n]*(\n|$)/g, "\n")
-    // Clean up extra spaces and line breaks
     .replace(/\s+/g, " ")
     .trim();
 
@@ -139,6 +140,15 @@ export const speakText = (
   speech.rate = 1;
   speech.pitch = 1;
   speech.lang = "en-US";
+
+  // // Get available voices and set an English voice
+  // const voices = window.speechSynthesis.getVoices();
+  // const englishVoice = voices.find(
+  //   (voice) => voice.lang.startsWith("en-") && voice.name.includes("Female")
+  // );
+  // if (englishVoice) {
+  //   speech.voice = englishVoice;
+  // }
 
   // Update global state
   currentUtterance = speech;
