@@ -13,6 +13,7 @@ import {
   cancelSpeaking,
   getCurrentSpeakingMessageId,
   setActiveMessageComponent,
+  handleTextToAvatarConversion,
 } from "../utils/chatUtils";
 
 import ChatButtonCard from "./ui/ChatButtonCard";
@@ -47,31 +48,31 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     }, [utterance]);
 
     // Add resetSpeakingState function
-    const resetSpeakingState = useCallback(() => {
-      setIsSpeaking(false);
-      setIsPaused(false);
-      setUtterance(null);
-    }, []);
+    // const resetSpeakingState = useCallback(() => {
+    //   setIsSpeaking(false);
+    //   setIsPaused(false);
+    //   setUtterance(null);
+    // }, []);
 
     // Register this component as active when mounted
-    React.useEffect(() => {
-      setActiveMessageComponent({ resetSpeakingState });
-      return () => {
-        if (getCurrentSpeakingMessageId() === messageId) {
-          cancelSpeaking();
-        }
-      };
-    }, [messageId, resetSpeakingState]);
+    // React.useEffect(() => {
+    //   setActiveMessageComponent({ resetSpeakingState });
+    //   return () => {
+    //     if (getCurrentSpeakingMessageId() === messageId) {
+    //       cancelSpeaking();
+    //     }
+    //   };
+    // }, [messageId, resetSpeakingState]);
 
-    React.useEffect(() => {
-      // Cleanup function for component unmount and page refresh
-      return () => {
-        if (utterance) {
-          window.speechSynthesis.cancel();
-          resetSpeakingState();
-        }
-      };
-    }, [utterance, resetSpeakingState]);
+    // React.useEffect(() => {
+    //   // Cleanup function for component unmount and page refresh
+    //   return () => {
+    //     if (utterance) {
+    //       window.speechSynthesis.cancel();
+    //       resetSpeakingState();
+    //     }
+    //   };
+    // }, [utterance, resetSpeakingState]);
 
     const handleVerificationComplete = useCallback(async () => {
       setShowAuthVideoCard(false);
@@ -216,42 +217,43 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     };
 
     const handleSpeak = () => {
-      const currentSpeakingId = getCurrentSpeakingMessageId();
+      handleTextToAvatarConversion(message.text);
+      // const currentSpeakingId = getCurrentSpeakingMessageId();
 
-      // If we're already speaking this message
-      if (currentSpeakingId === messageId && isSpeaking) {
-        if (isPaused) {
-          resumeSpeaking();
-          setIsPaused(false);
-        } else {
-          stopSpeaking();
-          setIsPaused(true);
-        }
-        return;
-      }
+      // // If we're already speaking this message
+      // if (currentSpeakingId === messageId && isSpeaking) {
+      //   if (isPaused) {
+      //     resumeSpeaking();
+      //     setIsPaused(false);
+      //   } else {
+      //     stopSpeaking();
+      //     setIsPaused(true);
+      //   }
+      //   return;
+      // }
 
-      // Reset states before starting new speech
-      setIsSpeaking(false);
-      setIsPaused(false);
+      // // Reset states before starting new speech
+      // setIsSpeaking(false);
+      // setIsPaused(false);
 
-      // Cancel any existing speech
-      cancelSpeaking();
+      // // Cancel any existing speech
+      // cancelSpeaking();
 
-      // Start new speech after a small delay to ensure previous speech is cancelled
-      setTimeout(() => {
-        const newUtterance = speakText(message.text, messageId);
+      // // Start new speech after a small delay to ensure previous speech is cancelled
+      // setTimeout(() => {
+      //   const newUtterance = speakText(message.text, messageId);
 
-        newUtterance.onend = () => {
-          resetSpeakingState();
-        };
+      //   newUtterance.onend = () => {
+      //     resetSpeakingState();
+      //   };
 
-        newUtterance.onerror = () => {
-          resetSpeakingState();
-        };
+      //   newUtterance.onerror = () => {
+      //     resetSpeakingState();
+      //   };
 
-        setIsSpeaking(true);
-        setUtterance(newUtterance);
-      }, 100);
+      //   setIsSpeaking(true);
+      //   setUtterance(newUtterance);
+      // }, 100);
     };
 
     console.log("Message data:", {
@@ -372,7 +374,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
         {!message.isUserMessage && (
           <div className="flex items-center gap-2 mt-2 text-gray-500 text-sm">
             <button
-              className={`p-1 rounded transition-colors hover:bg-gray-100 
+              className={`p-1 rounded transition-colors hover:bg-gray-100
                 ${message.like ? "text-green-600" : ""}`}
               onClick={() => onLike(message.history_id || "")}
               aria-label="Like message"
@@ -380,7 +382,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
               <ThumbsUp size={16} />
             </button>
             <button
-              className={`p-1 rounded transition-colors hover:bg-gray-100 
+              className={`p-1 rounded transition-colors hover:bg-gray-100
                 ${message.un_like ? "text-red-600" : ""}`}
               onClick={() => onDislike(message.history_id || "")}
               aria-label="Dislike message"
@@ -388,7 +390,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
               <ThumbsDown size={16} />
             </button>
             <button
-              className={`p-1 rounded transition-colors hover:bg-gray-100 
+              className={`p-1 rounded transition-colors hover:bg-gray-100
                 ${isSpeaking ? "text-blue-600" : ""}`}
               onClick={handleSpeak}
               aria-label={

@@ -5,6 +5,7 @@ declare global {
   interface Window {
     SpeechRecognition?: new () => SpeechRecognition;
     webkitSpeechRecognition?: new () => SpeechRecognition;
+    webkitAudioContext: typeof AudioContext;
   }
 }
 
@@ -251,6 +252,225 @@ export const startSpeechRecognition = (
 export const stopSpeechRecognition = () => {
   if (recognition) {
     recognition.stop();
+  }
+};
+
+// Function to play audio blob for testing
+export const playAudioBlob = async (audioBlob: Blob): Promise<void> => {
+  const url = URL.createObjectURL(audioBlob);
+  const audio = new Audio(url);
+
+  try {
+    await audio.play();
+    console.log("Playing audio for testing...");
+
+    // Clean up the URL after playing
+    audio.onended = () => {
+      URL.revokeObjectURL(url);
+      console.log("Audio playback finished");
+    };
+  } catch (error) {
+    console.error("Error playing audio:", error);
+    URL.revokeObjectURL(url);
+  }
+};
+
+export const textToSpeechBlob = async (text: string): Promise<Blob> => {
+  try {
+    console.log("Original input text:", text);
+
+    const cleanText = text
+      .replace(/<[^>]*>/g, "")
+      .replace(/\[(.*?)\]\(.*?\)/g, "$1")
+      .replace(/https?:\/\/\S+/g, "")
+      .replace(/[•\s]*Source[^\n]*(\n|$)/g, "\n")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    console.log("Cleaned text being sent to TTS API:", cleanText);
+
+    const requestBody = {
+      text: cleanText,
+      voice: "en-US",
+      rate: 1.0,
+      pitch: 1.0,
+      mens: true,
+      format: "wav", // Explicitly request WAV format
+    };
+
+    console.log("TTS API request payload:", requestBody);
+
+    // Call the deployed TTS API with specific parameters for better clarity
+    const response = await fetch("https://voice-api-va05.onrender.com/tts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "audio/wav", // Explicitly request WAV format
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("TTS API error response:", errorText);
+      throw new Error(`TTS API request failed: ${errorText}`);
+    }
+
+    // Get the audio blob with explicit WAV type
+    const audioBlob = await response.blob();
+    const properAudioBlob = new Blob([audioBlob], { type: "audio/wav" });
+
+    console.log("Received audio blob:", {
+      originalType: audioBlob.type,
+      newType: properAudioBlob.type,
+      size: properAudioBlob.size,
+    });
+
+    // Verify the audio blob is valid
+    if (properAudioBlob.size === 0) {
+      throw new Error("Received empty audio blob from TTS API");
+    }
+
+    // Play the audio for testing
+    await playAudioBlob(properAudioBlob);
+
+    return properAudioBlob;
+  } catch (error) {
+    console.error("Error with TTS API:", error);
+    throw error;
+  }
+};
+
+// Function to convert blob to base64
+const blobToBase64 = async (blob: Blob): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      const base64Data = base64String.split(",")[1];
+      resolve(base64Data);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+};
+
+// Function to send audio to Gooey.AI
+export const sendToGooeyAPI = async (
+  audioBlob: Blob
+): Promise<{ video_url: string }> => {
+  try {
+    console.log("Starting Gooey API request with audio blob:", {
+      type: audioBlob.type,
+      size: audioBlob.size,
+    });
+
+    // Convert audio blob to base64
+    const base64Audio = await blobToBase64(audioBlob);
+    console.log("Successfully converted audio to base64");
+
+    // Create the payload with base64 audio
+    const payload = {
+      functions: null,
+      variables: null,
+      input_face:
+        "https://testing-bart-1.s3.us-east-2.amazonaws.com/LipSync+Video.mp4",
+      face_padding_top: 0,
+      face_padding_bottom: 18,
+      face_padding_left: 0,
+      face_padding_right: 0,
+      sadtalker_settings: null,
+      selected_model: "Wav2Lip",
+      input_audio_base64: base64Audio,
+      input_audio_format: audioBlob.type,
+    };
+
+    console.log("Sending request to Gooey API");
+
+    const gooeyResponse = await fetch(
+      "https://api.gooey.ai/v3/Lipsync/async/",
+      {
+        method: "POST",
+        headers: {
+          Authorization:
+            "bearer sk-9P7tzGYH4qOPymfuEsuDxFMDdUhqpKNa4nC7dQXIXusCiWJJ",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    if (!gooeyResponse.ok) {
+      const errorData = await gooeyResponse.json();
+      console.error("Gooey API error:", errorData);
+      throw new Error(`Gooey API request failed: ${JSON.stringify(errorData)}`);
+    }
+
+    // Get the status URL from the response headers
+    const statusUrl = gooeyResponse.headers.get("Location");
+    if (!statusUrl) {
+      throw new Error("No status URL returned from Gooey API");
+    }
+
+    console.log("Status URL for checking progress:", statusUrl);
+
+    // Poll for completion
+    while (true) {
+      console.log("Checking processing status...");
+      const statusResponse = await fetch(statusUrl, {
+        headers: {
+          Authorization:
+            "bearer sk-9P7tzGYH4qOPymfuEsuDxFMDdUhqpKNa4nC7dQXIXusCiWJJ",
+        },
+      });
+
+      if (!statusResponse.ok) {
+        const errorData = await statusResponse.json();
+        console.error("Status check error:", errorData);
+        throw new Error(
+          `Status check failed with status: ${
+            statusResponse.status
+          }. Error: ${JSON.stringify(errorData)}`
+        );
+      }
+
+      const result = await statusResponse.json();
+      console.log("Processing status:", result.status);
+
+      if (result.status === "completed") {
+        console.log("Video generation completed successfully");
+        return { video_url: result.output.output_video };
+      } else if (result.status === "failed") {
+        console.error("Full error details:", result);
+        throw new Error(`Lip-syncing failed: ${JSON.stringify(result)}`);
+      }
+
+      // Wait 3 seconds before next check
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+    }
+  } catch (error) {
+    console.error("Gooey API error:", error);
+    throw error;
+  }
+};
+
+// Main function to handle text to avatar conversion
+export const handleTextToAvatarConversion = async (
+  text: string
+): Promise<string> => {
+  try {
+    // 1. Create audio from text and get it as a blob
+    const audioBlob = await textToSpeechBlob(text);
+    console.log("Audio blob created:", audioBlob);
+
+    // 2. Send directly to Gooey.AI
+    const result = await sendToGooeyAPI(audioBlob);
+    console.log("Gooey API response:", result);
+
+    return result.video_url;
+  } catch (error) {
+    console.error("Avatar conversion failed:", error);
+    throw error;
   }
 };
 

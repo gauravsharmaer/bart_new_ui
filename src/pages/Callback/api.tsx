@@ -18,7 +18,7 @@ export const CallbackApiService = {
       const jsonResponse = await response.json();
 
       if (!response.ok) {
-        // toast.error(jsonResponse.message || "Callback failed");
+        // toast.error(jsonResponse.message || "Callback failed")
         throw new Error(jsonResponse.message || "Callback failed");
       }
 
