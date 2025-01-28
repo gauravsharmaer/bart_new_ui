@@ -85,7 +85,7 @@ export function SearchSection() {
               variant="outline"
               size="sm"
               className="rounded-full bg-[#F1F1F1] font-passenger font-normal text-[#171717] opacity-60 border  flex items-center gap-2 whitespace-nowrap"
-              onClick={() => handleTemplateClick("Password Management")}
+              onClick={() => handleTemplateClick("Hey bart reset my password")}
             >
               <Password weight="fill" className="h-4 w-4 text-blue-500" />
               Password Management
@@ -94,7 +94,9 @@ export function SearchSection() {
               variant="outline"
               size="sm"
               className="rounded-full bg-[#F1F1F1] font-passenger font-normal text-[#171717] opacity-60  border flex items-center gap-2 whitespace-nowrap"
-              onClick={() => handleTemplateClick("Equipment Request")}
+              onClick={() =>
+                handleTemplateClick("Hey bart I need a new equipment")
+              }
             >
               <Desktop weight="fill" className="h-4 w-4 text-purple-500" />
               Equipment Request
@@ -103,7 +105,9 @@ export function SearchSection() {
               variant="outline"
               size="sm"
               className="rounded-full bg-[#F1F1F1] font-passenger font-normal text-[#171717] opacity-60 border flex items-center gap-2 whitespace-nowrap"
-              onClick={() => handleTemplateClick("Software Support")}
+              onClick={() =>
+                handleTemplateClick("Hey bart I need software support")
+              }
             >
               <Wrench weight="fill" className="h-4 w-4 text-green-500" />
               Software Support
@@ -112,7 +116,9 @@ export function SearchSection() {
               variant="outline"
               size="sm"
               className="rounded-full bg-[#F1F1F1] font-passenger font-normal text-[#171717] opacity-60 border flex items-center gap-2 whitespace-nowrap"
-              onClick={() => handleTemplateClick("Printer Set-Up")}
+              onClick={() =>
+                handleTemplateClick("Hey bart I need to set-up my printer")
+              }
             >
               <Printer weight="fill" className="h-4 w-4 text-red-500" />
               Printer Set-Up
@@ -121,7 +127,9 @@ export function SearchSection() {
               variant="outline"
               size="sm"
               className="rounded-full bg-[#F1F1F1] font-passenger font-normal text-[#171717] opacity-60 border flex items-center gap-2 whitespace-nowrap"
-              onClick={() => handleTemplateClick("IT Security")}
+              onClick={() =>
+                handleTemplateClick("Hey bart I need IT security help")
+              }
             >
               <Shield weight="fill" className="h-4 w-4 text-yellow-500" />
               IT Security

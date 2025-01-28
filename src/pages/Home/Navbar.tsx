@@ -1,12 +1,12 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MagnifyingGlass } from "@phosphor-icons/react";
+import { MagnifyingGlass, FileDoc } from "@phosphor-icons/react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Notification from "./Notification";
 import Profile from "./Profile";
 import genie from "../../assets/Genie.svg";
-import invite from "../../assets/invite.svg";
+// import invite from "../../assets/invite.svg";
 import notificationicon from "../../assets/notification-bell.svg";
 import menubar from "../../assets/menu-bar.svg";
 import { BackendBaseUrl } from "../../config";
@@ -206,13 +206,21 @@ export function SiteHeader() {
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <Button
+            {/* <Button
               variant="outline"
               size="sm"
               className="flex items-center gap-2 border border-[#EDEDED] bg-[#FAFAFA] font-passenger font-medium text-[#33343C]"
             >
               <img src={invite} alt="Invite" className="h-4 w-4" />
               Invite team-mate
+            </Button> */}
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2 border border-[#EDEDED] bg-[#FAFAFA] font-passenger font-medium text-[#33343C]"
+            >
+              <FileDoc size={16} className="h-4 w-4" />
+              Chat with Docs
             </Button>
             <Button
               variant="ghost"
