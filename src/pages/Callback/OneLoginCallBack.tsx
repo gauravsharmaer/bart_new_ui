@@ -55,6 +55,7 @@ const OneLoginCallBack = () => {
           "isFaceVerified",
           response.is_facial_verified.toString()
         );
+        localStorage.setItem("image", response.imagePath);
 
         // 6. Clean up
         sessionStorage.removeItem("auth_state");

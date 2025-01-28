@@ -6,13 +6,8 @@ import { askBart, verifyOTP } from "../Api/CommonApi";
 import OtpInputCard from "./ui/OtpInputCard";
 // import { speakText, stopSpeaking, createTimestamp } from "../utils/chatUtils";
 import {
-  speakText,
-  stopSpeaking,
   createTimestamp,
-  resumeSpeaking,
-  cancelSpeaking,
-  getCurrentSpeakingMessageId,
-  setActiveMessageComponent,
+  handleTextToAvatarConversion,
 } from "../utils/chatUtils";
 
 import ChatButtonCard from "./ui/ChatButtonCard";
@@ -21,7 +16,7 @@ import TicketCard from "./ui/ticketcard";
 import { ChatMessageProps } from "../props/Props";
 import { Message } from "../Interface/Interface";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
-import { SpeakerHigh, SpeakerX } from "@phosphor-icons/react";
+import { SpeakerHigh } from "@phosphor-icons/react";
 import TypingEffect from "./TypingEffect";
 import createMarkup from "../utils/chatUtils";
 
@@ -30,48 +25,50 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     const [showAuthVideoCard, setShowAuthVideoCard] = useState(false);
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
     const [clickedButton, setClickedButton] = useState<string | null>(null);
-    const [isSpeaking, setIsSpeaking] = useState(false);
-    const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(
-      null
-    );
-    const [isPaused, setIsPaused] = useState(false);
-    const messageId = message.history_id || message.timestamp;
+    // const [isSpeaking, setIsSpeaking] = useState(false);
+    // const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(
+    //   // null
+    // );
+    // const [isPaused, setIsPaused] = useState(false);
+    // const messageId = message.history_id || message.timestamp;
+    const [videoUrl, setVideoUrl] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     // Clean up speech synthesis when component unmounts
-    React.useEffect(() => {
-      return () => {
-        if (utterance) {
-          window.speechSynthesis.cancel();
-        }
-      };
-    }, [utterance]);
+    // React.useEffect(() => {
+    //   return () => {
+    //     if (utterance) {
+    //       window.speechSynthesis.cancel();
+    //     }
+    //   };
+    // }, [utterance]);
 
     // Add resetSpeakingState function
-    const resetSpeakingState = useCallback(() => {
-      setIsSpeaking(false);
-      setIsPaused(false);
-      setUtterance(null);
-    }, []);
+    // const resetSpeakingState = useCallback(() => {
+    //   setIsSpeaking(false);
+    //   setIsPaused(false);
+    //   setUtterance(null);
+    // }, []);
 
     // Register this component as active when mounted
-    React.useEffect(() => {
-      setActiveMessageComponent({ resetSpeakingState });
-      return () => {
-        if (getCurrentSpeakingMessageId() === messageId) {
-          cancelSpeaking();
-        }
-      };
-    }, [messageId, resetSpeakingState]);
+    // React.useEffect(() => {
+    //   setActiveMessageComponent({ resetSpeakingState });
+    //   return () => {
+    //     if (getCurrentSpeakingMessageId() === messageId) {
+    //       cancelSpeaking();
+    //     }
+    //   };
+    // }, [messageId, resetSpeakingState]);
 
-    React.useEffect(() => {
-      // Cleanup function for component unmount and page refresh
-      return () => {
-        if (utterance) {
-          window.speechSynthesis.cancel();
-          resetSpeakingState();
-        }
-      };
-    }, [utterance, resetSpeakingState]);
+    // React.useEffect(() => {
+    //   // Cleanup function for component unmount and page refresh
+    //   return () => {
+    //     if (utterance) {
+    //       window.speechSynthesis.cancel();
+    //       resetSpeakingState();
+    //     }
+    //   };
+    // }, [utterance, resetSpeakingState]);
 
     const handleVerificationComplete = useCallback(async () => {
       setShowAuthVideoCard(false);
@@ -215,43 +212,19 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
       }
     };
 
-    const handleSpeak = () => {
-      const currentSpeakingId = getCurrentSpeakingMessageId();
-
-      // If we're already speaking this message
-      if (currentSpeakingId === messageId && isSpeaking) {
-        if (isPaused) {
-          resumeSpeaking();
-          setIsPaused(false);
-        } else {
-          stopSpeaking();
-          setIsPaused(true);
+    const handleSpeak = async () => {
+      try {
+        setIsLoading(true);
+        const url = await handleTextToAvatarConversion(message.text);
+        console.log("Video URL:", url);
+        if (url) {
+          setVideoUrl(url);
         }
-        return;
+      } catch (error) {
+        console.error("Error converting text to avatar:", error);
+      } finally {
+        setIsLoading(false);
       }
-
-      // Reset states before starting new speech
-      setIsSpeaking(false);
-      setIsPaused(false);
-
-      // Cancel any existing speech
-      cancelSpeaking();
-
-      // Start new speech after a small delay to ensure previous speech is cancelled
-      setTimeout(() => {
-        const newUtterance = speakText(message.text, messageId);
-
-        newUtterance.onend = () => {
-          resetSpeakingState();
-        };
-
-        newUtterance.onerror = () => {
-          resetSpeakingState();
-        };
-
-        setIsSpeaking(true);
-        setUtterance(newUtterance);
-      }, 100);
     };
 
     console.log("Message data:", {
@@ -370,9 +343,9 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
         )}
 
         {!message.isUserMessage && (
-          <div className="flex items-center gap-2 mt-2 text-gray-500 text-sm">
+          <div className="flex items-center gap-2 text-gray-500 text-sm">
             <button
-              className={`p-1 rounded transition-colors hover:bg-gray-100 
+              className={`p-1 rounded transition-colors hover:bg-gray-100
                 ${message.like ? "text-green-600" : ""}`}
               onClick={() => onLike(message.history_id || "")}
               aria-label="Like message"
@@ -380,7 +353,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
               <ThumbsUp size={16} />
             </button>
             <button
-              className={`p-1 rounded transition-colors hover:bg-gray-100 
+              className={`p-1 rounded transition-colors hover:bg-gray-100
                 ${message.un_like ? "text-red-600" : ""}`}
               onClick={() => onDislike(message.history_id || "")}
               aria-label="Dislike message"
@@ -388,23 +361,64 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
               <ThumbsDown size={16} />
             </button>
             <button
-              className={`p-1 rounded transition-colors hover:bg-gray-100 
-                ${isSpeaking ? "text-blue-600" : ""}`}
+              className={`p-1 rounded transition-colors hover:bg-gray-100
+               `}
               onClick={handleSpeak}
-              aria-label={
-                isSpeaking
-                  ? isPaused
-                    ? "Resume speaking"
-                    : "Pause speaking"
-                  : "Speak message"
-              }
+              // aria-label={
+              //   isSpeaking
+              //     ? isPaused
+              //       ? "Resume speaking"
+              //       : "Pause speaking"
+              //     : "Speak message"
+              // }
             >
-              {isSpeaking && !isPaused ? (
+              <SpeakerHigh size={16} />
+              {/* {isSpeaking && !isPaused ? (
                 <SpeakerX size={16} weight="fill" />
               ) : (
                 <SpeakerHigh size={16} />
-              )}
+              )} */}
             </button>
+          </div>
+        )}
+
+        {isLoading && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+            <div className="relative w-[500px] bg-[#2C2C2E] rounded-3xl p-4">
+              <div className="bg-[#2C2C2E] rounded-lg p-6">
+                <div className="flex flex-col items-center">
+                  <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+                  <p className="text-white mt-4">Generating avatar video...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {!isLoading && videoUrl && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+            <div className="relative w-[500px] bg-[#2C2C2E] rounded-3xl p-4">
+              <button
+                onClick={() => setVideoUrl(null)}
+                className="absolute top-1 right-4 text-xl text-white hover:text-gray-400"
+                aria-label="Close modal"
+              >
+                x
+              </button>
+              <div className="bg-[#2C2C2E] rounded-lg p-6">
+                <div className="flex flex-col items-center">
+                  <video
+                    src={videoUrl}
+                    controls
+                    autoPlay
+                    className="rounded-lg w-full"
+                    onEnded={() => setVideoUrl(null)}
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>

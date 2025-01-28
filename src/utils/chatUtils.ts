@@ -1,10 +1,12 @@
 import DOMPurify from "dompurify";
+import { REACT_APP_GOOEY_API_KEY, REACT_APP_GOOEY_API_URL } from "../config";
 
 // Add type declarations at the top of the file
 declare global {
   interface Window {
     SpeechRecognition?: new () => SpeechRecognition;
     webkitSpeechRecognition?: new () => SpeechRecognition;
+    webkitAudioContext: typeof AudioContext;
   }
 }
 
@@ -253,5 +255,90 @@ export const stopSpeechRecognition = () => {
     recognition.stop();
   }
 };
+
+// Function to play audio blob for testing
+// export const playAudioBlob = async (audioBlob: Blob): Promise<void> => {
+//   const url = URL.createObjectURL(audioBlob);
+//   const audio = new Audio(url);
+
+//   try {
+//     await audio.play();
+//     console.log("Playing audio for testing...");
+
+//     // Clean up the URL after playing
+//     audio.onended = () => {
+//       URL.revokeObjectURL(url);
+//       console.log("Audio playback finished");
+//     };
+//   } catch (error) {
+//     console.error("Error playing audio:", error);
+//     URL.revokeObjectURL(url);
+//   }
+// };
+
+export const handleTextToAvatarConversion = async (
+  text: string
+): Promise<string> => {
+  try {
+    // Clean the text but preserve natural speech patterns
+    const cleanText = text
+      .replace(/<[^>]*>/g, "")
+      .replace(/\[(.*?)\]\(.*?\)/g, "$1")
+      .replace(/https?:\/\/\S+/g, "")
+      .trim();
+
+    console.log("Cleaned text:", cleanText);
+
+    // Create the payload for Gooey API
+    const payload = {
+      functions: null,
+      variables: null,
+      text_prompt: cleanText,
+      input_face:
+        "https://testing-bart-1.s3.us-east-2.amazonaws.com/LipSync+Video.mp4",
+      face_padding_top: 0,
+      face_padding_bottom: 18,
+      face_padding_left: 0,
+      face_padding_right: 0,
+      sadtalker_settings: null,
+      selected_model: "Wav2Lip",
+      text_to_speech: true,
+      tts_settings: {
+        voice_id: "en-US-Neural2-F",
+        rate: 1.0,
+        pitch: 1.0,
+        volume: 1.0,
+      },
+    };
+
+    console.log("Sending request to Gooey API with payload:", payload);
+
+    // Make the API call
+    const response = await fetch(REACT_APP_GOOEY_API_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `bearer ${REACT_APP_GOOEY_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json();
+    console.log("API Response:", result);
+
+    if (result.output && result.output.output_video) {
+      return result.output.output_video;
+    } else {
+      throw new Error("No video URL in response");
+    }
+  } catch (error) {
+    console.error("Avatar conversion failed:", error);
+    throw error;
+  }
+};
+
+// Remove unused functions
+export const textToSpeechBlob = undefined;
+export const sendToGooeyAPI = undefined;
 
 export default createMarkup;

@@ -5,6 +5,7 @@ export interface CallbackInterface {
   name: string;
   faceDescriptor: [];
   is_facial_verified: boolean;
+  imagePath: string;
 }
 
 export interface ApiError {
