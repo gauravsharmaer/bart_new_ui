@@ -25,14 +25,14 @@ const PasswordManagement = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gray-100">
+    <div className="h-screen flex flex-col bg-gray-100 dark:bg-[#1a1b1e] transition-colors duration-200">
       {/* Header Section */}
       <SiteHeader />
 
       {/* Main Layout with Sidebar and Content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <div className="w-[280px] h-full bg-white border-r border-[#ddd] flex-shrink-0">
+        <div className="w-[280px] h-full bg-white dark:bg-[#2c2d32] border-r border-[#ddd] dark:border-[#3a3b40] flex-shrink-0 transition-colors duration-200">
           <Sidebar
             selectedTemplate={selectedTemplate}
             onTemplateSelect={setSelectedTemplate}

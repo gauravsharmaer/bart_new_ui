@@ -7,6 +7,7 @@ import {
   VerifyOTPResponse,
   chatHistory,
   ImageUploadResponse,
+  ChatWithDocsResponse
 } from "../Interface/Interface";
 
 import { NODE_API_URL } from "../config";
@@ -348,3 +349,60 @@ export const searchChatHistory = async (
       : new Error("An unexpected error occurred while searching chat history");
   }
 };
+
+
+
+export const chatWithDocs = async (
+  file: File,
+  userId: string,
+  question: string,
+  chatId?: string
+): Promise<ChatWithDocsResponse> => {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('user_id', userId);
+    formData.append('question', question);
+    if (chatId) {
+      formData.append('chat_id', chatId);
+    }
+
+    const response = await fetch(
+      'https://bart-api-bd05237bdea5.herokuapp.com/chat_with_docs',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+        },
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw {
+        message: errorData.message || 'Chat with docs request failed',
+        status: response.status,
+      } as APIError;
+    }
+
+    return await response.json() as ChatWithDocsResponse;
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      throw new Error('Invalid response format from server');
+    }
+
+    if ((error as APIError).status) {
+      const apiError = error as APIError;
+      throw new Error(
+        `Chat with docs request failed (${apiError.status}): ${apiError.message}`
+      );
+    }
+
+    throw new Error(
+      'An unexpected error occurred while processing your document chat'
+    );
+  }
+};
+
+

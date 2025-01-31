@@ -162,3 +162,40 @@ export interface ImageUploadResponse {
   userId: string;
   imagePath: string;
 }
+
+
+
+
+export interface ChatWithDocsResponse {
+  status: string;
+  message: string;
+  file_path: string;
+  file_name: string;
+  chat_id: string;
+  question: string;
+  answer: string;
+  display_settings: {
+    vertical_bar: boolean;
+    button_display: boolean;
+    ticket: boolean;
+    options: {
+      ticket_options: {
+        name: string | undefined;
+        description: string | undefined;
+        ticket_id: string | undefined;
+        assignee_name: string | undefined;
+        link: string | undefined;
+      };
+    };
+    message_history: {
+      question: string;
+      answer: string;
+      sources: string[];
+      history_id: string;
+      like: boolean;
+      un_like: boolean;
+      file_name: string;
+      file_path: string;
+    }[];
+  };
+}

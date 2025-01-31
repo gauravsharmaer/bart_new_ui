@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import VerifyAuthCapture from "./verifyAuthCapture";
 import bgHome from "../../assets/bg_home.svg"; // Import your SVG
 import ImageUploadPopup from "../../components/ui/ImageUploadPopup";
+
 const Home = () => {
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
   const [showImageUploadPopup, setShowImageUploadPopup] = useState(false);
@@ -22,6 +23,7 @@ const Home = () => {
 
   return (
     <div
+      className="dark:bg-[#1a1b1e] transition-colors duration-200"
       style={{
         backgroundImage: `url(${bgHome})`,
         backgroundSize: "cover",
@@ -49,18 +51,18 @@ const Home = () => {
       {showPopup &&
         localStorage.getItem("isFaceVerified") === "false" &&
         !showConfirmationPopup && (
-          <div className="fixed inset-0 bg-black/70  flex items-center justify-center z-50">
-            <div className="relative w-[500px] bg-[#2C2C2E] rounded-3xl p-4">
+          <div className="fixed inset-0 bg-black/70 dark:bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm">
+            <div className="relative w-[500px] bg-white dark:bg-[#2c2d32] rounded-3xl p-4 shadow-lg dark:shadow-[#1a1b1e]">
               {" "}
               {/* Added background and rounded corners */}
               <button
                 onClick={() => setShowPopup(false)}
-                className="absolute top-1 right-4 text-xl text-white hover:text-gray-400"
+                className="absolute top-1 right-4 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200"
                 aria-label="Close modal"
               >
                 x
               </button>
-              <div className="bg-[#2C2C2E] rounded-lg p-6">
+              <div className="rounded-lg p-6">
                 <div className="flex flex-col items-center">
                   {/* <h2 className="text-white/90 text-2xl font-normal mb-3">
           Verify Your Authentication

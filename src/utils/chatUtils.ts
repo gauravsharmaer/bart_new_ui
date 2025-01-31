@@ -300,6 +300,8 @@ export const handleTextToAvatarConversion = async (
       face_padding_bottom: 18,
       face_padding_left: 0,
       face_padding_right: 0,
+      
+
       sadtalker_settings: null,
       selected_model: "Wav2Lip",
       text_to_speech: true,

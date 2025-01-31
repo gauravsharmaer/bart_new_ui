@@ -1,12 +1,18 @@
 import React, { useEffect, useState, useRef } from "react";
-import { askBart, getHistory, likeChat, unlikeChat } from "../Api/CommonApi";
+import {
+  askBart,
+  getHistory,
+  likeChat,
+  unlikeChat,
+  getUserChats,
+} from "../Api/CommonApi";
 import ChatMessage from "./ChatMessage";
 import DotLoader from "../utils/DotLoader";
 import HistorySideBar from "./HistorySideBar";
 import ChatLogo from "../assets/Genie.svg";
 import ChatInputBar from "./ChatInputBar";
 import BackGround from "../assets/bg_frame.svg";
-import { Message } from "../Interface/Interface";
+import { Message, ChatHistory } from "../Interface/Interface";
 import { ChatUiProps } from "../props/Props";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../redux/store";
@@ -19,6 +25,10 @@ const ChatUi = ({ initialMessage }: ChatUiProps) => {
   const [loading, setLoading] = useState(false);
   const [chatId, setChatId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [chatHistory, setChatHistory] = useState<
+    (ChatHistory & { status?: string; timestamp?: string })[]
+  >([]);
+  const [isHistoryLoading, setIsHistoryLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isInitializedRef = useRef(false);
   const { isNewChat, selectedChatId } = useSelector(
@@ -67,6 +77,52 @@ const ChatUi = ({ initialMessage }: ChatUiProps) => {
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const fetchChatHistory = async () => {
+    try {
+      const data = await getUserChats();
+
+      // Add "days ago" timestamps with controlled repetition
+      let dayCounter = 1;
+      let repetitionCount = Math.floor(Math.random() * 3) + 2;
+      let currentRepetition = 0;
+
+      const updatedData = data.map((chat, index) => {
+        let timestamp = `${dayCounter} day${dayCounter > 1 ? "s" : ""} ago`;
+
+        if (currentRepetition >= repetitionCount) {
+          dayCounter++;
+          currentRepetition = 0;
+          repetitionCount = Math.floor(Math.random() * 3) + 2;
+          timestamp = `${dayCounter} day${dayCounter > 1 ? "s" : ""} ago`;
+        }
+
+        currentRepetition++;
+
+        if (index === 0) {
+          return {
+            ...chat,
+            status: "",
+          };
+        } else if (chat.name.startsWith("Hey") || chat.name.includes("h")) {
+          return {
+            ...chat,
+            status: "Resolved",
+          };
+        } else if ([1, 2, 5, 6].includes(index)) {
+          return { ...chat, status: "Ticket raised" };
+        } else {
+          return { ...chat, timestamp };
+        }
+      });
+
+      setChatHistory(updatedData);
+      setIsHistoryLoading(false);
+    } catch (error) {
+      console.error("Error fetching chat history:", error);
+      setIsHistoryLoading(false);
+    }
   };
 
   // Add effect for auto-scrolling
@@ -161,7 +217,7 @@ const ChatUi = ({ initialMessage }: ChatUiProps) => {
       .finally(() => {
         setLoading(false);
       });
-  }, [initialMessage]);
+  }, [initialMessage, dispatch]);
 
   const handleGetChat = async (chatId: string) => {
     try {
@@ -210,6 +266,11 @@ const ChatUi = ({ initialMessage }: ChatUiProps) => {
     }
   }, [selectedChatId]);
 
+  // Add new useEffect for fetching chat history
+  useEffect(() => {
+    fetchChatHistory();
+  }, []);
+
   return (
     <div className="absolute inset-x-0 bottom-0 top-10">
       {/* Main container */}
@@ -220,6 +281,9 @@ const ChatUi = ({ initialMessage }: ChatUiProps) => {
             onChatSelect={handleGetChat}
             isSidebarOpen={isSidebarOpen}
             onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+            chatHistory={chatHistory}
+            isLoading={isHistoryLoading}
+            setChatHistory={setChatHistory}
           />
         </div>
 
@@ -290,6 +354,11 @@ const ChatUi = ({ initialMessage }: ChatUiProps) => {
                           user_id: localStorage.getItem("user_id") || "",
                           chat_id: localStorage.getItem("chat_id") || "",
                         });
+
+                        // Check if this is a new chat before setting new chat_id
+                        if (!localStorage.getItem("chat_id")) {
+                          fetchChatHistory();
+                        }
 
                         localStorage.setItem("chat_id", result.chat_id);
                         const botMessage = {
