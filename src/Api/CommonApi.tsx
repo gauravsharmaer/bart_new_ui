@@ -350,7 +350,54 @@ export const searchChatHistory = async (
   }
 };
 
+export interface GeneralChatRequest {
+  question: string;
+  question_type: string;
+  user_id: string;
+  chat_id?: string;
+}
 
+export const generalChat = async (data: GeneralChatRequest): Promise<AskResponse> => {
+  try {
+    const response = await fetch(
+      `https://bart-api-bd05237bdea5.herokuapp.com/general_chat`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      throw {
+        message: responseData.message || "General chat request failed",
+        status: response.status,
+      } as APIError;
+    }
+
+    return responseData as AskResponse;
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      throw new Error("Invalid response format from server");
+    }
+
+    if ((error as APIError).status) {
+      const apiError = error as APIError;
+      throw new Error(
+        `General chat request failed (${apiError.status}): ${apiError.message}`
+      );
+    }
+
+    throw new Error(
+      "An unexpected error occurred while processing your question"
+    );
+  }
+};
 
 export const chatWithDocs = async (
   file: File,
@@ -406,3 +453,28 @@ export const chatWithDocs = async (
 };
 
 
+
+
+export const getPdfChatHistory = async (userId: string): Promise<chatHistory[]> => {
+  try {
+    const response = await fetch(
+      `https://bart-api-bd05237bdea5.herokuapp.com/doc_chats/${userId}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch PDF chat history");
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error instanceof Error
+      ? error
+      : new Error("An unexpected error occurred while fetching PDF chat history");
+  }
+};
