@@ -11,6 +11,8 @@ import VoiceChatCard from "../components/VoiceChatCard";
 const ChatInputBar: React.FC<ChatInputBarProps> = ({
   onSubmit,
   loading = false,
+  showUploadButton = true,
+  onUploadClick,
 }) => {
   const [inputMessage, setInputMessage] = useState("");
   const [isListening, setIsListening] = useState(false);

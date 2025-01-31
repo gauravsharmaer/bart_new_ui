@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MagnifyingGlass, FileDoc } from "@phosphor-icons/react";
+import { MagnifyingGlass} from "@phosphor-icons/react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -19,6 +19,7 @@ import {
 } from "../../redux/chatSlice";
 import { searchChatHistory } from "../../Api/CommonApi";
 import { chatHistory } from "../../Interface/Interface";
+import DocIcon from "../../assets/document.svg";
 
 export function SiteHeader() {
   const [isNotificationOpen, setNotificationOpen] = useState(false);
@@ -83,7 +84,7 @@ export function SiteHeader() {
     setShowSuggestions(false);
     setSearchQuery("");
     dispatch(setSelectedChatId(chatId));
-    // navigate(`/chat/${chatId}`);
+    // navigate(/chat/${chatId});
   };
 
   // const getInitials = (name: string): string => {
@@ -217,9 +218,12 @@ export function SiteHeader() {
             <Button
               variant="outline"
               size="sm"
-              className="flex items-center gap-2 border border-[#EDEDED] bg-[#FAFAFA] font-passenger font-medium text-[#33343C]"
+              className={`flex items-center gap-2 border border-[#EDEDED] bg-[#FAFAFA] font-passenger font-medium text-[#33343C] ${
+                location.pathname === "/chat-with-pdf" ? "border-[#EF613C] bg-[#EF613C1A]" : ""
+              }`}
+              onClick={() => navigate("/chat-with-pdf")}
             >
-              <FileDoc size={16} className="h-4 w-4" />
+              <img src={DocIcon} alt="Document Icon" className="h-4 w-4" /> {/* Use the imported SVG */}
               Chat with Docs
             </Button>
             <Button
@@ -239,7 +243,7 @@ export function SiteHeader() {
               {/* <img
                 src={
                   localStorage.getItem("image") != "undefined"
-                    ? `${BackendBaseUrl}/${localStorage.getItem("image")}`
+                    ? ${BackendBaseUrl}/${localStorage.getItem("image")}
                     : profileicon
                 }
                 alt="Profile"
