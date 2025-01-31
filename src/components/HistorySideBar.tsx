@@ -8,7 +8,7 @@ import { ChatHistory } from "../Interface/Interface";
 import { HistorySideBarProps } from "../props/Props";
 // import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Tooltip } from "@mui/material";
-import { Sidebar, SquareHalf } from "phosphor-react";
+import SidebarIcon from "../assets/chat.svg"
 
 const HistorySideBar: React.FC<HistorySideBarProps> = ({
   onChatSelect,
@@ -156,11 +156,19 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({
           >
             {isSidebarOpen ? (
               <Tooltip title="Collapse Sidebar">
-                <Sidebar size={20} weight="bold" />
+                <img
+                  src={SidebarIcon}
+                  alt="Collapse Sidebar"
+                  className="w-18px h-18px"
+                />
               </Tooltip>
             ) : (
               <Tooltip title="Expand Sidebar">
-                <SquareHalf size={20} weight="bold" />
+                  <img
+                  src={SidebarIcon}
+                  alt="Expand Sidebar"
+                  className="w-18px h-18px"
+                />
               </Tooltip>
             )}
           </button>
