@@ -7,7 +7,8 @@ import {
   VerifyOTPResponse,
   chatHistory,
   ImageUploadResponse,
-  ChatWithDocsResponse
+  ChatWithDocsResponse,
+  docChatHistory
 } from "../Interface/Interface";
 
 import { NODE_API_URL } from "../config";
@@ -452,10 +453,7 @@ export const chatWithDocs = async (
   }
 };
 
-
-
-
-export const getPdfChatHistory = async (userId: string): Promise<chatHistory[]> => {
+export const getPdfChatHistory = async (userId: string): Promise<docChatHistory[]> => {
   try {
     const response = await fetch(
       `https://bart-api-bd05237bdea5.herokuapp.com/doc_chats/${userId}`,
@@ -467,14 +465,30 @@ export const getPdfChatHistory = async (userId: string): Promise<chatHistory[]> 
       }
     );
 
+    const responseData = await response.json();
+
     if (!response.ok) {
-      throw new Error("Failed to fetch PDF chat history");
+      throw {
+        message: responseData.message || "Failed to fetch PDF chat history",
+        status: response.status,
+      } as APIError;
     }
 
-    return await response.json();
+    return responseData as docChatHistory[];
   } catch (error) {
-    throw error instanceof Error
-      ? error
-      : new Error("An unexpected error occurred while fetching PDF chat history");
+    if (error instanceof SyntaxError) {
+      throw new Error("Invalid response format from server");
+    }
+
+    if ((error as APIError).status) {
+      const apiError = error as APIError;
+      throw new Error(
+        `PDF chat history fetch failed (${apiError.status}): ${apiError.message}`
+      );
+    }
+
+    throw new Error(
+      "An unexpected error occurred while fetching PDF chat history"
+    );
   }
 };

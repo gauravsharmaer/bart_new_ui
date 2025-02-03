@@ -1,7 +1,7 @@
 // Tickets.tsx
 import { Search } from "lucide-react";
 import { Button } from "../../components/ui/button";
-import { SiteHeader } from "../Home/Navbar";
+import { SiteHeader } from "../../components/Navbar";
 import { Table } from "./Table";
 import { useState } from "react";
 import { CaretDown } from "phosphor-react";

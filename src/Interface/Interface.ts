@@ -157,6 +157,14 @@ export interface chatHistory {
   user_id: string;
 }
 
+export interface docChatHistory {
+  id: string;
+  name: string;
+  user_id: string;
+  file_path: string;
+
+}
+
 export interface ImageUploadResponse {
   message: string;
   userId: string;

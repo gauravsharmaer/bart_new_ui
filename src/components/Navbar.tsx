@@ -1,25 +1,26 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { MagnifyingGlass } from "@phosphor-icons/react";
-import { Button } from "../../components/ui/button";
-import DocIcon from "../../assets/document.svg";
-import { Input } from "../../components/ui/input";
+import { Button } from "./ui/button";
+import DocIcon from "../assets/document.svg";
+import { Input } from "./ui/input";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import Notification from "./Notification";
-import Profile from "./Profile";
-import genie from "../../assets/Genie.svg";
-// import invite from "../../assets/invite.svg";
-import notificationicon from "../../assets/notification-bell.svg";
-import menubar from "../../assets/menu-bar.svg";
-import { BackendBaseUrl } from "../../config";
-import { getInitials } from "../../utils/NameInitials";
+import Notification from "../pages/Home/Notification";
+import Profile from "../pages/Home/Profile";
+import genie from "../assets/Genie.svg";
+import notificationicon from "../assets/notification-bell.svg";
+
+import menubar from "../assets/menu-bar.svg";
+import { BackendBaseUrl } from "../config";
+import { getInitials } from "../utils/NameInitials";
 import { useDispatch } from "react-redux";
+
 import {
   resetChat,
   startNewChat,
   setSelectedChatId,
-} from "../../redux/chatSlice";
-import { searchChatHistory } from "../../Api/CommonApi";
-import { chatHistory } from "../../Interface/Interface";
+} from "../redux/chatSlice";
+import { searchChatHistory } from "../Api/CommonApi";
+import { chatHistory } from "../Interface/Interface";
 
 export function SiteHeader() {
   const [isNotificationOpen, setNotificationOpen] = useState(false);
@@ -58,7 +59,7 @@ export function SiteHeader() {
 
       return () => clearTimeout(timeoutId);
     },
-    [] // Empty dependency array since handleSearch is stable
+    [] 
   );
 
   // Effect to handle debounced search
@@ -87,15 +88,6 @@ export function SiteHeader() {
     // navigate(`/chat/${chatId}`);
   };
 
-  // const getInitials = (name: string): string => {
-  //   if (!name) return "";
-  //   return name
-  //     .split(" ")
-  //     .map((word) => word.charAt(0))
-  //     .join("")
-  //     .toUpperCase()
-  //     .slice(0, 2);
-  // };
 
   // Toggle notification sidebar
   const toggleNotification = () => {
@@ -215,26 +207,7 @@ export function SiteHeader() {
           </div>
 
           <div className="flex items-center space-x-4">
-            {/* <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2 border border-[#EDEDED] bg-[#FAFAFA] font-passenger font-medium text-[#33343C]"
-            >
-              <img src={invite} alt="Invite" className="h-4 w-4" />
-              Invite team-mate
-            </Button> */}
-
-           {/*<Button
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2 border border-[#EDEDED]
-              dark:border-[#2c2d32] bg-[#FAFAFA] dark:bg-[#2c2d32] font-passenger 
-              font-medium text-[#33343C] dark:text-gray-200 hover:bg-gray-100
-               dark:hover:bg-[#3a3b40] transition-colors duration-200"
-            >
-              <FileDoc size={16} className="h-4 w-4 dark:text-gray-400" />
-              Chat with Docs
-            </Button>*/}
+       
 <Button
               variant="outline"
               size="sm"
@@ -263,15 +236,7 @@ export function SiteHeader() {
               <span className="absolute bottom-6 left-5 h-4 w-4"></span>
             </Button>
             <div className="flex items-center space-x-4">
-              {/* <img
-                src={
-                  localStorage.getItem("image") != "undefined"
-                    ? `${BackendBaseUrl}/${localStorage.getItem("image")}`
-                    : profileicon
-                }
-                alt="Profile"
-                className="h-10 w-10 rounded-full"
-              /> */}
+        
               {localStorage.getItem("image") &&
               localStorage.getItem("image") !== "undefined" ? (
                 <img

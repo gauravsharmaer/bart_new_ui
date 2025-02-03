@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SiteHeader } from "../Home/Navbar";
+import { SiteHeader } from "../../components/Navbar";
 import Sidebar from "./Sidebar";
 import PasswordPage from "./PasswordPage";
 import EquipmentPage from "./EquipmentRequests";

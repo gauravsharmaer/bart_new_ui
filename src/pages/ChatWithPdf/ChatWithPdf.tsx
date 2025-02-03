@@ -1,32 +1,45 @@
-import React, { useState, useRef } from 'react';
-import { PdfViewerComponent, Toolbar, Magnification, Navigation, 
-         LinkAnnotation, BookmarkView, ThumbnailView, Print, 
-         TextSelection, TextSearch, Annotation, FormFields, 
-         Inject } from '@syncfusion/ej2-react-pdfviewer';
-import HistorySideBar from '../../components/HistorySideBar';
-import { getHistory } from '../../Api/CommonApi'; // Ensure this import is present
+import React, { useState, useRef, useEffect } from "react";
+import {
+  PdfViewerComponent,
+  Toolbar,
+  Magnification,
+  Navigation,
+  LinkAnnotation,
+  BookmarkView,
+  ThumbnailView,
+  Print,
+  TextSelection,
+  TextSearch,
+  Annotation,
+  FormFields,
+  Inject,
+} from "@syncfusion/ej2-react-pdfviewer";
+import HistorySideBar from "../../components/HistorySideBar";
+import { getHistory } from "../../Api/CommonApi"; // Ensure this import is present
 // import { createTimestamp } from '../../utils/chatUtils';
 import ChatLogo from "../../assets/Genie.svg";
 import BackGround from "../../assets/bg_frame.svg";
-import SiteHeader from '../Home/Navbar'; // Import the SiteHeader component
+import SiteHeader from "../../components/Navbar"; // Import the SiteHeader component
 import NewChatInputBar from "../../components/NewChatInputBar";
 // import FileUploadBar from "../../components/FileUploadBar";
 // import PdfFileDisplay from "../../components/PdfFileDisplay";
 // import pdfDisplayIcon from "../../assets/Pdf Display.svg"; // Import the PDF display icon
 // import { X } from 'lucide-react';
-import PdfFileList from "../../components/PdfFileList"; // Ensure this is imported
+import PdfFileList from "../../pages/ChatWithPdf/PdfFileList"; // Ensure this is imported
 import pdfIcon from "../../assets/document.svg"; // Make sure you have this icon
 // import { formatTimestamp } from '../../utils/dateUtils';
 import { chatWithDocs } from "../../Api/CommonApi";
+import { getPdfChatHistory, deleteChat, renameChat } from "../../Api/CommonApi";
+import { ChatHistory } from "../../Interface/Interface";
 // Import Syncfusion styles
-import '@syncfusion/ej2-base/styles/material.css';
-import '@syncfusion/ej2-buttons/styles/material.css';
-import '@syncfusion/ej2-inputs/styles/material.css';
-import '@syncfusion/ej2-popups/styles/material.css';
-import '@syncfusion/ej2-lists/styles/material.css';
-import '@syncfusion/ej2-navigations/styles/material.css';
-import '@syncfusion/ej2-dropdowns/styles/material.css';
-import '@syncfusion/ej2-react-pdfviewer/styles/material.css';
+import "@syncfusion/ej2-base/styles/material.css";
+import "@syncfusion/ej2-buttons/styles/material.css";
+import "@syncfusion/ej2-inputs/styles/material.css";
+import "@syncfusion/ej2-popups/styles/material.css";
+import "@syncfusion/ej2-lists/styles/material.css";
+import "@syncfusion/ej2-navigations/styles/material.css";
+import "@syncfusion/ej2-dropdowns/styles/material.css";
+import "@syncfusion/ej2-react-pdfviewer/styles/material.css";
 
 // TypeScript interfaces
 interface ApiResponse {
@@ -57,19 +70,20 @@ export interface ChatInputBarProps {
 const PDFChat = () => {
   const [pdfFiles, setPdfFiles] = useState<File[]>([]);
   const [pdfUrls, setPdfUrls] = useState<string[]>([]);
-  const [question, setQuestion] = useState<string>('');
-  const [response, setResponse] = useState<string>('');
+  const [question, setQuestion] = useState<string>("");
+  const [response, setResponse] = useState<string>("");
   const [sources, setSources] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
-  const [success, setSuccess] = useState<string>('');
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pdfViewerRef = useRef<PdfViewerComponent>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [showPdfPreview, setShowPdfPreview] = useState(false);
- 
   const [pdfId, setPdfId] = useState<string | null>(null);
+  const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
+  const [isHistoryLoading, setIsHistoryLoading] = useState(true);
 
   // Add these styles from ChatUi
   const chatScreenStyle: React.CSSProperties = {
@@ -93,44 +107,54 @@ const PDFChat = () => {
   };
 
   const generatePdfId = (fileName: string) => {
-    return `pdf_${fileName.replace(/\s+/g, '_')}_${Date.now()}`;
+    return `pdf_${fileName.replace(/\s+/g, "_")}_${Date.now()}`;
   };
 
   const savePDFLocally = async (file: File) => {
     try {
       // Request permission to access local file system
       const dirHandle = await window.showDirectoryPicker({
-        mode: 'readwrite'
+        mode: "readwrite",
       });
 
       // Create or get the 'uploads' directory
       let uploadsDirHandle;
       try {
-        uploadsDirHandle = await dirHandle.getDirectoryHandle('uploads', { create: true });
+        uploadsDirHandle = await dirHandle.getDirectoryHandle("uploads", {
+          create: true,
+        });
       } catch (err) {
-        console.error('Error creating or accessing uploads directory:', err);
-        setError('Failed to access uploads directory: ' + (err as Error).message);
+        console.error("Error creating or accessing uploads directory:", err);
+        setError(
+          "Failed to access uploads directory: " + (err as Error).message
+        );
         return;
       }
 
       // Create a new file in the 'uploads' directory
-      const fileHandle = await uploadsDirHandle.getFileHandle(file.name, { create: true });
-      
+      const fileHandle = await uploadsDirHandle.getFileHandle(file.name, {
+        create: true,
+      });
+
       // Get a writable stream
       const writable = await fileHandle.createWritable();
-      
+
       // Write the file content
       await writable.write(file);
       await writable.close();
-      
+
       // Log the path where the file is saved
-      console.log(`PDF "${file.name}" saved locally in the "uploads" directory!`);
-      
+      console.log(
+        `PDF "${file.name}" saved locally in the "uploads" directory!`
+      );
+
       // Set success message
-      setSuccess(`PDF "${file.name}" saved locally in the "uploads" directory!`);
+      setSuccess(
+        `PDF "${file.name}" saved locally in the "uploads" directory!`
+      );
     } catch (err) {
-      console.error('Error saving file locally:', err);
-      setError('Failed to save file locally: ' + (err as Error).message);
+      console.error("Error saving file locally:", err);
+      setError("Failed to save file locally: " + (err as Error).message);
     }
   };
 
@@ -139,7 +163,9 @@ const PDFChat = () => {
   };
 
   const handleRemoveFile = (fileName: string) => {
-    setPdfFiles((prevFiles) => prevFiles.filter(file => file.name !== fileName));
+    setPdfFiles((prevFiles) =>
+      prevFiles.filter((file) => file.name !== fileName)
+    );
   };
 
   const handlePdfPreview = () => {
@@ -147,7 +173,7 @@ const PDFChat = () => {
   };
 
   const handleDrop = (e: React.DragEvent) => {
-    console.log('File dropped');
+    console.log("File dropped");
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file) {
@@ -156,10 +182,13 @@ const PDFChat = () => {
   };
 
   const handleSubmit = async (message: string) => {
-    const response = await chatWithDocs(pdfFiles[0], "674eaffe7cbb08e51f7adada", message);
+    const response = await chatWithDocs(
+      pdfFiles[0],
+      "674eaffe7cbb08e51f7adada",
+      message
+    );
     console.log(response);
     setPdfFiles([]);
-   
   };
 
   const handleGetChat = async (chatId: string) => {
@@ -177,12 +206,69 @@ const PDFChat = () => {
     }
   };
 
+  const fetchPdfChatHistory = async () => {
+    try {
+      const userId = localStorage.getItem("user_id") || "";
+      const data = await getPdfChatHistory(userId);
+      const formattedData = data.map((chat, index) => {
+        // Status logic with new names
+        let status;
+        if (index === 0) {
+          status = "Reviewed";
+        } else if (chat.name.startsWith("Doc") || chat.name.includes("D")) {
+          status = "Analyzed";
+        } else if ([1, 2, 5, 6].includes(index)) {
+          status = "Processing";
+        }
+
+        // Generate a timestamp
+        const timestamp = `${index + 1} day${index === 0 ? "" : "s"} ago`;
+
+        // Return either status or timestamp
+        return {
+          ...chat,
+          isActive: chat.id === pdfId,
+          ...(status ? { status } : { timestamp }),
+        };
+      });
+
+      setChatHistory(formattedData);
+    } catch (error) {
+      console.error("Error fetching PDF chat history:", error);
+    } finally {
+      setIsHistoryLoading(false);
+    }
+  };
+
+  // Update chat history when pdfId changes
+  useEffect(() => {
+    if (chatHistory.length > 0) {
+      const updatedHistory = chatHistory.map((chat) => ({
+        ...chat,
+        isActive: chat.id === pdfId,
+      }));
+      setChatHistory(updatedHistory);
+    }
+  }, [pdfId]);
+
+  const handleDeleteChat = async (chatId: string) => {
+    await deleteChat(chatId);
+  };
+
+  const handleRenameChat = async (chatId: string, newName: string) => {
+    await renameChat(chatId, newName);
+  };
+
+  useEffect(() => {
+    fetchPdfChatHistory();
+  }, []);
+
   const renderChatContent = () => {
     if (!showPdfPreview && pdfFiles.length) {
       // Show PDF display when file is uploaded but preview is not shown
       return (
         <div className="flex flex-col space-y-4">
-          <PdfDisplay 
+          <PdfDisplay
             fileName={pdfFiles[0].name}
             fileType="PDF"
             onClick={handlePdfPreview}
@@ -190,7 +276,9 @@ const PDFChat = () => {
           {messages.map((message, index) => (
             <div
               key={index}
-              className={`flex ${message.isUserMessage ? 'justify-end' : 'justify-start'}`}
+              className={`flex ${
+                message.isUserMessage ? "justify-end" : "justify-start"
+              }`}
             >
               {!message.isUserMessage && (
                 <img
@@ -202,8 +290,8 @@ const PDFChat = () => {
               <div
                 className={`max-w-[80%] rounded-lg p-3 ${
                   message.isUserMessage
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100'
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100"
                 }`}
               >
                 {message.text}
@@ -223,20 +311,32 @@ const PDFChat = () => {
               id="container"
               documentPath={pdfUrls[0]}
               serviceUrl="https://ej2services.syncfusion.com/production/web-services/api/pdfviewer"
-              style={{ height: '100%' }}
+              style={{ height: "100%" }}
             >
-              <Inject services={[
-                Toolbar, Magnification, Navigation, LinkAnnotation,
-                BookmarkView, ThumbnailView, Print, TextSelection,
-                TextSearch, Annotation, FormFields
-              ]} />
+              <Inject
+                services={[
+                  Toolbar,
+                  Magnification,
+                  Navigation,
+                  LinkAnnotation,
+                  BookmarkView,
+                  ThumbnailView,
+                  Print,
+                  TextSelection,
+                  TextSearch,
+                  Annotation,
+                  FormFields,
+                ]}
+              />
             </PdfViewerComponent>
           </div>
           <div className="flex flex-col space-y-4 overflow-y-auto">
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`flex ${message.isUserMessage ? 'justify-end' : 'justify-start'}`}
+                className={`flex ${
+                  message.isUserMessage ? "justify-end" : "justify-start"
+                }`}
               >
                 {!message.isUserMessage && (
                   <img
@@ -248,8 +348,8 @@ const PDFChat = () => {
                 <div
                   className={`max-w-[80%] rounded-lg p-3 ${
                     message.isUserMessage
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100'
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100"
                   }`}
                 >
                   {message.text}
@@ -267,7 +367,9 @@ const PDFChat = () => {
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`flex ${message.isUserMessage ? 'justify-end' : 'justify-start'}`}
+            className={`flex ${
+              message.isUserMessage ? "justify-end" : "justify-start"
+            }`}
           >
             {!message.isUserMessage && (
               <img
@@ -278,9 +380,7 @@ const PDFChat = () => {
             )}
             <div
               className={`max-w-[80%] rounded-lg p-3 ${
-                message.isUserMessage
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100'
+                message.isUserMessage ? "bg-blue-600 text-white" : "bg-gray-100"
               }`}
             >
               {message.text}
@@ -294,16 +394,21 @@ const PDFChat = () => {
   return (
     <>
       <SiteHeader />
-      
+
       {/* Existing Content */}
       <div className="absolute inset-x-0 bottom-0 top-14">
         <div style={containerStyle}>
           {/* Sidebar */}
           <div className="flex-shrink-0 border-r border-gray-200">
             <HistorySideBar
-              onChatSelect={handleGetChat}
+              chatHistory={chatHistory}
+              isLoading={isHistoryLoading}
               isSidebarOpen={isSidebarOpen}
               onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+              onChatSelect={handleGetChat}
+              onDeleteChat={handleDeleteChat}
+              onRenameChat={handleRenameChat}
+              setChatHistory={setChatHistory}
             />
           </div>
 
@@ -316,7 +421,9 @@ const PDFChat = () => {
                   {messages.map((message, index) => (
                     <div
                       key={index}
-                      className={`flex ${message.isUserMessage ? 'justify-end' : 'justify-start'}`}
+                      className={`flex ${
+                        message.isUserMessage ? "justify-end" : "justify-start"
+                      }`}
                     >
                       {!message.isUserMessage && (
                         <img
@@ -328,25 +435,37 @@ const PDFChat = () => {
                       <div
                         className={`max-w-[80%] rounded-lg p-3 ${
                           message.isUserMessage
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-gray-100'
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-100"
                         }`}
                       >
                         {message.isUserMessage ? (
                           <div className="flex flex-col items-end">
                             {/* User Info */}
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="text-sm text-gray-600">John Doe</span>
-                              <span className="text-xs text-gray-400">{message.timestamp}</span>
+                              <span className="text-sm text-gray-600">
+                                John Doe
+                              </span>
+                              <span className="text-xs text-gray-400">
+                                {message.timestamp}
+                              </span>
                             </div>
 
                             {/* PDF File Display (if exists) */}
                             {message.pdfFile && (
                               <div className="flex items-center gap-2 bg-white rounded-lg p-3 mb-2 shadow-sm">
-                                <img src={pdfIcon} alt="PDF" className="w-8 h-8" />
+                                <img
+                                  src={pdfIcon}
+                                  alt="PDF"
+                                  className="w-8 h-8"
+                                />
                                 <div>
-                                  <p className="text-sm font-medium">{message.pdfFile.name}</p>
-                                  <p className="text-xs text-gray-500">Click to open file</p>
+                                  <p className="text-sm font-medium">
+                                    {message.pdfFile.name}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    Click to open file
+                                  </p>
                                 </div>
                               </div>
                             )}
@@ -359,7 +478,11 @@ const PDFChat = () => {
                         ) : (
                           // Bot message rendering
                           <div className="flex items-start gap-2">
-                            <img src={ChatLogo} alt="BART Genie" className="w-8 h-8 rounded-full" />
+                            <img
+                              src={ChatLogo}
+                              alt="BART Genie"
+                              className="w-8 h-8 rounded-full"
+                            />
                             <div className="bg-white shadow-sm rounded-lg p-3 max-w-[80%]">
                               {message.text}
                             </div>
@@ -375,9 +498,9 @@ const PDFChat = () => {
                   {/* PDF Files Display */}
                   {pdfFiles.length > 0 && (
                     <div className="px-4">
-                      <PdfFileList 
-                        pdfFiles={pdfFiles} 
-                        onRemove={handleRemoveFile} 
+                      <PdfFileList
+                        pdfFiles={pdfFiles}
+                        onRemove={handleRemoveFile}
                       />
                     </div>
                   )}

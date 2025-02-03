@@ -1,4 +1,4 @@
-import { SiteHeader } from "./Navbar";
+import { SiteHeader } from "../../components/Navbar";
 import { SearchSection } from "./SearchSection";
 import FacialConfirmationPopup from "./FacialConfirmationPopup";
 import { useState, useEffect } from "react";
