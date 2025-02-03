@@ -36,8 +36,8 @@
 
 
 import React from "react";
-import pdfDisplayIcon from "../../assets/document.svg";
-import CrossIcon from "../../assets/Genie.svg";
+import pdfDisplayIcon from "../../assets/Pdf Display.svg";
+import CrossIcon from "../../assets/Cross.svg";
 
 interface PdfFileListProps {
   pdfFiles: File[];
@@ -51,15 +51,15 @@ const PdfFileList: React.FC<PdfFileListProps> = ({ pdfFiles, onRemove }) => {
         <div key={index} className="relative flex flex-col items-center">
           <button 
             onClick={() => onRemove(file.name)} 
-            className="absolute -top-2 -left-2 w-5 h-5 flex items-center justify-center"
+            className="absolute -top-[-4px] -left-[-20px] w-7 h-4 flex items-center justify-center"
           >
-            <img src={CrossIcon} alt="Remove" className="w-4 h-4" />
+            <img src={CrossIcon} alt="Remove" className="w-6 h-6" />
           </button>
           <img src={pdfDisplayIcon} alt="PDF" className="w-24 h-24 mb-1" />
-          <span className="text-xs text-gray-700 text-center max-w-[96px] truncate">
+          <span className="text-sm font-semibold text-gray-700 text-center max-w-[159px] truncate">
             {file.name}
           </span>
-          <span className="text-xs text-blue-600">PDF</span>
+          <span className="text-sm font-semibold text-gray-600">.pdf</span>
         </div>
       ))}
     </div>
