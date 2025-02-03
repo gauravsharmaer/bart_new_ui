@@ -1,4 +1,4 @@
-import { Message } from "../Interface/Interface";
+import { Message, ChatHistory } from "../Interface/Interface";
 export interface TimelineProps {
   isOpen: boolean;
   onClose: () => void; // Callback to handle closing
@@ -109,6 +109,13 @@ export interface HistorySideBarProps {
   onChatSelect: (chatId: string) => void;
   isSidebarOpen: boolean;
   onToggleSidebar: () => void;
+  chatHistory: (ChatHistory & { status?: string; timestamp?: string })[];
+  isLoading: boolean;
+  setChatHistory: React.Dispatch<
+    React.SetStateAction<
+      (ChatHistory & { status?: string; timestamp?: string })[]
+    >
+  >;
 }
 
 export interface ImageUploadProps {

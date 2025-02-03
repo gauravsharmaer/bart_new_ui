@@ -9,13 +9,13 @@ import {
   createTimestamp,
   handleTextToAvatarConversion,
 } from "../utils/chatUtils";
-
+import { toast } from "react-toastify";
 import ChatButtonCard from "./ui/ChatButtonCard";
 import UserCard from "./ui/UserCard";
 import TicketCard from "./ui/ticketcard";
 import { ChatMessageProps } from "../props/Props";
 import { Message } from "../Interface/Interface";
-import { ThumbsUp, ThumbsDown } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Copy, Check } from "lucide-react";
 import { SpeakerHigh } from "@phosphor-icons/react";
 import TypingEffect from "./TypingEffect";
 import createMarkup from "../utils/chatUtils";
@@ -25,6 +25,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     const [showAuthVideoCard, setShowAuthVideoCard] = useState(false);
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
     const [clickedButton, setClickedButton] = useState<string | null>(null);
+    const [isCopied, setIsCopied] = useState(false);
     // const [isSpeaking, setIsSpeaking] = useState(false);
     // const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(
     //   // null
@@ -227,6 +228,26 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
       }
     };
 
+    const handleCopy = async () => {
+      try {
+        // Create a temporary div to handle HTML content
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = message.text;
+        // Get text content without HTML tags
+        const textToCopy = tempDiv.textContent || tempDiv.innerText || "";
+        await navigator.clipboard.writeText(textToCopy);
+        setIsCopied(true);
+        toast.success("Text copied to clipboard");
+
+        // Reset back to copy icon after 2 seconds
+        setTimeout(() => {
+          setIsCopied(false);
+        }, 2000);
+      } catch (error) {
+        console.error("Failed to copy text:", error);
+      }
+    };
+
     console.log("Message data:", {
       ticket: message.ticket,
       ticket_options: message.ticket_options,
@@ -248,15 +269,15 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
             <img
               src={ChatLogo}
               alt="BART Genie"
-              className="w-8 h-8 rounded-full object-cover mx-2"
+              className="w-8 h-8 rounded-full object-cover mx-2 dark:opacity-90"
             />
             <div className="flex-1">
               <div className="flex items-center justify-start">
-                <span className="text-[14px] font-passenger font-light text-[#000000] mr-2 ">
+                <span className="text-[14px] font-passenger font-light text-gray-900 dark:text-black mr-2 transition-colors duration-200">
                   BART Genie
                 </span>
-                <span className="w-1 h-1 bg-white rounded-full mx-1"></span>
-                <span className="text-[12px] font-passenger font-light text-[#000000] opacity-60">
+                <span className="w-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-full mx-1"></span>
+                <span className="text-[12px] font-passenger font-light text-gray-600 dark:text-black/70 transition-colors duration-200">
                   {(() => {
                     try {
                       const date = new Date(message.timestamp);
@@ -271,19 +292,14 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                 {(message.button_display ||
                   message.text.includes("verification code")) && (
                   <div
-                    className="w-1 h-auto mr-2"
-                    style={{
-                      background: "#523EC6",
-                      borderRadius: "4px",
-                    }}
+                    className="w-1 h-auto mr-2 bg-purple-600 dark:bg-purple-500 rounded-sm transition-colors duration-200"
                   ></div>
                 )}
                 <div className="flex-1">
                   <div className="flex-1">
                     {message.isFromHistory ? (
                       <div
-                        className="text-sm opacity-80 font-passenger
-                         "
+                        className="text-sm text-gray-800 dark:text-black font-passenger transition-colors duration-200"
                         dangerouslySetInnerHTML={createMarkup(message.text)}
                       />
                     ) : (
@@ -322,20 +338,18 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
         )}
 
         {showAuthVideoCard && (
-          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-            <div className="relative w-[500px] bg-[#2C2C2E] rounded-3xl p-4">
+          <div className="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="relative w-[500px] bg-white dark:bg-[#2c2d32] rounded-3xl p-4 shadow-lg dark:shadow-[#1a1b1e]">
               <button
                 onClick={() => setShowAuthVideoCard(false)}
-                className="absolute top-1 right-4 text-xl text-white hover:text-gray-400"
+                className="absolute top-1 right-4 text-xl text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200"
                 aria-label="Close modal"
               >
                 x
               </button>
-              <div className="bg-[#2C2C2E] rounded-lg p-6">
+              <div className="rounded-lg p-6">
                 <div className="flex flex-col items-center">
-                  <VerifyAuth
-                    onVerificationComplete={handleVerificationComplete}
-                  />
+                  <VerifyAuth onVerificationComplete={handleVerificationComplete} />
                 </div>
               </div>
             </div>
@@ -343,52 +357,47 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
         )}
 
         {!message.isUserMessage && (
-          <div className="flex items-center gap-2 text-gray-500 text-sm">
+          <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
             <button
-              className={`p-1 rounded transition-colors hover:bg-gray-100
-                ${message.like ? "text-green-600" : ""}`}
+              className={`p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]
+                ${message.like ? "text-green-600 dark:text-green-500" : ""}`}
               onClick={() => onLike(message.history_id || "")}
               aria-label="Like message"
             >
               <ThumbsUp size={16} />
             </button>
             <button
-              className={`p-1 rounded transition-colors hover:bg-gray-100
-                ${message.un_like ? "text-red-600" : ""}`}
+              className={`p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]
+                ${message.un_like ? "text-red-600 dark:text-red-500" : ""}`}
               onClick={() => onDislike(message.history_id || "")}
               aria-label="Dislike message"
             >
               <ThumbsDown size={16} />
             </button>
             <button
-              className={`p-1 rounded transition-colors hover:bg-gray-100
-               `}
+              className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]"
               onClick={handleSpeak}
-              // aria-label={
-              //   isSpeaking
-              //     ? isPaused
-              //       ? "Resume speaking"
-              //       : "Pause speaking"
-              //     : "Speak message"
-              // }
             >
               <SpeakerHigh size={16} />
-              {/* {isSpeaking && !isPaused ? (
-                <SpeakerX size={16} weight="fill" />
-              ) : (
-                <SpeakerHigh size={16} />
-              )} */}
+            </button>
+            <button
+              className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]"
+              onClick={handleCopy}
+            >
+              {isCopied ? <Check size={16} /> : <Copy size={16} />}
             </button>
           </div>
         )}
 
         {isLoading && (
-          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-            <div className="relative w-[500px] bg-[#2C2C2E] rounded-3xl p-4">
-              <div className="bg-[#2C2C2E] rounded-lg p-6">
+          <div className="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="relative w-[500px] bg-white dark:bg-[#2c2d32] rounded-3xl p-4 shadow-lg dark:shadow-[#1a1b1e]">
+              <div className="rounded-lg p-6">
                 <div className="flex flex-col items-center">
-                  <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
-                  <p className="text-white mt-4">Generating avatar video...</p>
+                  <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-600 dark:border-purple-500"></div>
+                  <p className="text-gray-900 dark:text-black mt-4 transition-colors duration-200">
+                    Generating avatar video...
+                  </p>
                 </div>
               </div>
             </div>
@@ -396,16 +405,16 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
         )}
 
         {!isLoading && videoUrl && (
-          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-            <div className="relative w-[500px] bg-[#2C2C2E] rounded-3xl p-4">
+          <div className="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="relative w-[500px] bg-white dark:bg-[#2c2d32] rounded-3xl p-4 shadow-lg dark:shadow-[#1a1b1e]">
               <button
                 onClick={() => setVideoUrl(null)}
-                className="absolute top-1 right-4 text-xl text-white hover:text-gray-400"
+                className="absolute top-1 right-4 text-xl text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200"
                 aria-label="Close modal"
               >
                 x
               </button>
-              <div className="bg-[#2C2C2E] rounded-lg p-6">
+              <div className="rounded-lg p-6">
                 <div className="flex flex-col items-center">
                   <video
                     src={videoUrl}

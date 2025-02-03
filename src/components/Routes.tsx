@@ -11,6 +11,7 @@ import OneLoginCallBack from "../pages/Callback/OneLoginCallBack";
 import Templates from "../pages/Templates/Templates";
 import History from "../pages/History/History";
 import Settings from "../pages/Settings/Settings";
+import PDFChat from "../pages/ChatWithPdf/ChatWithPdf";
 const AppRoutes = () => {
   const authenticated = useSelector<RootState>(
     (state) => state.auth.authenticated
@@ -56,6 +57,10 @@ const AppRoutes = () => {
       <Route
         path="/settings"
         element={authenticated ? <Settings /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/chat-with-pdf"
+        element={authenticated ? <PDFChat /> : <Navigate to="/login" />}
       />
     </Routes>
   );

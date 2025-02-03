@@ -5,6 +5,7 @@ interface ChatState {
   initialMessage: string;
   isNewChat: boolean;
   selectedChatId: string | null;
+  shouldUpdateHistory: boolean;
 }
 
 const initialState: ChatState = {
@@ -12,6 +13,7 @@ const initialState: ChatState = {
   initialMessage: "",
   isNewChat: false,
   selectedChatId: null,
+  shouldUpdateHistory: false,
 };
 
 const chatSlice = createSlice({
@@ -42,6 +44,12 @@ const chatSlice = createSlice({
       state.selectedChatId = action.payload;
       state.isNewChat = false;
     },
+    resetHistoryUpdateFlag: (state) => {
+      state.shouldUpdateHistory = false;
+    },
+    setHistoryUpdateFlag: (state) => {
+      state.shouldUpdateHistory = true;
+    },
   },
 });
 
@@ -51,5 +59,7 @@ export const {
   setInitialMessage,
   resetNewChatFlag,
   setSelectedChatId,
+  resetHistoryUpdateFlag,
+  setHistoryUpdateFlag,
 } = chatSlice.actions;
 export default chatSlice.reducer;

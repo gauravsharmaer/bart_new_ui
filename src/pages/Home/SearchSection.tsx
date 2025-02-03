@@ -51,7 +51,7 @@ export function SearchSection() {
           style={{ marginTop: "80px" }}
         >
           <h1
-            className="text-center text-3xl font-passenger font-semibold tracking-tighter mb-8 text-[#202B3B]"
+            className="text-center text-3xl font-passenger font-semibold tracking-tighter mb-8 text-[#202B3B] dark:text-gray-200"
             style={{ marginBottom: "25px" }}
           >
             Got questions or need help?
@@ -64,7 +64,9 @@ export function SearchSection() {
               onKeyDown={handleKeyDown}
               placeholder=" Have any questions? Or choose a template below to get started"
               className="w-[75%] h-14 pl-4 pr-12 rounded-full py-3
-               text-[#000000] font-graphik font-normal opacity-50"
+               text-[#000000] dark:text-gray-200 font-graphik font-normal opacity-50 dark:opacity-70 
+               dark:bg-[#2c2d32] dark:border-[#3a3b40] dark:placeholder-gray-400
+               focus:outline-none focus:ring-1 focus:ring-[#E8E8E8] dark:focus:ring-[#3a3b40]"
               style={{
                 border: "2px solid #E8E8E8",
               }}
@@ -74,8 +76,9 @@ export function SearchSection() {
               variant="ghost"
               onClick={handleSearch}
               disabled={inputMessage.length === 0}
-              className="absolute bg-[#EF613C]
-           p-6 rounded-full right-[13%] top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute bg-[#EF613C] dark:bg-[#ff8851] dark:hover:bg-[#ff7a3d]
+           p-6 rounded-full right-[13%] top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground
+           transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <MagnifyingGlass className="h-5 w-5 rounded-full text-white" />
             </Button>
@@ -84,60 +87,70 @@ export function SearchSection() {
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full bg-[#F1F1F1] font-passenger font-normal text-[#171717] opacity-60 border  flex items-center gap-2 whitespace-nowrap"
+              className="rounded-full bg-[#F1F1F1] dark:bg-[#2c2d32] font-passenger font-normal text-[#171717] dark:text-gray-200 
+              opacity-60 dark:opacity-90 border dark:border-[#3a3b40] hover:bg-gray-200 dark:hover:bg-[#3a3b40] 
+              flex items-center gap-2 whitespace-nowrap transition-colors duration-200"
               onClick={() => handleTemplateClick("Hey bart reset my password")}
             >
-              <Password weight="fill" className="h-4 w-4 text-blue-500" />
+              <Password weight="fill" className="h-4 w-4 text-blue-500 dark:text-blue-400" />
               Password Management
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full bg-[#F1F1F1] font-passenger font-normal text-[#171717] opacity-60  border flex items-center gap-2 whitespace-nowrap"
+              className="rounded-full bg-[#F1F1F1] dark:bg-[#2c2d32] font-passenger font-normal text-[#171717] dark:text-gray-200 
+              opacity-60 dark:opacity-90 border dark:border-[#3a3b40] hover:bg-gray-200 dark:hover:bg-[#3a3b40] 
+              flex items-center gap-2 whitespace-nowrap transition-colors duration-200"
               onClick={() =>
                 handleTemplateClick("Hey bart I need a new equipment")
               }
             >
-              <Desktop weight="fill" className="h-4 w-4 text-purple-500" />
+              <Desktop weight="fill" className="h-4 w-4 text-purple-500 dark:text-purple-400" />
               Equipment Request
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full bg-[#F1F1F1] font-passenger font-normal text-[#171717] opacity-60 border flex items-center gap-2 whitespace-nowrap"
+              className="rounded-full bg-[#F1F1F1] dark:bg-[#2c2d32] font-passenger font-normal text-[#171717] dark:text-gray-200 
+              opacity-60 dark:opacity-90 border dark:border-[#3a3b40] hover:bg-gray-200 dark:hover:bg-[#3a3b40] 
+              flex items-center gap-2 whitespace-nowrap transition-colors duration-200"
               onClick={() =>
                 handleTemplateClick("Hey bart I need software support")
               }
             >
-              <Wrench weight="fill" className="h-4 w-4 text-green-500" />
+              <Wrench weight="fill" className="h-4 w-4 text-green-500 dark:text-green-400" />
               Software Support
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full bg-[#F1F1F1] font-passenger font-normal text-[#171717] opacity-60 border flex items-center gap-2 whitespace-nowrap"
+              className="rounded-full bg-[#F1F1F1] dark:bg-[#2c2d32] font-passenger font-normal text-[#171717] dark:text-gray-200 
+              opacity-60 dark:opacity-90 border dark:border-[#3a3b40] hover:bg-gray-200 dark:hover:bg-[#3a3b40] 
+              flex items-center gap-2 whitespace-nowrap transition-colors duration-200"
               onClick={() =>
                 handleTemplateClick("Hey bart I need to set-up my printer")
               }
             >
-              <Printer weight="fill" className="h-4 w-4 text-red-500" />
+              <Printer weight="fill" className="h-4 w-4 text-red-500 dark:text-red-400" />
               Printer Set-Up
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full bg-[#F1F1F1] font-passenger font-normal text-[#171717] opacity-60 border flex items-center gap-2 whitespace-nowrap"
+              className="rounded-full bg-[#F1F1F1] dark:bg-[#2c2d32] font-passenger font-normal text-[#171717] dark:text-gray-200 
+              opacity-60 dark:opacity-90 border dark:border-[#3a3b40] hover:bg-gray-200 dark:hover:bg-[#3a3b40] 
+              flex items-center gap-2 whitespace-nowrap transition-colors duration-200"
               onClick={() =>
                 handleTemplateClick("Hey bart I need IT security help")
               }
             >
-              <Shield weight="fill" className="h-4 w-4 text-yellow-500" />
+              <Shield weight="fill" className="h-4 w-4 text-yellow-500 dark:text-yellow-400" />
               IT Security
             </Button>
             <Button
               variant="default"
               size="sm"
-              className="text-orange-500 hover:bg-transparent bg-transparent whitespace-nowrap"
+              className="text-orange-500 dark:text-[#ff8851] hover:bg-transparent dark:hover:text-[#ff7a3d] bg-transparent whitespace-nowrap transition-colors duration-200"
             >
               All Templates
             </Button>

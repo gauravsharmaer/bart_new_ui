@@ -9,28 +9,26 @@ const SidebarItem: React.FC<{
   return (
     <li
       onClick={onClick}
-      className={`flex items-center cursor-pointer w-full px-2 py-[6px] relative`}
+      className={`flex items-center cursor-pointer w-full px-2 py-[6px] relative hover:bg-gray-50 dark:hover:bg-[#3a3b40] transition-colors duration-200`}
     >
       {/* Rounded border on the left */}
       <div
         className={`absolute left-0 top-0 bottom-0 w-[3px] ${
-          isSelected ? "bg-[#ff5600] rounded-full" : "bg-transparent"
+          isSelected ? "bg-[#ff5600] dark:bg-[#ff8851] rounded-full" : "bg-transparent"
         }`}
       ></div>
-       <span
-        className={`flex-1 whitespace-nowrap  ${
+      <span
+        className={`flex-1 whitespace-nowrap ${
           isSelected
-            ? "font-bold text-[#000000] "
-            : "font-normal text-[rgba(60,60,60,0.7)]"
-
-        } text-[14px]`}
+            ? "font-bold text-[#000000] dark:text-white"
+            : "font-normal text-[rgba(60,60,60,0.7)] dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+        } text-[14px] transition-colors duration-200`}
       >
         {title}
       </span>
     </li>
   );
 };
-
 
 const Sidebar: React.FC<{
   selectedTemplate: string;
@@ -52,17 +50,17 @@ const Sidebar: React.FC<{
   ];
 
   return (
-    <div className="w-[300px] max-w-[300px] h-full bg-white p-5 flex flex-col">
+    <div className="w-[300px] max-w-[300px] h-full bg-white dark:bg-[#2c2d32] p-5 flex flex-col transition-colors duration-200">
       {/* Back Button */}
       <div className="flex items-center mb-4">
         <button
           onClick={() => console.log("Back button clicked")}
-          className="inline-flex items-center justify-center bg-none border-none cursor-pointer text-[30px] mr-[10px] text-black p-0"
+          className="inline-flex items-center justify-center bg-none border-none cursor-pointer text-[30px] mr-[10px] text-black dark:text-white p-0 hover:opacity-80 transition-opacity duration-200"
         >
-          <img src={Arrow} alt="Back Arrow" className="w-[25px] h-[25px]" />
-          </button>
+          <img src={Arrow} alt="Back Arrow" className="w-[25px] h-[25px] dark:opacity-80" />
+        </button>
 
-        <h2 className="font-medium text-[20px] leading-[28px] m-1 text-[rgba(0,0,0,0.8)] mr-1">
+        <h2 className="font-medium text-[20px] leading-[28px] m-1 text-[rgba(0,0,0,0.8)] dark:text-white mr-1 transition-colors duration-200">
           All Templates
         </h2>
       </div>
