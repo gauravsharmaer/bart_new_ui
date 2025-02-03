@@ -8,8 +8,6 @@ import Chat from "../pages/Chat/Chat";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import OneLoginCallBack from "../pages/Callback/OneLoginCallBack";
-import Templates from "../pages/Templates/Templates";
-import History from "../pages/History/History";
 import Settings from "../pages/Settings/Settings";
 import PDFChat from "../pages/ChatWithPdf/ChatWithPdf";
 const AppRoutes = () => {
@@ -46,14 +44,8 @@ const AppRoutes = () => {
         path="/tickets"
         element={authenticated ? <Tickets /> : <Navigate to="/login" />}
       />
-      <Route
-        path="/templates"
-        element={authenticated ? <Templates /> : <Navigate to="/login" />}
-      />
-      <Route
-        path="/history"
-        element={authenticated ? <History /> : <Navigate to="/login" />}
-      />
+     
+  
       <Route
         path="/settings"
         element={authenticated ? <Settings /> : <Navigate to="/login" />}

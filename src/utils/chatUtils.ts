@@ -1,5 +1,5 @@
 import DOMPurify from "dompurify";
-import { REACT_APP_GOOEY_API_KEY, REACT_APP_GOOEY_API_URL } from "../config";
+import { REACT_APP_GOOEY_API_KEY, REACT_APP_GOOEY_API_URL, REACT_APP_ELEVENLABS_API_KEY, REACT_APP_ELEVENLABS_VOICE_ID } from "../config";
 
 // Add type declarations at the top of the file
 declare global {
@@ -47,55 +47,55 @@ export const createTimestamp = (): string => {
   return new Date().toISOString();
 };
 
-const createMarkup = (text: string) => {
-  // First sanitize the HTML to prevent XSS attacks
-  const sanitizedHtml = DOMPurify.sanitize(text, {
-    ALLOWED_TAGS: ["h2", "a", "br", "p", "ul", "li"],
-    ALLOWED_ATTR: ["href", "target", "class"],
-  });
+// const createMarkup = (text: string) => {
+//   // First sanitize the HTML to prevent XSS attacks
+//   const sanitizedHtml = DOMPurify.sanitize(text, {
+//     ALLOWED_TAGS: ["h2", "a", "br", "p", "ul", "li"],
+//     ALLOWED_ATTR: ["href", "target", "class"],
+//   });
 
-  // Remove Sources header
-  let processedText = sanitizedHtml.replace(/<h2>Sources<\/h2>/, "");
+//   // Remove Sources header
+//   let processedText = sanitizedHtml.replace(/<h2>Sources<\/h2>/, "");
 
-  // Convert newlines to <br> tags
-  processedText = processedText.replace(/\n/g, "<br>");
+//   // Convert newlines to <br> tags
+//   processedText = processedText.replace(/\n/g, "<br>");
 
-  // Process any markdown-style headers that weren't already HTML
-  processedText = processedText.replace(
-    /^## (.*$)/gm,
-    '<h2 class="text-xl font-bold mb-2">$1</h2>'
-  );
+//   // Process any markdown-style headers that weren't already HTML
+//   processedText = processedText.replace(
+//     /^## (.*$)/gm,
+//     '<h2 class="text-xl font-bold mb-2">$1</h2>'
+//   );
 
-  // Process text enclosed in ** as headings
-  processedText = processedText.replace(
-    /\*\*(.*?)\*\*/g,
-    '<span class="font-bold ">$1</span>'
-  );
+//   // Process text enclosed in ** as headings
+//   processedText = processedText.replace(
+//     /\*\*(.*?)\*\*/g,
+//     '<span class="font-bold ">$1</span>'
+//   );
 
-  // Process links if they're in markdown format
-  processedText = processedText.replace(
-    /\[(.*?)\]\((.*?)\)/g,
-    '<a href="$2" target="_blank" class="border border-gray-300 flex p-1 bg-white rounded-md font-bold w-[300px]">$1</a>'
-  );
+//   // Process links if they're in markdown format
+//   processedText = processedText.replace(
+//     /\[(.*?)\]\((.*?)\)/g,
+//     '<a href="$2" target="_blank" class="border border-gray-300 flex p-1 bg-white rounded-md font-bold w-[300px]">$1</a>'
+//   );
 
-  // Add classes to existing HTML elements
-  processedText = processedText
-    // Style paragraphs
-    .replace(/<p>/g, '<p class="mb-2">')
-    // Style unordered lists
-    .replace(/<ul>/g, '<ul class="list-none  mb-2">')
-    // Style list items
-    .replace(/<li>/g, '<li class="mb-2">')
-    // Style links that aren't already styled
-    .replace(
-      /<a(?![^>]*class=)/g,
-      '<a class="border border-gray-300 flex p-1 bg-white rounded-md font-bold w-[300px]"'
-    );
+//   // Add classes to existing HTML elements
+//   processedText = processedText
+//     // Style paragraphs
+//     .replace(/<p>/g, '<p class="mb-2">')
+//     // Style unordered lists
+//     .replace(/<ul>/g, '<ul class="list-none  mb-2">')
+//     // Style list items
+//     .replace(/<li>/g, '<li class="mb-2">')
+//     // Style links that aren't already styled
+//     .replace(
+//       /<a(?![^>]*class=)/g,
+//       '<a class="border border-gray-300 flex p-1 bg-white rounded-md font-bold w-[300px]"'
+//     );
 
-  return {
-    __html: processedText,
-  };
-};
+//   return {
+//     __html: processedText,
+//   };
+// };
 
 // export const speakText = (text: string): SpeechSynthesisUtterance => {
 //   // Remove HTML tags from the text
@@ -121,6 +121,57 @@ const createMarkup = (text: string) => {
 //   // Return the utterance instance
 //   return speech;
 // };
+
+const createMarkup = (text: string) => {
+  // First sanitize the HTML to prevent XSS attacks
+  const sanitizedHtml = DOMPurify.sanitize(text, {
+    ALLOWED_TAGS: ["h2", "a", "br", "p", "ul", "li"],
+    ALLOWED_ATTR: ["href", "target", "class"],
+  });
+
+  // Remove Sources header
+  let processedText = sanitizedHtml.replace(/<h2>Sources<\/h2>/, "");
+   
+  // Convert newlines to <br> tags
+  processedText = processedText.replace(/\n/g, "<br>");
+
+  // Process any markdown-style headers that weren't already HTML
+  processedText = processedText.replace(
+    /^## (.*$)/gm,
+    '<h2 class="text-xl font-bold mb-2">$1</h2>'
+  );
+
+  // Process text enclosed in ** as headings
+  processedText = processedText.replace(
+    /\*\*(.*?)\*\*/g,
+    '<span class="font-bold ">$1</span>'
+  );
+
+  // Process links if they're in markdown format
+  processedText = processedText.replace(
+    /\[(.*?)\]\((.*?)\)/g,
+    '<a href="$2" target="_blank" class="inline border border-red-300 bg-white text-black rounded-md font-bold px-1 py-0.5 hover:bg-gray-200 transition duration-200 ease-in-out">$1</a>'
+  );
+
+  // Add classes to existing HTML elements
+  processedText = processedText
+    // Style paragraphs
+    .replace(/<p>/g, '<p class="mb-1">')
+    // Style unordered lists
+    .replace(/<ul>/g, '<ul class="flex space-x-2">')
+    // Style list items
+    .replace(/<li>/g, '<li class="mb-2">')
+    // Style links that aren't already styled
+    .replace(
+      /<a(?![^>]*class=)/g,
+      '<a class=" inline-block border border-red-300 bg-white rounded-md font-bold px-2 py-1 mr-0 hover:bg-gray-200 transition duration-200 ease-in-out"'
+    );
+
+  return {
+    __html: processedText,
+  };
+};
+
 
 export const speakText = (
   text: string,
@@ -276,6 +327,68 @@ export const stopSpeechRecognition = () => {
 //   }
 // };
 
+// export const handleTextToAvatarConversion = async (
+//   text: string
+// ): Promise<string> => {
+//   try {
+//     // Clean the text but preserve natural speech patterns
+//     const cleanText = text
+//       .replace(/<[^>]*>/g, "")
+//       .replace(/\[(.*?)\]\(.*?\)/g, "$1")
+//       .replace(/https?:\/\/\S+/g, "")
+//       .trim();
+
+//     console.log("Cleaned text:", cleanText);
+
+//     // Create the payload for Gooey API
+//     const payload = {
+//       functions: null,
+//       variables: null,
+//       text_prompt: cleanText,
+//       input_face:
+//         "https://testing-bart-1.s3.us-east-2.amazonaws.com/LipSync+Video.mp4",
+//       face_padding_top: 0,
+//       face_padding_bottom: 18,
+//       face_padding_left: 0,
+//       face_padding_right: 0,
+      
+
+//       sadtalker_settings: null,
+//       selected_model: "Wav2Lip",
+//       text_to_speech: true,
+//       tts_settings: {
+//         voice_id: "en-US-Neural2-F",
+//         rate: 1.0,
+//         pitch: 1.0,
+//         volume: 1.0,
+//       },
+//     };
+
+//     console.log("Sending request to Gooey API with payload:", payload);
+
+//     // Make the API call
+//     const response = await fetch(REACT_APP_GOOEY_API_URL, {
+//       method: "POST",
+//       headers: {
+//         Authorization: `bearer ${REACT_APP_GOOEY_API_KEY}`,
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(payload),
+//     });
+
+//     const result = await response.json();
+//     console.log("API Response:", result);
+
+//     if (result.output && result.output.output_video) {
+//       return result.output.output_video;
+//     } else {
+//       throw new Error("No video URL in response");
+//     }
+//   } catch (error) {
+//     console.error("Avatar conversion failed:", error);
+//     throw error;
+//   }
+// };
 export const handleTextToAvatarConversion = async (
   text: string
 ): Promise<string> => {
@@ -291,27 +404,15 @@ export const handleTextToAvatarConversion = async (
 
     // Create the payload for Gooey API
     const payload = {
-      functions: null,
-      variables: null,
       text_prompt: cleanText,
-      input_face:
-        "https://testing-bart-1.s3.us-east-2.amazonaws.com/LipSync+Video.mp4",
-      face_padding_top: 0,
-      face_padding_bottom: 18,
-      face_padding_left: 0,
-      face_padding_right: 0,
-      
+      tts_provider: "ELEVEN_LABS",
+      elevenlabs_voice_name: null, // Set to null if not using a specific voice name
+      elevenlabs_api_key: REACT_APP_ELEVENLABS_API_KEY, // Replace with your actual Eleven Labs API key
+      elevenlabs_voice_id: REACT_APP_ELEVENLABS_VOICE_ID, // Replace with your actual Eleven Labs voice ID
+      input_face: "https://testing-bart-1.s3.us-east-2.amazonaws.com/Stevejobs.jpeg",
+      //input_face: "https://testing-bart-1.s3.us-east-2.amazonaws.com/LipSync+Video.mp4", // Include the input face URL
+};
 
-      sadtalker_settings: null,
-      selected_model: "Wav2Lip",
-      text_to_speech: true,
-      tts_settings: {
-        voice_id: "en-US-Neural2-F",
-        rate: 1.0,
-        pitch: 1.0,
-        volume: 1.0,
-      },
-    };
 
     console.log("Sending request to Gooey API with payload:", payload);
 

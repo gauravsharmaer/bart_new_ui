@@ -1,34 +1,51 @@
-// Table.tsx
 import { useState, useEffect } from "react";
 import genie from "../../assets/Genie.svg";
 import { TicketHistoryData } from "../../Interface/Interface";
 import TicketApiService from "./api";
 import { Link } from "react-router-dom";
+import { TicketProps } from "../../props/Props";
 
-export const Table = () => {
+
+export const TicketTable = ({ type }: TicketProps) => {
   const [ticketData, setTicketData] = useState<TicketHistoryData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const getTicketHistory = async () => {
+    // Set loading to true whenever type changes
+    setIsLoading(true);
+    
+    const fetchTickets = async () => {
       try {
-        const data = await TicketApiService.getTicketHistory(
-          localStorage.getItem("user_id") || ""
-        );
+        const userId = localStorage.getItem("user_id") || "";
+        let data;
+        
+        switch (type) {
+          case 'resolved':
+            data = await TicketApiService.getResolvedTickets(userId);
+            break;
+          case 'unresolved':
+            data = await TicketApiService.getUnResolvedTickets(userId);
+            break;
+          default:
+            data = await TicketApiService.getTicketHistory(userId);
+        }
+        
         setTicketData(data.ticketHistory);
-        setIsLoading(false);
       } catch (error) {
         console.log(error);
+        // Consider showing an error state here
+      } finally {
         setIsLoading(false);
       }
     };
-    getTicketHistory();
-  }, []);
+
+    fetchTickets();
+  }, [type]);
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-12 h-12 rounded-full border-4 border-gray-200  border-t-purple-600 animate-spin"></div>
+        <div className="w-12 h-12 rounded-full border-4 border-gray-200 border-t-purple-600 animate-spin"></div>
       </div>
     );
   }

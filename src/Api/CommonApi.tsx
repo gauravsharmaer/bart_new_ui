@@ -8,7 +8,8 @@ import {
   chatHistory,
   ImageUploadResponse,
   ChatWithDocsResponse,
-  docChatHistory
+  docChatHistory,
+  GeneralChatRequest
 } from "../Interface/Interface";
 
 import { NODE_API_URL } from "../config";
@@ -351,12 +352,7 @@ export const searchChatHistory = async (
   }
 };
 
-export interface GeneralChatRequest {
-  question: string;
-  question_type: string;
-  user_id: string;
-  chat_id?: string;
-}
+
 
 export const generalChat = async (data: GeneralChatRequest): Promise<AskResponse> => {
   try {
@@ -489,6 +485,46 @@ export const getPdfChatHistory = async (userId: string): Promise<docChatHistory[
 
     throw new Error(
       "An unexpected error occurred while fetching PDF chat history"
+    );
+  }
+};
+
+export const getGeneralChatHistory = async (userId: string): Promise<docChatHistory[]> => {
+  try {
+    const response = await fetch(
+      `https://bart-api-bd05237bdea5.herokuapp.com/general_chats/${userId}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      throw {
+        message: responseData.message || "Failed to fetch general chat history",
+        status: response.status,
+      } as APIError;
+    }
+
+    return responseData as docChatHistory[];
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      throw new Error("Invalid response format from server");
+    }
+
+    if ((error as APIError).status) {
+      const apiError = error as APIError;
+      throw new Error(
+        `General chat history fetch failed (${apiError.status}): ${apiError.message}`
+      );
+    }
+
+    throw new Error(
+      "An unexpected error occurred while fetching general chat history"
     );
   }
 };

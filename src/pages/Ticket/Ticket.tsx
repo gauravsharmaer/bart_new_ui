@@ -2,14 +2,19 @@
 import { Search } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { SiteHeader } from "../../components/Navbar";
-import { Table } from "./Table";
+// import { Table } from "./Table";
 import { useState } from "react";
 import { CaretDown } from "phosphor-react";
-import { ResolvedTicketTable } from "./ResolvedTicketTable";
-import { UnResolvedTicketTable } from "./UnResolvedTicketTable";
-import SupportTicket from "./SupportTicketCard";
-import SupportResolvedTicketCard from "./SupportResolvedTicketCard";
-import SupportUnResolvedTicketCard from "./SupportUnResolvedTicketCard";
+// import { ResolvedTicketTable } from "./ResolvedTicketTable";
+// import { UnResolvedTicketTable } from "./UnResolvedTicketTable";
+// import SupportTicket from "./SupportTicketCard";
+// import SupportResolvedTicketCard from "./SupportResolvedTicketCard";
+// import SupportUnResolvedTicketCard from "./SupportUnResolvedTicketCard";
+import { TicketTable } from "./TicketTable";
+import TicketCard from "./TicketCard";
+
+
+
 const Tickets = () => {
   const [gridViewEnabled, setGridViewEnabled] = useState(true);
   const [printViewEnabled, setPrintViewEnabled] = useState(false);
@@ -125,17 +130,9 @@ const Tickets = () => {
           </div>
 
           {printViewEnabled ? (
-            <>
-              {activeTab === "all" && <Table />}
-              {activeTab === "resolved" && <ResolvedTicketTable />}
-              {activeTab === "unresolved" && <UnResolvedTicketTable />}
-            </>
+            <TicketTable type={activeTab as 'all' | 'resolved' | 'unresolved'} />
           ) : (
-            <>
-              {activeTab === "all" && <SupportTicket />}
-              {activeTab === "resolved" && <SupportResolvedTicketCard />}
-              {activeTab === "unresolved" && <SupportUnResolvedTicketCard />}
-            </>
+            <TicketCard type={activeTab as 'all' | 'resolved' | 'unresolved'} />
           )}
         </div>
       </main>

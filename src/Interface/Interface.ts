@@ -1,3 +1,5 @@
+import { askBart, getHistory, likeChat, unlikeChat, getUserChats, deleteChat, renameChat } from "../Api/CommonApi";
+
 export interface CallbackInterface {
   _id: string;
   one_login_id: string;
@@ -172,8 +174,6 @@ export interface ImageUploadResponse {
 }
 
 
-
-
 export interface ChatWithDocsResponse {
   status: string;
   message: string;
@@ -206,4 +206,24 @@ export interface ChatWithDocsResponse {
       file_path: string;
     }[];
   };
+}
+
+
+export interface GeneralChatRequest {
+  question: string;
+  question_type: string;
+  user_id: string;
+  chat_id?: string;
+}
+
+
+export interface ApiHandlers {
+  askBart: typeof askBart;
+  getHistory: typeof getHistory;
+  likeChat: typeof likeChat;
+  unlikeChat: typeof unlikeChat;
+  getUserChats: typeof getUserChats;
+  deleteChat: typeof deleteChat;
+  renameChat: typeof renameChat;
+
 }

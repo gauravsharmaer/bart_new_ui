@@ -4,35 +4,50 @@ import { useState, useEffect } from "react";
 import TicketApiService from "./api";
 import { TicketHistoryData } from "../../Interface/Interface";
 import { Link } from "react-router-dom";
+import { TicketProps } from "../../props/Props";
 
-const SupportUnResolvedTicketCard = () => {
+
+const TicketCard = ({ type }: TicketProps) => {
   const [ticketData, setTicketData] = useState<TicketHistoryData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const getUnResolvedTickets = async () => {
+    setIsLoading(true);
+    
+    const fetchTickets = async () => {
       try {
-        const data = await TicketApiService.getUnResolvedTickets(
-          localStorage.getItem("user_id") || ""
-        );
+        const userId = localStorage.getItem("user_id") || "";
+        let data;
+        
+        switch (type) {
+          case 'resolved':
+            data = await TicketApiService.getResolvedTickets(userId);
+            break;
+          case 'unresolved':
+            data = await TicketApiService.getUnResolvedTickets(userId);
+            break;
+          default:
+            data = await TicketApiService.getTicketHistory(userId);
+        }
+        
         setTicketData(data.ticketHistory);
-        setIsLoading(false);
       } catch (error) {
         console.log(error);
+      } finally {
         setIsLoading(false);
       }
     };
-    getUnResolvedTickets();
-  }, []);
+
+    fetchTickets();
+  }, [type]);
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-12 h-12 rounded-full border-4 border-gray-200  border-t-purple-600 animate-spin"></div>
+        <div className="w-12 h-12 rounded-full border-4 border-gray-200 border-t-purple-600 animate-spin"></div>
       </div>
     );
   }
-
   return (
     <div className="flex flex-wrap justify-around gap-3 h-[500px] overflow-y-auto">
       {ticketData.map((ticket) => (
@@ -40,7 +55,7 @@ const SupportUnResolvedTicketCard = () => {
           to={ticket.link}
           target="_blank"
           key={ticket.id}
-          className="w-full max-w-md transition-transform dark:bg-[#1a1b1e] rounded-xl hover:scale-[1.02] hover:shadow-lg dark:hover:shadow-[#1a1b1e]"
+          className="w-full max-w-md transition-transform hover:scale-[1.02] dark:bg-[#1a1b1e] dark:rounded-xl hover:shadow-lg dark:hover:shadow-[#1a1b1e]"
         >
           <div className="bg-white dark:bg-[#1a1b1e] rounded-3xl border border-gray-200 dark:border-[#2c2d32] p-6">
             <div className="flex items-center justify-between mb-4">
@@ -98,6 +113,7 @@ const SupportUnResolvedTicketCard = () => {
       ))}
     </div>
   );
+  // ... rest of the card JSX remains the same as in your SupportTicket component ...
 };
 
-export default SupportUnResolvedTicketCard;
+export default TicketCard;

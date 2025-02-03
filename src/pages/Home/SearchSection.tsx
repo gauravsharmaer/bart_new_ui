@@ -9,17 +9,32 @@ import {
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { useSelector, useDispatch } from "react-redux";
-import ChatUi from "../../components/ChatUi";
+// import ChatUi from "../../components/ChatUi";
 import { RootState } from "../../redux/store";
 import { setInitialMessage } from "../../redux/chatSlice";
 import { useState } from "react";
-
+import NewChatUi from "../../components/NewChatUi";
+import { askBart, getHistory, likeChat, unlikeChat, getUserChats, deleteChat, renameChat } from "../../Api/CommonApi";
 export function SearchSection() {
   const dispatch = useDispatch();
   const [inputMessage, setInputMessage] = useState<string>("");
   const { showChatUi, initialMessage } = useSelector(
     (state: RootState) => state.chat
   );
+
+
+
+  const apiHandlers = {
+    askBart: askBart,
+    getHistory: getHistory,
+    likeChat: likeChat,
+    unlikeChat: unlikeChat,
+    getUserChats: getUserChats,
+    deleteChat: deleteChat,
+    renameChat: renameChat,
+
+
+  };
 
   const handleSearch = () => {
     if (inputMessage.length > 0) {
@@ -40,11 +55,13 @@ export function SearchSection() {
   return (
     <>
       {showChatUi ? (
-        <ChatUi
-          initialMessage={
-            initialMessage.length > 0 ? initialMessage : undefined
-          }
-        />
+        // <ChatUi
+        //   initialMessage={
+        //     initialMessage.length > 0 ? initialMessage : undefined
+        //   }
+          
+        // />
+        <NewChatUi initialMessage={initialMessage} apiHandlers={apiHandlers} />
       ) : (
         <div
           className="container max-w-4xl py-6 md:py-12"

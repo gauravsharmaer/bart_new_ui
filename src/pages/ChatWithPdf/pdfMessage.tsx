@@ -1,109 +1,48 @@
 //chatmessage
 import React, { useState, useCallback } from "react";
-import ChatLogo from "../assets/Genie.svg";
-import VerifyAuth from "../pages/Home/verifyAuth";
-import { askBart, verifyOTP } from "../Api/CommonApi";
-import OtpInputCard from "./ui/OtpInputCard";
+import ChatLogo from "../../assets/Genie.svg";
+import VerifyAuth from "../Home/verifyAuth";
+import { askBart, verifyOTP } from "../../Api/CommonApi";
+import OtpInputCard from "../../components/ui/OtpInputCard";
 // import { speakText, stopSpeaking, createTimestamp } from "../utils/chatUtils";
 import {
   createTimestamp,
   handleTextToAvatarConversion,
-} from "../utils/chatUtils";
+} from "../../utils/chatUtils";
 import { toast } from "react-toastify";
-import ChatButtonCard from "./ui/ChatButtonCard";
-import UserCard from "./ui/UserCard";
-import TicketCard from "./ui/ticketcard";
-import { ChatMessageProps } from "../props/Props";
-// import { Message } from "../Interface/Interface";
+import ChatButtonCard from "../../components/ui/ChatButtonCard";
+import UserCard from "../../components/ui/UserCard";
+import TicketCard from "../../components/ui/ticketcard";
+import { ChatMessageProps } from "../../props/Props";
+import { Message } from "../../Interface/Interface";
 import { ThumbsUp, ThumbsDown, Copy, Check } from "lucide-react";
 import { SpeakerHigh } from "@phosphor-icons/react";
-import TypingEffect from "./TypingEffect";
-import createMarkup from "../utils/chatUtils";
-import { createBotMessage, createUserMessage } from "../utils/chatFields";
-// Add these helper functions at the top of the component
+import TypingEffect from "../../components/TypingEffect";
+import createMarkup from "../../utils/chatUtils";
 
-// const createBotMessage = (result: any): Message => ({
-//   text: result.answer || "No response received",
-//   isUserMessage: false,
-//   timestamp: createTimestamp(),
-//   button_display: result.display_settings?.button_display || false,
-//   number_of_buttons: result.display_settings?.options?.buttons?.length || 0,
-//   button_text: result.display_settings?.options?.buttons || [],
-//   ticket: result.display_settings?.ticket || false,
-//   ticket_options: result.display_settings?.options?.ticket_options || {},
-//   history_id: result.display_settings?.message_history[0]?.history_id,
-//   like: result.display_settings?.message_history[0]?.like,
-//   un_like: result.display_settings?.message_history[0]?.un_like,
-// });
-
-// const createUserMessage = (text: string): Message => ({
-//   text,
-//   isUserMessage: true,
-//   timestamp: createTimestamp(),
-//   button_display: false,
-//   number_of_buttons: 0,
-//   button_text: [],
-//   ticket: false,
-// });
-
-
-
-const ChatMessage: React.FC<ChatMessageProps> = React.memo(
+const PdfMessage: React.FC<ChatMessageProps> = React.memo(
   ({ message, onNewMessage, onLike, onDislike }) => {
     const [showAuthVideoCard, setShowAuthVideoCard] = useState(false);
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
     const [clickedButton, setClickedButton] = useState<string | null>(null);
     const [isCopied, setIsCopied] = useState(false);
-    // const [isSpeaking, setIsSpeaking] = useState(false);
-    // const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(
-    //   // null
-    // );
-    // const [isPaused, setIsPaused] = useState(false);
-    // const messageId = message.history_id || message.timestamp;
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-
-    // Clean up speech synthesis when component unmounts
-    // React.useEffect(() => {
-    //   return () => {
-    //     if (utterance) {
-    //       window.speechSynthesis.cancel();
-    //     }
-    //   };
-    // }, [utterance]);
-
-    // Add resetSpeakingState function
-    // const resetSpeakingState = useCallback(() => {
-    //   setIsSpeaking(false);
-    //   setIsPaused(false);
-    //   setUtterance(null);
-    // }, []);
-
-    // Register this component as active when mounted
-    // React.useEffect(() => {
-    //   setActiveMessageComponent({ resetSpeakingState });
-    //   return () => {
-    //     if (getCurrentSpeakingMessageId() === messageId) {
-    //       cancelSpeaking();
-    //     }
-    //   };
-    // }, [messageId, resetSpeakingState]);
-
-    // React.useEffect(() => {
-    //   // Cleanup function for component unmount and page refresh
-    //   return () => {
-    //     if (utterance) {
-    //       window.speechSynthesis.cancel();
-    //       resetSpeakingState();
-    //     }
-    //   };
-    // }, [utterance, resetSpeakingState]);
 
     const handleVerificationComplete = useCallback(async () => {
       setShowAuthVideoCard(false);
 
       try {
-        onNewMessage(createUserMessage("Facial Recognition Verified"));
+        const userMessage: Message = {
+          text: "Facial Recognition Verified",
+          isUserMessage: true,
+          timestamp: createTimestamp(),
+          button_display: false,
+          number_of_buttons: 0,
+          button_text: [],
+          ticket: false,
+        };
+        onNewMessage(userMessage);
 
         const result = await askBart({
           question: "verified_success",
@@ -112,7 +51,23 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
         });
         localStorage.setItem("chat_id", result.chat_id);
 
-        onNewMessage(createBotMessage(result));
+        const botMessage: Message = {
+          text: result.answer || "No response received",
+          isUserMessage: false,
+          timestamp: createTimestamp(),
+          button_display: result.display_settings?.button_display || false,
+          number_of_buttons:
+            result.display_settings?.options?.buttons?.length || 0,
+          button_text: result.display_settings?.options?.buttons || [],
+          ticket: result.display_settings?.ticket || false,
+          ticket_options:
+            result.display_settings?.options?.ticket_options || {},
+          history_id: result.display_settings?.message_history[0]?.history_id,
+          like: result.display_settings?.message_history[0]?.like,
+          un_like: result.display_settings?.message_history[0]?.un_like,
+        };
+
+        onNewMessage(botMessage);
       } catch (error) {
         console.error("API Error:", error);
       }
@@ -122,28 +77,61 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
       setClickedButton(button);
       if (button.toLowerCase() === "facial recognition") {
         setShowAuthVideoCard(true);
-        return;
-      }
+      } else {
+        const userMessage: Message = {
+          text: button,
+          isUserMessage: true,
+          timestamp: createTimestamp(),
+          button_display: false,
+          number_of_buttons: 0,
+          button_text: [],
+          ticket: false,
+        };
+        onNewMessage(userMessage);
 
-      onNewMessage(createUserMessage(button));
+        try {
+          const result = await askBart({
+            question: button,
+            user_id: localStorage.getItem("user_id") || "",
+            chat_id: localStorage.getItem("chat_id") || "",
+          });
+          localStorage.setItem("chat_id", result.chat_id);
 
-      try {
-        const result = await askBart({
-          question: button,
-          user_id: localStorage.getItem("user_id") || "",
-          chat_id: localStorage.getItem("chat_id") || "",
-        });
-        localStorage.setItem("chat_id", result.chat_id);
+          const botMessage: Message = {
+            text: result.answer || "No response received",
+            isUserMessage: false,
+            timestamp: createTimestamp(),
+            button_display: result.display_settings?.button_display || false,
+            number_of_buttons:
+              result.display_settings?.options?.buttons?.length || 0,
+            button_text: result.display_settings?.options?.buttons || [],
+            ticket: result.display_settings?.ticket || false,
+            ticket_options:
+              result.display_settings?.options?.ticket_options || {},
+            history_id: result.display_settings?.message_history[0]?.history_id,
+            like: result.display_settings?.message_history[0]?.like,
+            un_like: result.display_settings?.message_history[0]?.un_like,
+          };
 
-        onNewMessage(createBotMessage(result));
-      } catch (error) {
-        console.error("API Error:", error);
+          onNewMessage(botMessage);
+        } catch (error) {
+          console.error("API Error:", error);
+        }
       }
     };
 
     const handleOtpSubmit = async (otpString: string) => {
       try {
-        onNewMessage(createUserMessage("Done"));
+        const userMessage: Message = {
+          text: "Done",
+          isUserMessage: true,
+          timestamp: createTimestamp(),
+          button_display: false,
+          number_of_buttons: 0,
+          button_text: [],
+          ticket: false,
+        };
+        onNewMessage(userMessage);
 
         const result = await verifyOTP({
           otp: parseInt(otpString),
@@ -151,17 +139,35 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           chat_id: localStorage.getItem("chat_id") || "",
         });
 
-        onNewMessage(createBotMessage(result));
+        const botMessage: Message = {
+          text: result.answer || "No response received",
+          isUserMessage: false,
+          timestamp: createTimestamp(),
+          button_display: result.display_settings?.button_display || false,
+          number_of_buttons:
+            result.display_settings?.options?.buttons?.length || 0,
+          button_text: result.display_settings?.options?.buttons || [],
+          ticket: result.display_settings?.ticket || false,
+          ticket_options:
+            result.display_settings?.options?.ticket_options || {},
+          history_id: result.display_settings?.message_history[0]?.history_id,
+          like: result.display_settings?.message_history[0]?.like,
+          un_like: result.display_settings?.message_history[0]?.un_like,
+        };
+
+        onNewMessage(botMessage);
       } catch (error) {
-        onNewMessage({
-          text: error instanceof Error ? error.message : "OTP verification failed",
+        const errorMessage: Message = {
+          text:
+            error instanceof Error ? error.message : "OTP verification failed",
           isUserMessage: false,
           timestamp: createTimestamp(),
           button_display: false,
           number_of_buttons: 0,
           button_text: [],
           ticket: false,
-        });
+        };
+        onNewMessage(errorMessage);
       }
     };
 
@@ -387,4 +393,4 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
   }
 );
 
-export default ChatMessage;
+export default PdfMessage;

@@ -1,4 +1,4 @@
-import { Message, ChatHistory } from "../Interface/Interface";
+import { Message, ChatHistory, ApiHandlers } from "../Interface/Interface";
 export interface TimelineProps {
   isOpen: boolean;
   onClose: () => void; // Callback to handle closing
@@ -125,3 +125,13 @@ export interface ImageUploadProps {
 export interface ChatUiProps {
   initialMessage?: string;
 }
+
+export interface ExtendedChatUiProps extends ChatUiProps {
+  apiHandlers: ApiHandlers;
+  botName?: string;
+  botAvatar?: string;
+}
+
+export type TicketProps = {
+  type: 'all' | 'resolved' | 'unresolved';
+};
