@@ -41,7 +41,7 @@ const SoftwareSupport = () => {
   return (
     <div className="h-full w-full flex items-center justify-center p-4">
       <div
-        className="relative w-[1113px] h-[690px] bg-white rounded-2xl p-6 shadow-lg overflow-hidden"
+        className="relative w-[1113px] h-[690px] bg-white dark:bg-[#2c2d32] rounded-2xl p-6 shadow-lg dark:shadow-[#1a1b1e] overflow-hidden transition-colors duration-200"
         style={{
           backgroundImage: `url(${bgHome})`,
           backgroundSize: "cover",
@@ -50,22 +50,22 @@ const SoftwareSupport = () => {
         }}
       >
         <div className="absolute top-8 left-6 flex items-center text-sm">
-          <a href="/" className="hover:underline flex items-center text-[#3c3c3c]">
+          <a href="/" className="hover:underline flex items-center text-[#3c3c3c] dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors duration-200">
             Home
           </a>
-          <img src={caretLeftIcon} alt="Separator" className="w-4 h-4 mx-2" />
-          <a href="/templates" className="hover:underline text-[#3c3c3c]">
+          <img src={caretLeftIcon} alt="Separator" className="w-4 h-4 mx-2 dark:opacity-80" />
+          <a href="/templates" className="hover:underline text-[#3c3c3c] dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors duration-200">
             All templates
           </a>
-          <img src={caretLeftIcon} alt="Separator" className="w-4 h-4 mx-2" />
-          <span className="text-[#5f4eff]">Software & Application Support</span>
+          <img src={caretLeftIcon} alt="Separator" className="w-4 h-4 mx-2 dark:opacity-80" />
+          <span className="text-[#5f4eff] dark:text-purple-400 transition-colors duration-200">Software & Application Support</span>
         </div>
 
         <div className="mt-12">
-          <h2 className="text-xl font-semibold text-[#262626] mb-2">
+          <h2 className="text-xl font-semibold text-[#262626] dark:text-white mb-2 transition-colors duration-200">
             SOFTWARE AND APPLICATION SUPPORT
           </h2>
-          <p className="text-sm text-[#6c6f76] mb-6">
+          <p className="text-sm text-[#6c6f76] dark:text-gray-400 mb-6 transition-colors duration-200">
             Install, update, or troubleshoot software with ease.
           </p>
         </div>
