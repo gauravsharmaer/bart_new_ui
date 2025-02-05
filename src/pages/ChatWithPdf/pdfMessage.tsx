@@ -223,73 +223,108 @@ const PdfMessage: React.FC<ChatMessageProps> = React.memo(
             text={message.text}
           />
         ) : (
-          <div className="flex items-start w-full">
-            <img
-              src={ChatLogo}
-              alt="BART Genie"
-              className="w-8 h-8 rounded-full object-cover mx-2 dark:opacity-90"
-            />
-            <div className="flex-1">
-              <div className="flex items-center justify-start">
-                <span className="text-[14px] font-passenger font-light text-gray-900 dark:text-black mr-2 transition-colors duration-200">
-                  BART Genie
-                </span>
-                <span className="w-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-full mx-1"></span>
-                <span className="text-[12px] font-passenger font-light text-gray-600 dark:text-black/70 transition-colors duration-200">
-                  {(() => {
-                    try {
-                      const date = new Date(message.timestamp);
-                      return date.toLocaleString();
-                    } catch {
-                      return "Invalid date";
-                    }
-                  })()}
-                </span>
-              </div>
-              <div className="flex mt-2">
-                {(message.button_display ||
-                  message.text.includes("verification code")) && (
-                  <div
-                    className="w-1 h-auto mr-2 bg-purple-600 dark:bg-purple-500 rounded-sm transition-colors duration-200"
-                  ></div>
-                )}
-                <div className="flex-1">
+          <div className="flex flex-col w-full">
+            <div className="flex items-start">
+              <img
+                src={ChatLogo}
+                alt="BART Genie"
+                className="w-8 h-8 rounded-full object-cover mx-2 dark:opacity-90"
+              />
+              <div className="flex-1">
+                <div className="flex items-center justify-start">
+                  <span className="text-[14px] font-passenger font-light text-gray-900 dark:text-black mr-2 transition-colors duration-200">
+                    BART Genie
+                  </span>
+                  <span className="w-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-full mx-1"></span>
+                  <span className="text-[12px] font-passenger font-light text-gray-600 dark:text-black/70 transition-colors duration-200">
+                    {(() => {
+                      try {
+                        const date = new Date(message.timestamp);
+                        return date.toLocaleString();
+                      } catch {
+                        return "Invalid date";
+                      }
+                    })()}
+                  </span>
+                </div>
+                <div className="flex mt-2">
+                  {(message.button_display ||
+                    message.text.includes("verification code")) && (
+                    <div
+                      className="w-1 h-auto mr-2 bg-purple-600 dark:bg-purple-500 rounded-sm transition-colors duration-200"
+                    ></div>
+                  )}
                   <div className="flex-1">
-                    {message.isFromHistory ? (
-                      <div
-                        className="text-sm text-gray-800 dark:text-black font-passenger transition-colors duration-200"
-                        dangerouslySetInnerHTML={createMarkup(message.text)}
+                    <div className="flex-1">
+                      {message.isFromHistory ? (
+                        <div
+                          className="text-sm text-gray-800 dark:text-black font-passenger transition-colors duration-200"
+                          dangerouslySetInnerHTML={createMarkup(message.text)}
+                        />
+                      ) : (
+                        <TypingEffect text={message.text} speed={1} />
+                      )}
+                    </div>
+
+                    {message.text.includes("verification code") && (
+                      <OtpInputCard
+                        onSubmitOTP={(otpString) => handleOtpSubmit(otpString)}
+                        otp={otp}
+                        setOtp={setOtp}
                       />
-                    ) : (
-                      <TypingEffect text={message.text} speed={1} />
+                    )}
+                    {message.button_display &&
+                      !message.text.includes("verification code") && (
+                        <ChatButtonCard
+                          buttons={message.button_text}
+                          onButtonClick={handleButtonClick}
+                          clickedButton={clickedButton}
+                        />
+                      )}
+                    {message.ticket && message.ticket_options && (
+                      <TicketCard
+                        name={message.ticket_options.name}
+                        description={message.ticket_options.description}
+                        ticket_id={message.ticket_options.ticket_id}
+                        assignee_name={message.ticket_options.assignee_name}
+                        ticket_link={message.ticket_options.link}
+                      />
                     )}
                   </div>
-
-                  {message.text.includes("verification code") && (
-                    <OtpInputCard
-                      onSubmitOTP={(otpString) => handleOtpSubmit(otpString)}
-                      otp={otp}
-                      setOtp={setOtp}
-                    />
-                  )}
-                  {message.button_display &&
-                    !message.text.includes("verification code") && (
-                      <ChatButtonCard
-                        buttons={message.button_text}
-                        onButtonClick={handleButtonClick}
-                        clickedButton={clickedButton}
-                      />
-                    )}
-                  {message.ticket && message.ticket_options && (
-                    <TicketCard
-                      name={message.ticket_options.name}
-                      description={message.ticket_options.description}
-                      ticket_id={message.ticket_options.ticket_id}
-                      assignee_name={message.ticket_options.assignee_name}
-                      ticket_link={message.ticket_options.link}
-                    />
-                  )}
                 </div>
+                
+                {!message.isUserMessage && (
+                  <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 mt-2 ml-0">
+                    <button
+                      className={`p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]
+                        ${message.like ? "text-green-600 dark:text-green-500" : ""}`}
+                      onClick={() => onLike(message.history_id || "")}
+                      aria-label="Like message"
+                    >
+                      <ThumbsUp size={16} />
+                    </button>
+                    <button
+                      className={`p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]
+                        ${message.un_like ? "text-red-600 dark:text-red-500" : ""}`}
+                      onClick={() => onDislike(message.history_id || "")}
+                      aria-label="Dislike message"
+                    >
+                      <ThumbsDown size={16} />
+                    </button>
+                    <button
+                      className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]"
+                      onClick={handleSpeak}
+                    >
+                      <SpeakerHigh size={16} />
+                    </button>
+                    <button
+                      className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]"
+                      onClick={handleCopy}
+                    >
+                      {isCopied ? <Check size={16} /> : <Copy size={16} />}
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -311,39 +346,6 @@ const PdfMessage: React.FC<ChatMessageProps> = React.memo(
                 </div>
               </div>
             </div>
-          </div>
-        )}
-
-        {!message.isUserMessage && (
-          <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-            <button
-              className={`p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]
-                ${message.like ? "text-green-600 dark:text-green-500" : ""}`}
-              onClick={() => onLike(message.history_id || "")}
-              aria-label="Like message"
-            >
-              <ThumbsUp size={16} />
-            </button>
-            <button
-              className={`p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]
-                ${message.un_like ? "text-red-600 dark:text-red-500" : ""}`}
-              onClick={() => onDislike(message.history_id || "")}
-              aria-label="Dislike message"
-            >
-              <ThumbsDown size={16} />
-            </button>
-            <button
-              className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]"
-              onClick={handleSpeak}
-            >
-              <SpeakerHigh size={16} />
-            </button>
-            <button
-              className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]"
-              onClick={handleCopy}
-            >
-              {isCopied ? <Check size={16} /> : <Copy size={16} />}
-            </button>
           </div>
         )}
 

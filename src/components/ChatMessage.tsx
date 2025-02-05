@@ -20,6 +20,7 @@ import { SpeakerHigh } from "@phosphor-icons/react";
 import TypingEffect from "./TypingEffect";
 import createMarkup from "../utils/chatUtils";
 import { createBotMessage, createUserMessage } from "../utils/chatFields";
+import { useGetAvatarMutation, getAvatarCacheKey } from "../redux/features/avatarSlice";
 // Add these helper functions at the top of the component
 
 // const createBotMessage = (result: any): Message => ({
@@ -62,6 +63,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     // const messageId = message.history_id || message.timestamp;
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [getAvatar] = useGetAvatarMutation();
 
     // Clean up speech synthesis when component unmounts
     // React.useEffect(() => {
@@ -168,13 +170,38 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     const handleSpeak = async () => {
       try {
         setIsLoading(true);
-        const url = await handleTextToAvatarConversion(message.text);
+        const cleanText = message.text.replace(/<[^>]*>/g, "")
+          .replace(/\[(.*?)\]\(.*?\)/g, "$1")
+          .replace(/https?:\/\/\S+/g, "")
+          .trim();
+          
+        // Check if we already have a cached response
+        const cacheKey = getAvatarCacheKey(cleanText);
+        const cachedResponse = localStorage.getItem(cacheKey);
+        
+        if (cachedResponse) {
+          setVideoUrl(JSON.parse(cachedResponse).output.output_video);
+          setIsLoading(false);
+          return;
+        }
+
+        const url = await handleTextToAvatarConversion(
+          message.text,
+          async (text) => {
+            const response = await getAvatar(text).unwrap();
+            // Cache the response
+            localStorage.setItem(cacheKey, JSON.stringify(response));
+            return response;
+          }
+        );
+        
         console.log("Video URL:", url);
         if (url) {
           setVideoUrl(url);
         }
       } catch (error) {
         console.error("Error converting text to avatar:", error);
+        toast.error("Failed to generate avatar video");
       } finally {
         setIsLoading(false);
       }

@@ -1,5 +1,4 @@
 import DOMPurify from "dompurify";
-import { REACT_APP_GOOEY_API_KEY, REACT_APP_GOOEY_API_URL, REACT_APP_ELEVENLABS_API_KEY, REACT_APP_ELEVENLABS_VOICE_ID } from "../config";
 
 // Add type declarations at the top of the file
 declare global {
@@ -327,6 +326,43 @@ export const stopSpeechRecognition = () => {
 //   }
 // };
 
+interface GooeyApiResponse {
+  id: string;
+  url: string;
+  created_at: string;
+  output: {
+    output_video: string;
+    audio_url: string;
+    text_prompt: string;
+    duration_sec: number;
+  };
+}
+
+export const handleTextToAvatarConversion = async (
+  text: string,
+  triggerMutation: (text: string) => Promise<GooeyApiResponse>
+): Promise<string> => {
+  try {
+    console.log('Initiating avatar conversion with text:', text);
+    
+    // Call the mutation using the provided trigger function
+    const response = await triggerMutation(text);
+    console.log('API response:', response);
+    
+    if (!response || !response.output?.output_video) {
+      throw new Error("Invalid response format from API");
+    }
+    
+    return response.output.output_video;
+  } catch (error) {
+    console.error("Avatar conversion failed:", error);
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("Failed to convert text to avatar");
+  }
+};
+
 // export const handleTextToAvatarConversion = async (
 //   text: string
 // ): Promise<string> => {
@@ -342,27 +378,15 @@ export const stopSpeechRecognition = () => {
 
 //     // Create the payload for Gooey API
 //     const payload = {
-//       functions: null,
-//       variables: null,
 //       text_prompt: cleanText,
-//       input_face:
-//         "https://testing-bart-1.s3.us-east-2.amazonaws.com/LipSync+Video.mp4",
-//       face_padding_top: 0,
-//       face_padding_bottom: 18,
-//       face_padding_left: 0,
-//       face_padding_right: 0,
-      
+//       tts_provider: "ELEVEN_LABS",
+//       elevenlabs_voice_name: null, // Set to null if not using a specific voice name
+//       elevenlabs_api_key: REACT_APP_ELEVENLABS_API_KEY, // Replace with your actual Eleven Labs API key
+//       elevenlabs_voice_id: REACT_APP_ELEVENLABS_VOICE_ID, // Replace with your actual Eleven Labs voice ID
+//       input_face: "https://testing-bart-1.s3.us-east-2.amazonaws.com/Stevejobs.jpeg",
+//       //input_face: "https://testing-bart-1.s3.us-east-2.amazonaws.com/LipSync+Video.mp4", // Include the input face URL
+// };
 
-//       sadtalker_settings: null,
-//       selected_model: "Wav2Lip",
-//       text_to_speech: true,
-//       tts_settings: {
-//         voice_id: "en-US-Neural2-F",
-//         rate: 1.0,
-//         pitch: 1.0,
-//         volume: 1.0,
-//       },
-//     };
 
 //     console.log("Sending request to Gooey API with payload:", payload);
 
@@ -389,56 +413,6 @@ export const stopSpeechRecognition = () => {
 //     throw error;
 //   }
 // };
-export const handleTextToAvatarConversion = async (
-  text: string
-): Promise<string> => {
-  try {
-    // Clean the text but preserve natural speech patterns
-    const cleanText = text
-      .replace(/<[^>]*>/g, "")
-      .replace(/\[(.*?)\]\(.*?\)/g, "$1")
-      .replace(/https?:\/\/\S+/g, "")
-      .trim();
-
-    console.log("Cleaned text:", cleanText);
-
-    // Create the payload for Gooey API
-    const payload = {
-      text_prompt: cleanText,
-      tts_provider: "ELEVEN_LABS",
-      elevenlabs_voice_name: null, // Set to null if not using a specific voice name
-      elevenlabs_api_key: REACT_APP_ELEVENLABS_API_KEY, // Replace with your actual Eleven Labs API key
-      elevenlabs_voice_id: REACT_APP_ELEVENLABS_VOICE_ID, // Replace with your actual Eleven Labs voice ID
-      input_face: "https://testing-bart-1.s3.us-east-2.amazonaws.com/Stevejobs.jpeg",
-      //input_face: "https://testing-bart-1.s3.us-east-2.amazonaws.com/LipSync+Video.mp4", // Include the input face URL
-};
-
-
-    console.log("Sending request to Gooey API with payload:", payload);
-
-    // Make the API call
-    const response = await fetch(REACT_APP_GOOEY_API_URL, {
-      method: "POST",
-      headers: {
-        Authorization: `bearer ${REACT_APP_GOOEY_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const result = await response.json();
-    console.log("API Response:", result);
-
-    if (result.output && result.output.output_video) {
-      return result.output.output_video;
-    } else {
-      throw new Error("No video URL in response");
-    }
-  } catch (error) {
-    console.error("Avatar conversion failed:", error);
-    throw error;
-  }
-};
 
 // Remove unused functions
 export const textToSpeechBlob = undefined;

@@ -397,16 +397,19 @@ export const generalChat = async (data: GeneralChatRequest): Promise<AskResponse
 };
 
 export const chatWithDocs = async (
-  file: File,
+  file: File | null,
   userId: string,
   question: string,
   chatId?: string
 ): Promise<ChatWithDocsResponse> => {
   try {
     const formData = new FormData();
-    formData.append('file', file);
+    if(file){
+      formData.append('file', file);
+    }
     formData.append('user_id', userId);
     formData.append('question', question);
+
     if (chatId) {
       formData.append('chat_id', chatId);
     }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { X } from 'lucide-react';
+import CloseIcon from '../../assets/ViewPDF.svg';
 
 interface PdfSidebarProps {
   isOpen: boolean;
@@ -10,31 +10,44 @@ interface PdfSidebarProps {
 const PdfSidebar: React.FC<PdfSidebarProps> = ({ isOpen, onClose, pdfUrl }) => {
   return (
     <div
-      className={`fixed inset-y-0 right-0 top-[56px] bottom-[-12px] w-[570px] bg-transparent transform transition-transform duration-300 ease-in-out z-50 ${
-        isOpen ? 'translate-x-0' : 'translate-x-full'
-      }`}
+    className={`fixed inset-y-0 right-2 transform transition-all duration-300 ease-in-out z-50 
+      ${isOpen ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 pointer-events-none'}`}
+    style={{
+        backgroundColor: '#f3f5f9',
+        height: 'calc(100% - 88px)',
+        marginTop: '72px',
+        borderRadius: '16px',
+        width: '450px',
+      }}
     >
-      <div className="h-full flex flex-col p-4">
-        {/* PDF Viewer with circular container */}
-        <div className="flex-1 overflow-hidden relative">
-          <div className="absolute top-4 right-6 z-10">
-            <button
-              onClick={onClose}
-              className="p-1 hover:bg-gray-100 bg-white rounded-full transition-colors shadow-lg"
-            >
-              <X className="w-4 h-4" />
-            </button>
+      <div className="h-full flex flex-col bg-white rounded-2xl overflow-hidden">
+        {/* Header with Close Icon */}
+        <div className="relative p-2 rounded-t-lg">
+          <img
+            src={CloseIcon}
+            alt="Close"
+            className="absolute top-0 left-0 w-8px h-6 cursor-pointer"
+            onClick={onClose}
+          />
+          <div className="ml-8">
+            <span className="text-white text-sm block">View PDF</span>
+            <span className="text-black text-sm font-medium block ml-[-25px] mt-[8px]">PDF Viewer</span>
           </div>
-          <div className="h-full flex flex-col items-center">
-            <div className="bg-white shadow-lg rounded-[30px] w-[98%] h-[98%] overflow-hidden">
-              {pdfUrl && (
-                <iframe
-                  src={pdfUrl}
-                  className="w-full h-full border-0"
-                  title="PDF Preview"
-                />
-              )}
-            </div>
+        </div>
+
+        {/* PDF Container */}
+        <div className="flex-1 overflow-hidden p-3 mt-[-10px]">
+          <div className="bg-white rounded-lg h-full shadow-inner">
+            {pdfUrl && (
+              <iframe
+                src={pdfUrl}
+                className="w-full h-full border-0"
+                title="PDF Preview"
+                style={{
+                  backgroundColor: 'white',
+                }}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -42,4 +55,4 @@ const PdfSidebar: React.FC<PdfSidebarProps> = ({ isOpen, onClose, pdfUrl }) => {
   );
 };
 
-export default PdfSidebar; 
+export default PdfSidebar;

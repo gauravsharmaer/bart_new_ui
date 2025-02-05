@@ -10,10 +10,12 @@ import { RootState } from "../redux/store";
 import OneLoginCallBack from "../pages/Callback/OneLoginCallBack";
 import Settings from "../pages/Settings/Settings";
 import PDFChat from "../pages/ChatWithPdf/ChatWithPdf";
+import GeneralChat from "../pages/GeneralChat/GeneralChat";
 const AppRoutes = () => {
   const authenticated = useSelector<RootState>(
     (state) => state.auth.authenticated
   ) as boolean;
+
   return (
     <Routes>
       <Route
@@ -53,8 +55,13 @@ const AppRoutes = () => {
       <Route
         path="/chat-with-pdf"
         element={authenticated ? <PDFChat /> : <Navigate to="/login" />}
-      />
+        />
+        <Route
+        path="/general-chat"
+        element={authenticated ? <GeneralChat /> : <Navigate to="/login" />}
+        />
     </Routes>
+
   );
 };
 
