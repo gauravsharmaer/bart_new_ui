@@ -11,7 +11,7 @@ import PdfMessage from '../ChatWithPdf/pdfMessage';
 import PdfSidebar from '../ChatWithPdf/pdfSidebar';
 import DotLoader from "../../utils/DotLoader"; // Add this import at the top
 import Genie from "../../assets/Genie.svg";
-
+import { createTimestamp } from "../../utils/chatUtils";
 // TypeScript interfaces
 interface ApiResponse {
   response: string;
@@ -111,12 +111,13 @@ const PDFChat = () => {
       const userMessage: Message = {
         text: message,
         isUserMessage: true,
-        timestamp: new Date().toLocaleTimeString(),
+        timestamp: createTimestamp(),
         button_display: false,
         number_of_buttons: 0,
         button_text: [],
         pdfFile: !currentChatId ? pdfFiles[0] : undefined,
-        history_id: Date.now().toString()
+        history_id: createTimestamp()
+
       };
 
       setMessages(prevMessages => [...prevMessages, userMessage]);
@@ -144,11 +145,12 @@ const PDFChat = () => {
         const botMessage: Message = {
           text: response.answer,
           isUserMessage: false,
-          timestamp: new Date().toLocaleTimeString(),
+          timestamp: createTimestamp(),
           button_display: false,
           number_of_buttons: 0,
           button_text: [],
-          history_id: Date.now().toString()
+          history_id: createTimestamp()
+
         };
         setMessages(prevMessages => [...prevMessages, botMessage]);
       }
@@ -183,6 +185,39 @@ const PDFChat = () => {
     setMessages(updatedMessages);
   };
 
+  // const handleGetChat = async (chatId: string) => {
+  //   try {
+  //     const data = await getHistory(chatId);
+  //     console.log("Full chat history response:", data);
+
+  //     // Find the chat details from chatHistory array
+  //     const chatDetails = chatHistory.find(chat => chat.id === chatId);
+  //     if (chatDetails) {
+  //       console.log("Chat details:", chatDetails);
+        
+  //       // Construct PDF URL if file_path exists
+  //       if (chatDetails.file_path) {
+  //         const pdfUrl = `https://bart-api-bd05237bdea5.herokuapp.com/uploads/${chatDetails.file_path}`;
+  //         console.log("Constructed PDF URL:", pdfUrl);
+  //         setPdfUrls([pdfUrl]);
+  //         setIsPdfSidebarOpen(false);
+  //       }
+  //     }
+
+  //     const flattenedMessages = data.flat().map((message) => ({
+  //       ...message,
+  //       isFromHistory: true,
+  //     }));
+  //     setMessages(flattenedMessages);
+  //     setCurrentChatId(chatId);
+  //     setPdfFiles([]); // Reset PDF files array
+  //   } catch (error) {
+  //     console.error("Error fetching chat:", error);
+  //   }
+  // };
+
+
+
   const handleGetChat = async (chatId: string) => {
     try {
       const data = await getHistory(chatId);
@@ -193,11 +228,9 @@ const PDFChat = () => {
       if (chatDetails) {
         console.log("Chat details:", chatDetails);
         
-        // Construct PDF URL if file_path exists
+        // Use the file_path directly from the chat details
         if (chatDetails.file_path) {
-          const pdfUrl = `https://bart-api-bd05237bdea5.herokuapp.com/uploads/${chatDetails.file_path}`;
-          console.log("Constructed PDF URL:", pdfUrl);
-          setPdfUrls([pdfUrl]);
+          setPdfUrls([chatDetails.file_path]);
           setIsPdfSidebarOpen(false);
         }
       }
@@ -278,18 +311,18 @@ const PDFChat = () => {
       <div className="flex-1 overflow-y-auto px-4 py-3">
         {/* Display PDF URL for both history and new chats */}
         {(pdfUrls[0] || (messages[0]?.pdfFile)) && (
-          <div className="flex justify-end mb-[-25px]">
-            <PdfFileDisplay
-              fileName={
-                currentChatId 
-                  ? getFileName(chatHistory.find(chat => chat.id === currentChatId)?.file_path || "")
-                  : messages[0]?.pdfFile?.name || "PDF Document"
-              }
-              onClick={() => {
-                setIsPdfSidebarOpen(true);
-              }}
-            />
-          </div>
+    <div className="flex justify-end mb-[-25px]">
+    <PdfFileDisplay
+      fileName={
+        currentChatId 
+          ? chatHistory.find(chat => chat.id === currentChatId)?.original_file_name || "PDF Document"
+          : messages[0]?.pdfFile?.name || "PDF Document"
+      }
+      onClick={() => {
+        setIsPdfSidebarOpen(true);
+      }}
+    />
+  </div>
         )}
 
         {messages.map((message, index) => (
@@ -320,10 +353,12 @@ const PDFChat = () => {
                 </span>
                 <span className="w-1 h-1 bg-gray-300 rounded-full mx-1"></span>
                 <span className="text-xs text-gray-400">
-                  {new Date().toLocaleTimeString()}
+                {new Date().toLocaleTimeString()}
                 </span>
               </div>
               <div className="mt-2">
+
+
                 <DotLoader />
               </div>
             </div>

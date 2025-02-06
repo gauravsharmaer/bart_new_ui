@@ -59,7 +59,8 @@ const PdfFileDisplay: React.FC<PdfFileDisplayProps> = ({
   onClick,
 }) => {
   return (
-    <div className="inline-flex items-center gap-2 bg-[#f8f8f8] rounded-[14px] px-1 py-3 cursor-pointer hover:bg-gray-50 border border-dotted border-[#d1cfc5] shadow-sm"
+    <div className="inline-flex items-center gap-2 bg-[#f8f8f8] rounded-[14px] px-1 py-3 cursor-pointer
+     hover:bg-gray-50 border border-dotted border-[#d1cfc5] shadow-sm"
       style={{ marginRight: '32px' }}
       onClick={onClick}
     >

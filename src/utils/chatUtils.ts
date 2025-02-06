@@ -121,10 +121,62 @@ export const createTimestamp = (): string => {
 //   return speech;
 // };
 
-const createMarkup = (text: string) => {
+// const createMarkup = (text: string) => {
+//   // First sanitize the HTML to prevent XSS attacks
+//   const sanitizedHtml = DOMPurify.sanitize(text, {
+//     ALLOWED_TAGS: ["h2", "a", "br", "p", "ul", "li"],
+//     ALLOWED_ATTR: ["href", "target", "class"],
+//   });
+
+//   // Remove Sources header
+//   let processedText = sanitizedHtml.replace(/<h2>Sources<\/h2>/, "");
+   
+//   // Convert newlines to <br> tags
+//   processedText = processedText.replace(/\n/g, "<br>");
+
+//   // Process any markdown-style headers that weren't already HTML
+//   processedText = processedText.replace(
+//     /^## (.*$)/gm,
+//     '<h2 class="text-xl font-bold mb-2">$1</h2>'
+//   );
+
+//   // Process text enclosed in ** as headings
+//   processedText = processedText.replace(
+//     /\*\*(.*?)\*\*/g,
+//     '<span class="font-bold ">$1</span>'
+//   );
+
+//   // Process links if they're in markdown format
+//   processedText = processedText.replace(
+//     /\[(.*?)\]\((.*?)\)/g,
+//     '<a href="$2" target="_blank" class="inline border border-red-300 bg-white text-black rounded-md font-bold px-1 py-0.5 hover:bg-gray-200 transition duration-200 ease-in-out">$1</a>'
+//   );
+
+//   // Add classes to existing HTML elements
+//   processedText = processedText
+//     // Style paragraphs
+//     .replace(/<p>/g, '<p class="mb-1">')
+//     // Style unordered lists
+//     .replace(/<ul>/g, '<ul class="flex space-x-2">')
+//     // Style list items
+//     .replace(/<li>/g, '<li class="mb-2">')
+//     // Style links that aren't already styled
+//     .replace(
+//       /<a(?![^>]*class=)/g,
+//       '<a class=" inline-block border border-red-300 bg-white rounded-md font-bold px-2 py-1 mr-0 hover:bg-gray-200 transition duration-200 ease-in-out"'
+//     );
+
+//   return {
+//     __html: processedText,
+//   };
+// };
+
+
+
+const createMarkup = (text: string, listStyle: 'inline' | 'vertical' = 'vertical') => {
   // First sanitize the HTML to prevent XSS attacks
   const sanitizedHtml = DOMPurify.sanitize(text, {
-    ALLOWED_TAGS: ["h2", "a", "br", "p", "ul", "li"],
+    ALLOWED_TAGS: ["h2", "a", "br", "p", "ul", "li", "div"],
     ALLOWED_ATTR: ["href", "target", "class"],
   });
 
@@ -143,33 +195,45 @@ const createMarkup = (text: string) => {
   // Process text enclosed in ** as headings
   processedText = processedText.replace(
     /\*\*(.*?)\*\*/g,
-    '<span class="font-bold ">$1</span>'
+    '<span class="font-bold">$1</span>'
   );
 
-  // Process links if they're in markdown format
+  // Process markdown-style links with consistent styling
   processedText = processedText.replace(
     /\[(.*?)\]\((.*?)\)/g,
     '<a href="$2" target="_blank" class="inline border border-red-300 bg-white text-black rounded-md font-bold px-1 py-0.5 hover:bg-gray-200 transition duration-200 ease-in-out">$1</a>'
   );
 
-  // Add classes to existing HTML elements
+  // Process existing HTML links and add classes
   processedText = processedText
     // Style paragraphs
-    .replace(/<p>/g, '<p class="mb-1">')
-    // Style unordered lists
-    .replace(/<ul>/g, '<ul class="flex space-x-2">')
-    // Style list items
-    .replace(/<li>/g, '<li class="mb-2">')
-    // Style links that aren't already styled
+    .replace(/<p>/g, '<p class="mb-[-10px]">')
+    // Style unordered lists based on listStyle parameter
+    .replace(
+      /<ul>/g,
+      listStyle === 'inline' 
+        ? '<ul class="flex gap-1 mt-[15px] mb-[-15px]">'
+        : '<ul class="flex flex-col w-full gap-0 mb-[-15px]">'
+    )
+    // Style list items based on listStyle parameter
+    .replace(
+      /<li>/g,
+      '<li class="inline-block">'
+    )
+    // Modify link styling
     .replace(
       /<a(?![^>]*class=)/g,
-      '<a class=" inline-block border border-red-300 bg-white rounded-md font-bold px-2 py-1 mr-0 hover:bg-gray-200 transition duration-200 ease-in-out"'
+      '<a class="inline-flex items-center border border-red-300 bg-white rounded-md font-bold px-2 py-1 hover:bg-gray-200 transition duration-200 ease-in-out"'
     );
+
+  // Remove <br> tags between list items
+  processedText = processedText.replace(/<br>\s*(?=<li>|<\/li>)/g, '');
 
   return {
     __html: processedText,
   };
 };
+
 
 
 export const speakText = (

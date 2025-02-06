@@ -62,6 +62,7 @@
 
 // export const { useGetAvatarMutation } = apiSlice
 
+
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { REACT_APP_GOOEY_API_KEY, REACT_APP_GOOEY_API_URL } from "../../config";
 interface GooeyApiResponse {
@@ -103,11 +104,16 @@ export const VOICE_OPTIONS: VoiceOption[] = [
   },
 ];
 
+export const getAvatarCacheKey = (text: string, voiceId: string, faceUrl: string) =>
+  `avatar-${text
+    .replace(/<[^>]*>/g, "")
+    .replace(/\[(.*?)\]\(.*?\)/g, "$1")
+    .trim()}-${voiceId}-${faceUrl}`;
+
 export const apiSlice = createApi({
   reducerPath: "avatarApi",
   baseQuery: fetchBaseQuery({
     baseUrl: REACT_APP_GOOEY_API_URL,
-
     prepareHeaders: (headers) => {
       headers.set("Authorization", `bearer ${REACT_APP_GOOEY_API_KEY}`);
       headers.set("Content-Type", "application/json");
@@ -131,8 +137,7 @@ export const apiSlice = createApi({
             .trim(),
           tts_provider: "ELEVEN_LABS",
           elevenlabs_voice_name: null,
-          elevenlabs_api_key:
-            "sk_0c1bc5383092605e8582a5018e2584633522f8cda998ad0e",
+          elevenlabs_api_key: "sk_0c1bc5383092605e8582a5018e2584633522f8cda998ad0e",
           elevenlabs_voice_id: voiceId,
           input_face: faceUrl,
         },
@@ -141,20 +146,14 @@ export const apiSlice = createApi({
       extraOptions: {
         maxRetries: 0,
       },
-      transformResponse: (response: GooeyApiResponse) => {
+      transformResponse: (response: GooeyApiResponse, _, arg) => {
         return {
           ...response,
-          cacheKey: response.output.text_prompt,
+          cacheKey: getAvatarCacheKey(arg.text, arg.voiceId, arg.faceUrl),
         };
       },
     }),
   }),
 });
-
-export const getAvatarCacheKey = (text: string) =>
-  `avatar-${text
-    .replace(/<[^>]*>/g, "")
-    .replace(/\[(.*?)\]\(.*?\)/g, "$1")
-    .trim()}`;
 
 export const { useGetAvatarMutation } = apiSlice;

@@ -17,13 +17,19 @@ import TicketCard from "../../components/ui/ticketcard";
 import { ChatMessageProps } from "../../props/Props";
 
 // import { Message } from "../Interface/Interface";
-import { ThumbsUp, ThumbsDown, Copy, Check } from "lucide-react";
-import { SpeakerHigh } from "@phosphor-icons/react";
+// import { ThumbsUp, ThumbsDown, Copy, Check } from "lucide-react";
+// import { SpeakerHigh } from "@phosphor-icons/react";
 import TypingEffect from "../../components/TypingEffect";
 import createMarkup from "../../utils/chatUtils";
 import { createBotMessage, createUserMessage } from "../../utils/chatFields";
-import { useGetAvatarMutation, getAvatarCacheKey } from "../../redux/features/avatarSlice";
-
+import { useGetAvatarMutation, getAvatarCacheKey, VOICE_OPTIONS } from "../../redux/features/avatarSlice";
+import VoiceOptions from "../../components/VoiceOptions";
+// import VoiceOptions from "./VoiceOptions";
+import SpeakerHigh from "../../assets/speaker.svg";
+import ThumbsUp from "../../assets/thumb-up.svg";
+import ThumbsDown from "../../assets/thumb-down.svg";
+import Copy from "../../assets/copy.svg";
+import Check from "../../assets/check.svg";
 // Add these helper functions at the top of the component
 
 // const createBotMessage = (result: any): Message => ({
@@ -67,12 +73,13 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [getAvatar] = useGetAvatarMutation();
-
+    const [showVoiceOptions, setShowVoiceOptions] = useState(false);
     // Clean up speech synthesis when component unmounts
     // React.useEffect(() => {
     //   return () => {
     //     if (utterance) {
     //       window.speechSynthesis.cancel();
+
     //     }
     //   };
     // }, [utterance]);
@@ -170,18 +177,69 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
       }
     };
 
-    const handleSpeak = async () => {
+    // const handleSpeak = async () => {
+    //   try {
+    //     setIsLoading(true);
+    //     const cleanText = message.text.replace(/<[^>]*>/g, "")
+    //       .replace(/\[(.*?)\]\(.*?\)/g, "$1")
+    //       .replace(/https?:\/\/\S+/g, "")
+    //       .trim();
+          
+    //     // Check if we already have a cached response
+    //     const cacheKey = getAvatarCacheKey(cleanText);
+    //     const cachedResponse = localStorage.getItem(cacheKey);
+        
+    //     if (cachedResponse) {
+    //       setVideoUrl(JSON.parse(cachedResponse).output.output_video);
+    //       setIsLoading(false);
+    //       return;
+    //     }
+
+    //     const url = await handleTextToAvatarConversion(
+    //       message.text,
+    //       async (text) => {
+    //         const response = await getAvatar(text).unwrap();
+    //         // Cache the response
+    //         localStorage.setItem(cacheKey, JSON.stringify(response));
+    //         return response;
+    //       }
+    //     );
+        
+    //     console.log("Video URL:", url);
+    //     if (url) {
+    //       setVideoUrl(url);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error converting text to avatar:", error);
+    //     toast.error("Failed to generate avatar video");
+    //   } finally {
+    //     setIsLoading(false);
+    //   }
+    // };
+
+
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleSpeak = async (voiceOption?: any) => {
+      if (!voiceOption) {
+        setShowVoiceOptions(true);
+        return;
+      }
+
       try {
         setIsLoading(true);
-        const cleanText = message.text.replace(/<[^>]*>/g, "")
+        setShowVoiceOptions(false);
+
+        const cleanText = message.text
+          .replace(/<[^>]*>/g, "")
           .replace(/\[(.*?)\]\(.*?\)/g, "$1")
           .replace(/https?:\/\/\S+/g, "")
           .trim();
-          
-        // Check if we already have a cached response
-        const cacheKey = getAvatarCacheKey(cleanText);
+
+        // Check if we already have a cached response with this specific voice and face
+        const cacheKey = getAvatarCacheKey(cleanText, voiceOption.voice_id, voiceOption.face_url);
         const cachedResponse = localStorage.getItem(cacheKey);
-        
+
         if (cachedResponse) {
           setVideoUrl(JSON.parse(cachedResponse).output.output_video);
           setIsLoading(false);
@@ -191,13 +249,17 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
         const url = await handleTextToAvatarConversion(
           message.text,
           async (text) => {
-            const response = await getAvatar(text).unwrap();
-            // Cache the response
+            const response = await getAvatar({
+              text,
+              voiceId: voiceOption.voice_id,
+              faceUrl: voiceOption.face_url,
+            }).unwrap();
+            // Cache the response with the new cache key format
             localStorage.setItem(cacheKey, JSON.stringify(response));
             return response;
           }
         );
-        
+
         console.log("Video URL:", url);
         if (url) {
           setVideoUrl(url);
@@ -207,6 +269,13 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
         toast.error("Failed to generate avatar video");
       } finally {
         setIsLoading(false);
+      }
+    };
+
+    const handleVoiceIconClick = (voiceIndex: number) => {
+      const selectedVoice = VOICE_OPTIONS[voiceIndex];
+      if (selectedVoice) {
+        handleSpeak(selectedVoice);
       }
     };
 
@@ -313,6 +382,50 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                       ticket_link={message.ticket_options.link}
                     />
                   )}
+
+                  <div className="relative mt-2">
+                    <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                      <button
+                        className={`p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]
+                          ${message.like ? "text-green-600 dark:text-green-500" : ""}`}
+                        onClick={() => onLike(message.history_id || "")}
+                        aria-label="Like message"
+                      >
+                        <img src={ThumbsUp} alt="Thumbs Up" className="w-6 h-6 object-contain" />
+                      </button>
+                      <button
+                        className={`p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]
+                          ${message.un_like ? "text-red-600 dark:text-red-500" : ""}`}
+                        onClick={() => onDislike(message.history_id || "")}
+                        aria-label="Dislike message"
+                      >
+                        <img src={ThumbsDown} alt="Thumbs Down" className="w-6 h-6 object-contain" />
+                      </button>
+                      <button
+                        className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40] relative"
+                        onClick={() => handleSpeak()}
+                        onBlur={() => setTimeout(() => setShowVoiceOptions(false), 200)}
+                      >
+                        <img src={SpeakerHigh} alt="Speaker" className="w-6 h-6 object-contain" />
+                      </button>
+                      <button
+                        className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]"
+                        onClick={handleCopy}
+                      >
+                        {isCopied ? (
+                          <img src={Check} alt="Check" className="w-6 h-6 object-contain" />
+                        ) : (
+                          <img src={Copy} alt="Copy" className="w-6 h-6 object-contain" />
+                        )}
+                      </button>
+                    </div>
+
+                    <VoiceOptions
+                      showVoiceOptions={showVoiceOptions}
+                      handleVoiceIconClick={handleVoiceIconClick}
+                      setShowVoiceOptions={setShowVoiceOptions}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -332,54 +445,6 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
               <div className="rounded-lg p-6">
                 <div className="flex flex-col items-center">
                   <VerifyAuth onVerificationComplete={handleVerificationComplete} />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {!message.isUserMessage && (
-          <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-            <button
-              className={`p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]
-                ${message.like ? "text-green-600 dark:text-green-500" : ""}`}
-              onClick={() => onLike(message.history_id || "")}
-              aria-label="Like message"
-            >
-              <ThumbsUp size={16} />
-            </button>
-            <button
-              className={`p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]
-                ${message.un_like ? "text-red-600 dark:text-red-500" : ""}`}
-              onClick={() => onDislike(message.history_id || "")}
-              aria-label="Dislike message"
-            >
-              <ThumbsDown size={16} />
-            </button>
-            <button
-              className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]"
-              onClick={handleSpeak}
-            >
-              <SpeakerHigh size={16} />
-            </button>
-            <button
-              className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]"
-              onClick={handleCopy}
-            >
-              {isCopied ? <Check size={16} /> : <Copy size={16} />}
-            </button>
-          </div>
-        )}
-
-        {isLoading && (
-          <div className="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm flex items-center justify-center z-50">
-            <div className="relative w-[500px] bg-white dark:bg-[#2c2d32] rounded-3xl p-4 shadow-lg dark:shadow-[#1a1b1e]">
-              <div className="rounded-lg p-6">
-                <div className="flex flex-col items-center">
-                  <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-600 dark:border-purple-500"></div>
-                  <p className="text-gray-900 dark:text-black mt-4 transition-colors duration-200">
-                    Generating avatar video...
-                  </p>
                 </div>
               </div>
             </div>

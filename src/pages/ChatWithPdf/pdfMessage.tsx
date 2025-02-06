@@ -15,20 +15,32 @@ import UserCard from "../../components/ui/UserCard";
 import TicketCard from "../../components/ui/ticketcard";
 import { ChatMessageProps } from "../../props/Props";
 import { Message } from "../../Interface/Interface";
-import { ThumbsUp, ThumbsDown, Copy, Check } from "lucide-react";
-import { SpeakerHigh } from "@phosphor-icons/react";
+// import { ThumbsUp, ThumbsDown, Copy, Check } from "lucide-react";
+// import { SpeakerHigh } from "@phosphor-icons/react";
 import TypingEffect from "../../components/TypingEffect";
 import createMarkup from "../../utils/chatUtils";
+import { useGetAvatarMutation } from "../../redux/features/avatarSlice";
+
+import { getAvatarCacheKey } from "../../redux/features/avatarSlice";
+import SpeakerHigh from "../../assets/speaker.svg";
+import ThumbsUp from "../../assets/thumb-up.svg";
+import ThumbsDown from "../../assets/thumb-down.svg";
+import Copy from "../../assets/copy.svg";
+import Check from "../../assets/check.svg";
+import VoiceOptions from "../../components/VoiceOptions";
+import { VOICE_OPTIONS } from "../../redux/features/avatarSlice";
 
 const PdfMessage: React.FC<ChatMessageProps> = React.memo(
   ({ message, onNewMessage, onLike, onDislike }) => {
     const [showAuthVideoCard, setShowAuthVideoCard] = useState(false);
+
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
     const [clickedButton, setClickedButton] = useState<string | null>(null);
     const [isCopied, setIsCopied] = useState(false);
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-
+    const [showVoiceOptions, setShowVoiceOptions] = useState(false);
+    const [getAvatar] = useGetAvatarMutation();
     const handleVerificationComplete = useCallback(async () => {
       setShowAuthVideoCard(false);
 
@@ -171,16 +183,72 @@ const PdfMessage: React.FC<ChatMessageProps> = React.memo(
       }
     };
 
-    const handleSpeak = async () => {
+    // const handleSpeak = async () => {
+    //   try {
+    //     setIsLoading(true);
+    //     const url = await handleTextToAvatarConversion(message.text);
+    //     console.log("Video URL:", url);
+    //     if (url) {
+    //       setVideoUrl(url);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error converting text to avatar:", error);
+    //   } finally {
+    //     setIsLoading(false);
+    //   }
+    // };
+
+
+
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleSpeak = async (voiceOption?: any) => {
+      if (!voiceOption) {
+        setShowVoiceOptions(true);
+        return;
+      }
+
       try {
         setIsLoading(true);
-        const url = await handleTextToAvatarConversion(message.text);
+        setShowVoiceOptions(false);
+
+        const cleanText = message.text
+          .replace(/<[^>]*>/g, "")
+          .replace(/\[(.*?)\]\(.*?\)/g, "$1")
+          .replace(/https?:\/\/\S+/g, "")
+          .trim();
+
+        // Check if we already have a cached response with this specific voice and face
+        const cacheKey = getAvatarCacheKey(cleanText, voiceOption.voice_id, voiceOption.face_url);
+        const cachedResponse = localStorage.getItem(cacheKey);
+
+        if (cachedResponse) {
+          setVideoUrl(JSON.parse(cachedResponse).output.output_video);
+          setIsLoading(false);
+          return;
+        }
+
+        const url = await handleTextToAvatarConversion(
+          message.text,
+          async (text) => {
+            const response = await getAvatar({
+              text,
+              voiceId: voiceOption.voice_id,
+              faceUrl: voiceOption.face_url,
+            }).unwrap();
+            // Cache the response with the new cache key format
+            localStorage.setItem(cacheKey, JSON.stringify(response));
+            return response;
+          }
+        );
+
         console.log("Video URL:", url);
         if (url) {
           setVideoUrl(url);
         }
       } catch (error) {
         console.error("Error converting text to avatar:", error);
+        toast.error("Failed to generate avatar video");
       } finally {
         setIsLoading(false);
       }
@@ -203,6 +271,13 @@ const PdfMessage: React.FC<ChatMessageProps> = React.memo(
         }, 2000);
       } catch (error) {
         console.error("Failed to copy text:", error);
+      }
+    };
+
+    const handleVoiceIconClick = (voiceIndex: number) => {
+      const selectedVoice = VOICE_OPTIONS[voiceIndex];
+      if (selectedVoice) {
+        handleSpeak(selectedVoice);
       }
     };
 
@@ -259,7 +334,8 @@ const PdfMessage: React.FC<ChatMessageProps> = React.memo(
                       {message.isFromHistory ? (
                         <div
                           className="text-sm text-gray-800 dark:text-black font-passenger transition-colors duration-200"
-                          dangerouslySetInnerHTML={createMarkup(message.text)}
+                          dangerouslySetInnerHTML={createMarkup(message.text,'vertical')}
+
                         />
                       ) : (
                         <TypingEffect text={message.text} speed={1} />
@@ -294,35 +370,48 @@ const PdfMessage: React.FC<ChatMessageProps> = React.memo(
                 </div>
                 
                 {!message.isUserMessage && (
-                  <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 mt-2 ml-0">
-                    <button
-                      className={`p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]
-                        ${message.like ? "text-green-600 dark:text-green-500" : ""}`}
-                      onClick={() => onLike(message.history_id || "")}
-                      aria-label="Like message"
-                    >
-                      <ThumbsUp size={16} />
-                    </button>
-                    <button
-                      className={`p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]
-                        ${message.un_like ? "text-red-600 dark:text-red-500" : ""}`}
-                      onClick={() => onDislike(message.history_id || "")}
-                      aria-label="Dislike message"
-                    >
-                      <ThumbsDown size={16} />
-                    </button>
-                    <button
-                      className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]"
-                      onClick={handleSpeak}
-                    >
-                      <SpeakerHigh size={16} />
-                    </button>
-                    <button
-                      className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]"
-                      onClick={handleCopy}
-                    >
-                      {isCopied ? <Check size={16} /> : <Copy size={16} />}
-                    </button>
+                  <div className="relative">
+                    <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 mt-2 ml-0">
+                      <button
+                        className={`p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]
+                          ${message.like ? "text-green-600 dark:text-green-500" : ""}`}
+                        onClick={() => onLike(message.history_id || "")}
+                        aria-label="Like message"
+                      >
+                        <img src={ThumbsUp} alt="Thumbs Up" className="w-6 h-6 object-contain" />
+                      </button>
+                      <button
+                        className={`p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]
+                          ${message.un_like ? "text-red-600 dark:text-red-500" : ""}`}
+                        onClick={() => onDislike(message.history_id || "")}
+                        aria-label="Dislike message"
+                      >
+                        <img src={ThumbsDown} alt="Thumbs Down" className="w-6 h-6 object-contain" />
+                      </button>
+                      <button
+                        className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40] relative"
+                        onClick={() => handleSpeak()}
+                        onBlur={() => setTimeout(() => setShowVoiceOptions(false), 200)}
+                      >
+                        <img src={SpeakerHigh} alt="Speaker" className="w-6 h-6 object-contain" />
+                      </button>
+                      <button
+                        className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]"
+                        onClick={handleCopy}
+                      >
+                        {isCopied ? (
+                          <img src={Check} alt="Check" className="w-6 h-6 object-contain" />
+                        ) : (
+                          <img src={Copy} alt="Copy" className="w-6 h-6 object-contain" />
+                        )}
+                      </button>
+                    </div>
+
+                    <VoiceOptions
+                      showVoiceOptions={showVoiceOptions}
+                      handleVoiceIconClick={handleVoiceIconClick}
+                      setShowVoiceOptions={setShowVoiceOptions}
+                    />
                   </div>
                 )}
               </div>

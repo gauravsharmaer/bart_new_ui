@@ -219,7 +219,8 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     //   }
     // };
 
-    const handleSpeak = async (voiceOption?: VoiceOption) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleSpeak = async (voiceOption?: any) => {
       if (!voiceOption) {
         setShowVoiceOptions(true);
         return;
@@ -235,8 +236,8 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           .replace(/https?:\/\/\S+/g, "")
           .trim();
 
-        // Check if we already have a cached response
-        const cacheKey = getAvatarCacheKey(cleanText);
+        // Check if we already have a cached response with this specific voice and face
+        const cacheKey = getAvatarCacheKey(cleanText, voiceOption.voice_id, voiceOption.face_url);
         const cachedResponse = localStorage.getItem(cacheKey);
 
         if (cachedResponse) {
@@ -253,6 +254,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
               voiceId: voiceOption.voice_id,
               faceUrl: voiceOption.face_url,
             }).unwrap();
+            // Cache the response with the new cache key format
             localStorage.setItem(cacheKey, JSON.stringify(response));
             return response;
           }
@@ -532,7 +534,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                       {message.isFromHistory ? (
                         <div
                           className="text-sm text-gray-800 dark:text-black font-passenger transition-colors duration-200"
-                          dangerouslySetInnerHTML={createMarkup(message.text)}
+                          dangerouslySetInnerHTML={createMarkup(message.text,'inline')}
                         />
                       ) : (
                         <TypingEffect text={message.text} speed={1} />
@@ -567,7 +569,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                 </div>
 
                 {!message.isUserMessage && (
-                  <div className="relative">
+                  <div className="relative pt-3">
                     <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
                       <button
                         className={`p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]

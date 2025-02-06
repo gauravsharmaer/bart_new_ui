@@ -8,6 +8,12 @@ interface PdfSidebarProps {
 }
 
 const PdfSidebar: React.FC<PdfSidebarProps> = ({ isOpen, onClose, pdfUrl }) => {
+
+  const getViewerUrl = (url: string) => {
+    // Use Google Docs viewer for S3 hosted PDFs
+    return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+  };
+
   return (
     <div
     className={`fixed inset-y-0 right-2 transform transition-all duration-300 ease-in-out z-50 
@@ -31,7 +37,7 @@ const PdfSidebar: React.FC<PdfSidebarProps> = ({ isOpen, onClose, pdfUrl }) => {
           />
           <div className="ml-8">
             <span className="text-white text-sm block">View PDF</span>
-            <span className="text-black text-sm font-medium block ml-[-25px] mt-[8px]">PDF Viewer</span>
+            {/* <span className="text-black text-sm font-medium block ml-[-25px] mt-[8px]">PDF Viewer</span> */}
           </div>
         </div>
 
@@ -40,7 +46,7 @@ const PdfSidebar: React.FC<PdfSidebarProps> = ({ isOpen, onClose, pdfUrl }) => {
           <div className="bg-white rounded-lg h-full shadow-inner">
             {pdfUrl && (
               <iframe
-                src={pdfUrl}
+                src={getViewerUrl(pdfUrl)}
                 className="w-full h-full border-0"
                 title="PDF Preview"
                 style={{
