@@ -363,6 +363,7 @@ export const handleTextToAvatarConversion = async (
   }
 };
 
+
 // export const handleTextToAvatarConversion = async (
 //   text: string
 // ): Promise<string> => {

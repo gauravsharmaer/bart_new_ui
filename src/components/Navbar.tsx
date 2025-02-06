@@ -130,7 +130,7 @@ export function SiteHeader() {
                   <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-[#2c2d32] pointer-events-none"></div>
                 )}
               </button>
-              <button
+              {/* <button
                 onClick={() => {
                   navigate("/");
                   dispatch(startNewChat());
@@ -144,7 +144,27 @@ export function SiteHeader() {
                 <span className="z-10 font-passenger font-medium text-[#000000] dark:text-gray-200">
                   New Chat
                 </span>
-              </button>
+              </button> */}
+
+              <Link
+                to="/general-chat"
+                className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary ${
+                  location.pathname === "/general-chat"
+                    ? "text-primary bg-[#F3F5F9] dark:bg-[#2c2d32]"
+
+                    : "text-muted-foreground dark:text-gray-400 dark:hover:text-gray-200"
+                }`}
+              >
+                <span className="z-10 font-passenger font-medium text-[#000000] dark:text-gray-200">
+                  General Chat
+                </span> 
+                {location.pathname === "/general-chat" && (
+                    <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-[#2c2d32] pointer-events-none"></div>
+                )}
+              </Link>
+
+
+
               <Link
                 to="/tickets"
                 className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary ${

@@ -211,7 +211,7 @@ export interface ChatWithDocsResponse {
 
 export interface GeneralChatRequest {
   question: string;
-  question_type: string;
+  question_type?: string;
   user_id: string;
   chat_id?: string;
 }

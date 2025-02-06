@@ -492,10 +492,12 @@ export const getPdfChatHistory = async (userId: string): Promise<docChatHistory[
   }
 };
 
-export const getGeneralChatHistory = async (userId: string): Promise<docChatHistory[]> => {
+export const getGeneralChatHistory = async (): Promise<docChatHistory[]> => {
   try {
     const response = await fetch(
-      `https://bart-api-bd05237bdea5.herokuapp.com/general_chats/${userId}`,
+      `https://bart-api-bd05237bdea5.herokuapp.com/general_chats/${localStorage.getItem(
+        "user_id"
+      )}`,
       {
         method: "GET",
         headers: {

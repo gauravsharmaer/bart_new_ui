@@ -1,31 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import HistorySideBar from "../../components/HistorySideBar";
 import BackGround from "../../assets/bg_frame.svg";
 import SiteHeader from "../../components/Navbar";
-import NewChatInputBar from "../../components/Inputbar";
-import { getHistory, deleteChat, renameChat } from "../../Api/CommonApi";
-import { ChatHistory } from "../../Interface/Interface";
+import InputBar from "../../components/Inputbar";
+import { getHistory, deleteChat, renameChat , getGeneralChatHistory,generalChat, unlikeChat, likeChat} from "../../Api/CommonApi";
+import { ChatHistory, Message } from "../../Interface/Interface";
 import DotLoader from "../../utils/DotLoader";
 import Genie from "../../assets/Genie.svg";
+import ChatMessage from "./GeneralChatMessage";
 
-interface Message {
-  text: string;
-  isUserMessage: boolean;
-  timestamp: string;
-  history_id: string;
-  like?: boolean;
-  un_like?: boolean;
-}
 
 const GeneralChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [chatId, setChatId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
   const [isHistoryLoading, setIsHistoryLoading] = useState(true);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [isResponseLoading, setIsResponseLoading] = useState(false);
-
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+console.log(chatHistory)
   // Styles matching ChatWithPdf
   const chatScreenStyle: React.CSSProperties = {
     backgroundImage: `url(${BackGround})`,
@@ -47,40 +42,217 @@ const GeneralChat = () => {
     boxSizing: "border-box",
   };
 
+
+
+  const fetchChatHistory = async () => {
+    try {
+      const data = await getGeneralChatHistory();
+      const formattedData = data.map((chat, index) => {
+        // Status logic
+        if (index === 0) {
+
+          return {
+            ...chat,
+            status: "",
+          };
+        } else if (chat.name.startsWith("Hey") || chat.name.includes("h")) {
+          return {
+            ...chat,
+            status: "Resolved",
+          };
+        } else if ([1, 2, 5, 6].includes(index)) {
+          return { ...chat, status: "Ticket raised" };
+        } else {
+          return {
+            ...chat,
+            timestamp: `${index + 1} day${index === 0 ? "" : "s"} ago`,
+          };
+        }
+      });
+
+      setChatHistory(formattedData);
+    } catch (error) {
+      console.error("Error fetching chat history:", error);
+    } finally {
+      setIsHistoryLoading(false);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchChatHistory();
+  }, []);
+
+
+
+  useEffect(() => {
+    if (chatHistory.length > 0) {
+      const updatedHistory = chatHistory.map((chat) => ({
+        ...chat,
+        isActive: chat.id === chatId,
+      }));
+      setChatHistory(updatedHistory);
+    }
+  }, [chatId]);
+
+
+
   const handleSubmit = async (message: string) => {
     try {
       setLoading(true);
       setIsResponseLoading(true);
 
+      // Get user ID from localStorage
+      const userId = localStorage.getItem("user_id") || "";
+
+      // Create new message
       const userMessage: Message = {
         text: message,
         isUserMessage: true,
         timestamp: new Date().toLocaleTimeString(),
+        button_display: false,
+        number_of_buttons: 0,
+        button_text: [],
         history_id: Date.now().toString()
       };
 
       setMessages(prevMessages => [...prevMessages, userMessage]);
 
-      // TODO: Implement your general chat API call here
-      // const response = await generalChatApi(message, currentChatId);
+      const response = await generalChat({
+        question: message,  
+        user_id: userId,
+      });
 
-      // Placeholder bot response
-      setTimeout(() => {
+      if (response) {
+        // Store the chatId for subsequent messages
+        if (response.chat_id) {
+          setCurrentChatId(response.chat_id);
+        }
+
         const botMessage: Message = {
-          text: "This is a placeholder response. Implement your API call here.",
+          text: response.answer,
           isUserMessage: false,
           timestamp: new Date().toLocaleTimeString(),
-          history_id: Date.now().toString()
+          button_display: response.display_settings?.button_display || false,
+          number_of_buttons: response.display_settings?.options?.buttons?.length || 0,
+          button_text: response.display_settings?.options?.buttons || [],
+          ticket: response.display_settings?.ticket || false,
+          ticket_options: response.display_settings?.options?.ticket_options || undefined,
+          history_id: response.display_settings?.message_history[
+            response.display_settings.message_history.length - 1
+          ]?.history_id,
+          like: response.display_settings?.message_history[
+            response.display_settings.message_history.length - 1
+          ]?.like,
+          un_like: response.display_settings?.message_history[
+            response.display_settings.message_history.length - 1
+          ]?.un_like,
         };
+        
         setMessages(prevMessages => [...prevMessages, botMessage]);
-        setLoading(false);
-        setIsResponseLoading(false);
-      }, 1000);
+      }
 
     } catch (error) {
       console.error('Error:', error);
+      // Add error message to chat
+      const errorMessage: Message = {
+        text: error instanceof Error ? error.message : "An error occurred",
+        isUserMessage: false,
+        timestamp: new Date().toLocaleTimeString(),
+        button_display: false,
+        number_of_buttons: 0,
+        button_text: [],
+        history_id: Date.now().toString()
+      };
+      setMessages(prevMessages => [...prevMessages, errorMessage]);
+    } finally {
+      setLoading(false);
+      setIsResponseLoading(false);
     }
   };
+
+
+
+  const handleLike = async (history_id: string) => {
+    if (!history_id) {
+      console.error("History ID is required");
+      return;
+    }
+    try {
+        const result = await likeChat(history_id);
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.history_id === history_id
+            ? { ...msg, like: true, un_like: false }
+            : msg
+        )
+      );
+      console.log(result);
+    } catch (error) {
+      console.error("Error liking chat:", error);
+    }
+  };
+
+  const handleDislike = async (history_id: string) => {
+    if (!history_id) {
+      console.error("History ID is required");
+      return;
+    }
+    try {
+      const result = await unlikeChat(history_id);
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.history_id === history_id
+            ? { ...msg, like: false, un_like: true }
+            : msg
+        )
+      );
+      console.log(result);
+    } catch (error) {
+      console.error("Error disliking chat:", error);
+    }
+  };  
+
+
+  const handleNewMessage = (message: Message) => {
+    setMessages((prev) => [...prev, message]);
+  };
+
+
+  // const handleSubmit = async (message: string) => {
+  //   try {
+  //     setLoading(true);
+  //     setIsResponseLoading(true);
+
+  //     const userMessage: Message = {
+  //       text: message,
+  //       isUserMessage: true,
+  //       timestamp: new Date().toLocaleTimeString(),
+  //       history_id: Date.now().toString()
+  //     };
+
+  //     setMessages(prevMessages => [...prevMessages, userMessage]);
+
+  //     // TODO: Implement your general chat API call here
+  //     // const response = await generalChatApi(message, currentChatId);
+
+  //     // Placeholder bot response
+  //     setTimeout(() => {
+  //       const botMessage: Message = {
+  //         text: "This is a placeholder response. Implement your API call here.",
+  //         isUserMessage: false,
+  //         timestamp: new Date().toLocaleTimeString(),
+  //         history_id: Date.now().toString()
+  //       };
+  //       setMessages(prevMessages => [...prevMessages, botMessage]);
+  //       setLoading(false);
+  //       setIsResponseLoading(false);
+  //     }, 1000);
+
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //   }
+  // };
 
   const handleGetChat = async (chatId: string) => {
     try {
@@ -105,75 +277,16 @@ const GeneralChat = () => {
   };
 
   // Add file upload handler
-  const handleFileUpload = (file: File) => {
-    if (file.type === "application/pdf") {
-      // Handle PDF file upload for general chat
-      console.log("PDF file uploaded:", file);
-      // Add your PDF handling logic here
-    } else {
-      console.error('Please upload a PDF file');
-    }
-  };
+
 
   // Render messages with loading state
-  const renderMessages = () => {
-    return (
-      <div className="flex-1 overflow-y-auto px-4 py-3">
-        {messages.map((message, index) => (
-          <div key={index} className="mb-4">
-            <div className="flex items-start">
-              <img
-                src={message.isUserMessage ? "user-avatar.png" : Genie}
-                alt={message.isUserMessage ? "User" : "BART Genie"}
-                className="w-8 h-8 rounded-full object-cover mr-2"
-              />
-              <div className="flex-1">
-                <div className="flex items-center">
-                  <span className="text-sm font-semibold mr-2">
-                    {message.isUserMessage ? "You" : "BART Genie"}
-                  </span>
-                  <span className="text-xs text-gray-400">
-                    {message.timestamp}
-                  </span>
-                </div>
-                <div className="mt-1 text-sm">
-                  {message.text}
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-        
-        {isResponseLoading && (
-          <div className="flex items-start w-full mt-2">
-            <img
-              src={Genie}
-              alt="BART Genie"
-              className="w-8 h-8 rounded-full object-cover mr-2"
-            />
-            <div className="flex-1">
-              <div className="flex items-center">
-                <span className="text-sm font-semibold mr-2">BART Genie</span>
-                <span className="text-xs text-gray-400">
-                  {new Date().toLocaleTimeString()}
-                </span>
-              </div>
-              <div className="mt-2">
-                <DotLoader />
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
 
   return (
     <>
       <SiteHeader />
       <div className="absolute inset-x-0 bottom-0 top-14">
         <div style={containerStyle}>
-          <div className="flex-shrink-0 border-r border-gray-200">
+          <div className="flex-shrink-0 border-r border-white">
             <HistorySideBar
               chatHistory={chatHistory}
               isLoading={isHistoryLoading}
@@ -186,18 +299,58 @@ const GeneralChat = () => {
             />
           </div>
 
-          <div className="flex-grow pt-0 w-[1200px] pb-4 px-4">
+          <div className="flex-grow p-4">
             <div style={chatScreenStyle}>
               <div className="flex flex-col h-full">
-                {renderMessages()}
-                <div className="flex-shrink-0 mt-auto p-3">
-                  <NewChatInputBar
-                    onSubmit={handleSubmit}
-                    loading={loading}
-                    enableVoiceInput={true}
-                    enableFileUpload={true}
-                    onFileUpload={handleFileUpload}
-                  />
+                <div className="flex-grow overflow-hidden relative">
+                  <div className="absolute inset-0 overflow-y-auto px-4 py-3">
+                    {messages.map((message, index) => (
+                      <ChatMessage
+                        key={index}
+                        message={message}
+                        chatId={currentChatId || ""}
+                        onNewMessage={handleNewMessage}
+                        setMessages={setMessages}
+                        onLike={handleLike}
+                        onDislike={handleDislike}
+                      />
+                    ))}
+                    {loading && (
+                      <div className="flex items-start w-full mt-2">
+                        <img
+                          src={Genie}
+                          alt="BART Genie"
+                          className="w-8 h-8 rounded-full object-cover mr-2"
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center">
+                            <span className="text-sm font-semibold mr-2">
+                              BART Genie
+                            </span>
+                            <span className="w-1 h-1 bg-gray-300 rounded-full mx-1"></span>
+                            <span className="text-xs text-gray-400">
+                              {new Date().toLocaleTimeString()}
+                            </span>
+                          </div>
+                          <div className="mt-2">
+                            <DotLoader />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <div ref={messagesEndRef} />
+                  </div>
+                </div>
+
+                <div className="flex-shrink-0 px-8 py-0">
+                  <div className="max-w-full mx-auto h-16 w-full">
+                    <InputBar
+                      onSubmit={handleSubmit}
+                      loading={loading}
+                      enableVoiceInput={true}
+                      enableFileUpload={true}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
