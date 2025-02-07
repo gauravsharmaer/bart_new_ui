@@ -13,7 +13,8 @@ import { Message, ChatHistory } from "../Interface/Interface";
 import {  ExtendedChatUiProps } from "../props/Props";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../redux/store";
-import { resetNewChatFlag } from "../redux/chatSlice";
+import { useNavigate } from "react-router-dom";
+import { resetNewChatFlag, startNewChat } from "../redux/chatSlice";
 import { createUserMessagechatUi, createBotMessagechatUi, createErrorMessage } from "../utils/chatFields";
 // import { createTimestamp } from "../utils/chatUtils";
 import Inputbar from "./Inputbar";
@@ -31,6 +32,7 @@ const ChatUi = ({ initialMessage, apiHandlers }: ExtendedChatUiProps) => {
   const [isHistoryLoading, setIsHistoryLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isInitializedRef = useRef(false);
+  const navigate = useNavigate();
   const { isNewChat, selectedChatId } = useSelector(
     (state: RootState) => state.chat
   );
@@ -224,8 +226,20 @@ const ChatUi = ({ initialMessage, apiHandlers }: ExtendedChatUiProps) => {
 
   return (
     <div className="absolute inset-x-0 bottom-0 top-10">
+      {/* New Chat Button */}
+    
+
       {/* Main container */}
       <div className="h-full flex p-2 box-border bg-[#f3f5f9]">
+      <button 
+        className="fixed top-32 right-20 z-50 bg-gray-300 text-white px-4 py-2 rounded-lg shadow-lg"
+        onClick={() => {
+          navigate("/");
+          dispatch(startNewChat());
+        }}
+      >
+        New Chat
+      </button>
         {/* Sidebar */}
         <div className="flex-shrink-0 border-r border-white">
           <HistorySideBar
