@@ -40,8 +40,9 @@ export function SiteHeader() {
       const userId = localStorage.getItem("user_id");
       if (!userId) return;
 
-      const results = await searchChatHistory(userId, query || undefined);
+      const results = await searchChatHistory(userId, query || undefined, location.pathname==="/general-chat" ? "general_chat" : location.pathname==="/chat-with-pdf" ? "document_chat" : undefined);
       setSearchResults(results || []);
+
     } catch (error) {
       console.error("Search failed:", error);
       setSearchResults([]); // Clear results on error

@@ -323,7 +323,8 @@ export const unlikeChat = async (chatId: string): Promise<HistoryInterface> => {
 
 export const searchChatHistory = async (
   userId: string,
-  name?: string
+  name?: string,
+  chat_type?: string
 ): Promise<chatHistory[]> => {
   try {
     const url = new URL(
@@ -332,6 +333,10 @@ export const searchChatHistory = async (
     if (name) {
       url.searchParams.append("name", name);
     }
+    if (chat_type) {
+      url.searchParams.append("chat_type", chat_type);
+    }
+
 
     const response = await fetch(url.toString(), {
       method: "GET",

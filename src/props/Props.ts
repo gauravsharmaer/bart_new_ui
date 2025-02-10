@@ -85,6 +85,8 @@ export interface ChatMessageProps {
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   onLike: (history_id: string) => Promise<void>;
   onDislike: (history_id: string) => Promise<void>;
+  inline?: boolean;
+  isPdfContext?: boolean;
 }
 export interface PasswordResetUiProps {
   initialMessage: string;

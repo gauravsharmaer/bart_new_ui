@@ -271,6 +271,8 @@ const ChatUi = ({ initialMessage, apiHandlers }: ExtendedChatUiProps) => {
                       setMessages={setMessages}
                       onLike={handleLike}
                       onDislike={handleDislike}
+                      inline={true}
+                      isPdfContext={false}
                     />
                   ))}
                   {loading && (

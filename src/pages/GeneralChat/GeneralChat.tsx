@@ -7,7 +7,7 @@ import { getHistory, deleteChat, renameChat , getGeneralChatHistory,generalChat,
 import { ChatHistory, Message } from "../../Interface/Interface";
 import DotLoader from "../../utils/DotLoader";
 import Genie from "../../assets/Genie.svg";
-import ChatMessage from "./GeneralChatMessage";
+import ChatMessage from "../../components/ChatMessage";
 
 
 const GeneralChat = () => {
@@ -335,30 +335,26 @@ console.log(chatHistory)
       <SiteHeader />
       <div className="absolute inset-x-0 bottom-0 top-14">
         <div style={containerStyle}>
-          <div className="flex-shrink-0 border-r border-gray-200">
+          <div className="flex-shrink-0 border-r border-white">
             <HistorySideBar
               chatHistory={chatHistory}
               isLoading={isHistoryLoading}
               isSidebarOpen={isSidebarOpen}
               onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
               onChatSelect={handleGetChat}
-
               onDeleteChat={handleDeleteChat}
               onRenameChat={handleRenameChat}
               setChatHistory={setChatHistory}
-
               isGeneralChat={true}
- maxWidth="250px"
-            
+              maxWidth="250px"
             />
           </div>
 
-          <div className="flex-grow pt-0 w-[1200px] pb-4 px-4">
 
+          <div className="flex-grow p-4">
             <div style={chatScreenStyle}>
               <div className="flex flex-col h-full">
-              <div className="flex-1 overflow-y-auto px-4 py-3">
-
+                <div className="flex-grow overflow-hidden relative">
                   <div className="absolute inset-0 overflow-y-auto px-4 py-3">
                     {messages.map((message, index) => (
                       <ChatMessage
@@ -369,6 +365,8 @@ console.log(chatHistory)
                         setMessages={setMessages}
                         onLike={handleLike}
                         onDislike={handleDislike}
+                        inline={false}
+                        isPdfContext={false}
                       />
                     ))}
                     {loading && (
@@ -398,8 +396,8 @@ console.log(chatHistory)
                   </div>
                 </div>
 
-                <div className="flex-shrink-0 mt-auto">
-                <div className="p-3">
+                <div className="flex-shrink-0 px-8 py-0">
+                  <div className="max-w-full mx-auto h-16 w-full">
                     <InputBar
                       onSubmit={handleSubmit}
                       loading={loading}
