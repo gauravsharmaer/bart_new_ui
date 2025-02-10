@@ -565,29 +565,49 @@ const ChatUi = ({ initialMessage }: ChatUiProps) => {
   //   }
   // };
 
+  // const fetchChatHistory = async () => {
+  //   try {
+  //     const data = await getUserChats();
+  //     const formattedData = data.map((chat, index) => {
+  //       // Status logic
+  //       if (index === 0) {
+  //         return {
+  //           ...chat,
+  //           status: "",
+  //         };
+  //       } else if (chat.name.startsWith("Hey") || chat.name.includes("h")) {
+  //         return {
+  //           ...chat,
+  //           status: "Resolved",
+  //         };
+  //       } else if ([1, 2, 5, 6].includes(index)) {
+  //         return { ...chat, status: "Ticket raised" };
+  //       } else {
+  //         return {
+  //           ...chat,
+  //           timestamp: `${index + 1} day${index === 0 ? "" : "s"} ago`,
+  //         };
+  //       }
+  //     });
+
+  //     setChatHistory(formattedData);
+  //   } catch (error) {
+  //     console.error("Error fetching chat history:", error);
+  //   } finally {
+  //     setIsHistoryLoading(false);
+  //   }
+  // };
+
+
+
   const fetchChatHistory = async () => {
     try {
-      const data = await getUserChats();
-      const formattedData = data.map((chat, index) => {
-        // Status logic
-        if (index === 0) {
-          return {
-            ...chat,
-            status: "",
-          };
-        } else if (chat.name.startsWith("Hey") || chat.name.includes("h")) {
-          return {
-            ...chat,
-            status: "Resolved",
-          };
-        } else if ([1, 2, 5, 6].includes(index)) {
-          return { ...chat, status: "Ticket raised" };
-        } else {
-          return {
-            ...chat,
-            timestamp: `${index + 1} day${index === 0 ? "" : "s"} ago`,
-          };
-        }
+      const data: ChatHistory[] = await getUserChats();
+      const formattedData = data.map((chat) => {
+        return {
+          ...chat,
+          timestamp: chat.status ? undefined : new Date().toLocaleString(),
+        };
       });
 
       setChatHistory(formattedData);
@@ -597,6 +617,9 @@ const ChatUi = ({ initialMessage }: ChatUiProps) => {
       setIsHistoryLoading(false);
     }
   };
+
+
+
   const handleDeleteChat = async (chatId: string) => {
     await deleteChat(chatId);
   };
@@ -605,6 +628,13 @@ const ChatUi = ({ initialMessage }: ChatUiProps) => {
     await renameChat(chatId, newName);
   };
 
+
+
+   useEffect(() => {
+    if (chatId) {
+      // Your logic here
+    }
+  }, [chatId]); // Ignore the warning for chatHistory
   // Add effect for auto-scrolling
   useEffect(() => {
     scrollToBottom();

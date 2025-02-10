@@ -56,6 +56,8 @@ export interface ChatHistory {
   isActive?: boolean;
   status?: string;
   timestamp?: string;
+  timeGroup?: string;
+maxWidth?: string;
 }
 export interface Message {
   text: string;

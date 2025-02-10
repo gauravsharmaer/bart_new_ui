@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { MagnifyingGlass } from "@phosphor-icons/react";
 import { Button } from "./ui/button";
-import DocIcon from "../assets/document.svg";
+// import DocIcon from "../assets/document.svg";
 import { Input } from "./ui/input";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Notification from "../pages/Home/Notification";
@@ -111,7 +111,7 @@ export function SiteHeader() {
                 <img src={genie} alt="Logo" className="h-8 w-8 dark:opacity-90" />
               </div>
             </Link>
-            <nav className="flex items-center space-x-4">
+            <nav className="flex items-center space-x-2">
               <button
                 onClick={() => {
                   navigate("/");
@@ -146,12 +146,11 @@ export function SiteHeader() {
                 </span>
               </button> */}
 
-              <Link
+{/* <Link
                 to="/general-chat"
-                className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary ${
+                className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary border-none ${
                   location.pathname === "/general-chat"
                     ? "text-primary bg-[#F3F5F9] dark:bg-[#2c2d32]"
-
                     : "text-muted-foreground dark:text-gray-400 dark:hover:text-gray-200"
                 }`}
               >
@@ -161,9 +160,34 @@ export function SiteHeader() {
                 {location.pathname === "/general-chat" && (
                     <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-[#2c2d32] pointer-events-none"></div>
                 )}
+              </Link> */}
+
+<Link
+                to="/general-chat"
+                className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary border-none ${
+                  location.pathname === "/general-chat"
+                    ? "text-primary bg-[#F3F5F9] dark:bg-[#2c2d32]"
+                    : "text-muted-foreground dark:text-gray-400 dark:hover:text-gray-200"
+                }`}
+              >
+                <span className="z-10 font-passenger font-medium text-[#000000] dark:text-gray-200">General&nbsp;Chat</span>
+                {location.pathname === "/general-chat" && (
+                  <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-[#2c2d32] pointer-events-none"></div>
+                )}
               </Link>
 
+              <Button
+                variant="outline"
+                size="sm"
+                className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary border-none ${
+                  location.pathname === "/chat-with-pdf" ? "text-primary bg-[#F3F5F9] dark:bg-[#2c2d32]" : "text-muted-foreground dark:text-gray-400 dark:hover:text-gray-200"
+                }`}
+                onClick={() => navigate("/chat-with-pdf")}
+              >
+                <span className="z-10 font-passenger font-medium text-[#000000] dark:text-gray-200">Chat&nbsp;with&nbsp;Docs</span>
+              </Button>
 
+{/* 
 
               <Link
                 to="/tickets"
@@ -179,12 +203,26 @@ export function SiteHeader() {
                 {location.pathname === "/tickets" && (
                   <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-[#2c2d32] pointer-events-none"></div>
                 )}
+              </Link> */}
+
+<Link
+                to="/tickets"
+                className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary border-none ${
+                  location.pathname === "/tickets"
+                    ? "text-primary bg-[#F3F5F9] dark:bg-[#2c2d32]"
+                    : "text-muted-foreground dark:text-gray-400 dark:hover:text-gray-200"
+                }`}
+              >
+                <span className="z-10 font-passenger font-medium text-[#000000] dark:text-gray-200">My&nbsp;Tickets</span>
+                {location.pathname === "/tickets" && (
+                  <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-[#2c2d32] pointer-events-none"></div>
+                )}
               </Link>
             </nav>
           </div>
          
 
-            <div className="flex flex-1 items-center justify-center px-4">
+            <div className="flex flex-1 items-center justify-center px-2">
                   {location.pathname !== "/password" && (
               <div className="flex w-full max-w-2xl items-center border border-gray-200 dark:bg-[#1a1b1e] dark:border-[#2c2d32] rounded-full relative">
                 <MagnifyingGlass
@@ -228,17 +266,7 @@ export function SiteHeader() {
 
           <div className="flex items-center space-x-4">
        
-<Button
-              variant="outline"
-              size="sm"
-              className={`flex items-center gap-2 border border-[#EDEDED] bg-[#FAFAFA] font-passenger font-medium text-[#33343C] ${
-                location.pathname === "/chat-with-pdf" ? "border-[#EF613C] bg-[#EF613C1A]" : ""
-              }`}
-              onClick={() => navigate("/chat-with-pdf")}
-            >
-              <img src={DocIcon} alt="Document Icon" className="h-4 w-4" /> {/* Use the imported SVG */}
-              Chat with Docs
-            </Button>
+
 
 
 

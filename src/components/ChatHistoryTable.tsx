@@ -118,15 +118,15 @@ const ChatHistorySidebar = ({ onClose }: { onClose: () => void }) => {
             <h1 className="text-lg font-semibold mt-0 ml-[-15px] text-gray-900 dark:text-white">
               Chat History
             </h1>
-            <p className="text-sm text-gray-500 dark:text-white/70 mt-1 ml-[-40px] transition-colors duration-200">
+            {/* <p className="text-sm text-gray-500 dark:text-white/70 mt-1 ml-[-40px] transition-colors duration-200">
               Start with our most-used template for work and life.
-            </p>
+            </p> */}
           </div>
         </div>
       </div>
 
       {/* Search Bar */}
-      <div className="p-4">
+      <div className="p-1">
         <div className="relative p-2 rounded-lg">
           <img
             src={SearchIcon}

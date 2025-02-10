@@ -29,7 +29,9 @@ import SpeakerHigh from "../../assets/speaker.svg";
 import ThumbsUp from "../../assets/thumb-up.svg";
 import ThumbsDown from "../../assets/thumb-down.svg";
 import Copy from "../../assets/copy.svg";
-import Check from "../../assets/check.svg";
+// import Check from "../../assets/check.svg";
+import TextCopied from "../../assets/TextCopied.svg";
+
 // Add these helper functions at the top of the component
 
 // const createBotMessage = (result: any): Message => ({
@@ -63,7 +65,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     const [showAuthVideoCard, setShowAuthVideoCard] = useState(false);
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
     const [clickedButton, setClickedButton] = useState<string | null>(null);
-    const [isCopied, setIsCopied] = useState(false);
+    // const [isCopied, setIsCopied] = useState(false);
     // const [isSpeaking, setIsSpeaking] = useState(false);
     // const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(
     //   // null
@@ -74,6 +76,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     const [isLoading, setIsLoading] = useState(false);
     const [getAvatar] = useGetAvatarMutation();
     const [showVoiceOptions, setShowVoiceOptions] = useState(false);
+    const [showCopiedNotification, setShowCopiedNotification] = useState(false);
     // Clean up speech synthesis when component unmounts
     // React.useEffect(() => {
     //   return () => {
@@ -279,20 +282,41 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
       }
     };
 
+    // const handleCopy = async () => {
+    //   try {
+    //     // Create a temporary div to handle HTML content
+    //     const tempDiv = document.createElement("div");
+    //     tempDiv.innerHTML = message.text;
+    //     // Get text content without HTML tags
+    //     const textToCopy = tempDiv.textContent || tempDiv.innerText || "";
+    //     await navigator.clipboard.writeText(textToCopy);
+    //     setIsCopied(true);
+    //     toast.success("Text copied to clipboard");
+
+    //     // Reset back to copy icon after 2 seconds
+    //     setTimeout(() => {
+    //       setIsCopied(false);
+    //     }, 2000);
+    //   } catch (error) {
+    //     console.error("Failed to copy text:", error);
+    //   }
+    // };
+
+
+
     const handleCopy = async () => {
       try {
-        // Create a temporary div to handle HTML content
         const tempDiv = document.createElement("div");
         tempDiv.innerHTML = message.text;
-        // Get text content without HTML tags
         const textToCopy = tempDiv.textContent || tempDiv.innerText || "";
         await navigator.clipboard.writeText(textToCopy);
-        setIsCopied(true);
-        toast.success("Text copied to clipboard");
-
-        // Reset back to copy icon after 2 seconds
+        
+        // Show the copied notification
+        setShowCopiedNotification(true);
+        
+        // Hide after 2 seconds
         setTimeout(() => {
-          setIsCopied(false);
+          setShowCopiedNotification(false);
         }, 2000);
       } catch (error) {
         console.error("Failed to copy text:", error);
@@ -305,6 +329,16 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     });
 
     return (
+      <>
+      {showCopiedNotification && (
+          <div className="fixed top-16 left-1/2 transform -translate-x-1/2 z-50" style={{ top: '13%', left: '64%', marginLeft: '-50px' }}>
+            <img
+              src={TextCopied}
+              alt="Text Copied"
+              className="h-10 w-auto"
+            />
+          </div>
+        )}
       <div
         className={`flex ${
           message.isUserMessage ? "justify-end" : "justify-start"
@@ -412,11 +446,9 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                         className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]"
                         onClick={handleCopy}
                       >
-                        {isCopied ? (
-                          <img src={Check} alt="Check" className="w-6 h-6 object-contain" />
-                        ) : (
+                       
                           <img src={Copy} alt="Copy" className="w-6 h-6 object-contain" />
-                        )}
+                        
                       </button>
                     </div>
 
@@ -478,8 +510,10 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
           </div>
         )}
       </div>
+      </>
     );
   }
 );
+
 
 export default ChatMessage;

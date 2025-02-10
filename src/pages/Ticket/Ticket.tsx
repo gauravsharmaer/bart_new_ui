@@ -12,7 +12,8 @@ import { CaretDown } from "phosphor-react";
 // import SupportUnResolvedTicketCard from "./SupportUnResolvedTicketCard";
 import { TicketTable } from "./TicketTable";
 import TicketCard from "./TicketCard";
-
+import Grid from "../../assets/GridFour.svg"
+import Cards from "../../assets/CardsThree.svg"
 
 
 const Tickets = () => {
@@ -31,11 +32,20 @@ const Tickets = () => {
             <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-200">My tickets</h1>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4" />
-              <input
+              {/* <input
                 type="text"
                 placeholder="Search tickets"
                 className="pl-10 pr-4 py-2 w-full sm:w-[280px] border border-gray-200 dark:border-[#2c2d32] dark:bg-[#2c2d32] dark:text-gray-200 
                 dark:placeholder-gray-400 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-[#3a3b40] transition-colors duration-200"
+              /> */}
+
+
+<input
+                type="text"
+                placeholder="Search tickets"
+                className="pl-10 pr-4 py-2 w-full sm:w-[280px] border border-gray-300 dark:border-[#2c2d32]  dark:bg-[#2c2d32] dark:text-gray-200 
+                dark:placeholder-gray-400 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-[#3a3b40] transition-colors duration-200"
+                style={{ borderWidth: '1px', borderStyle: 'solid', borderColor: '#d1d5db' }}
               />
             </div>
           </div>
@@ -94,7 +104,7 @@ const Tickets = () => {
               {/* Icons Container */}
               <div className="flex items-center gap-2 border border-gray-200 dark:border-[#2c2d32] rounded-lg p-2 bg-gray-100 dark:bg-[#2c2d32]">
                 {/* Grid View Icon */}
-                <Button
+                {/* <Button
                   variant="outline"
                   size="sm"
                   className={`text-sm transition-colors duration-200 ${
@@ -108,10 +118,26 @@ const Tickets = () => {
                   }}
                 >
                   <span className="sr-only">Grid view</span>⊞
+                </Button> */}
+
+<Button
+                  variant="outline"
+                  size="sm"
+                  className={`text-sm transition-colors duration-200 ${
+                    gridViewEnabled
+                     ? "bg-white dark:bg-[#3a3b40] text-black dark:text-gray-200 border-none dark:border-[#2c2d32] hover:bg-white dark:hover:bg-[#3a3b40]"
+                      : "text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-[#2c2d32] border-none dark:border-[#2c2d32] hover:bg-gray-100 dark:hover:bg-[#2c2d32]"
+                  }`}
+                  onClick={() => {
+                    setGridViewEnabled(true);
+                    setPrintViewEnabled(false);
+                  }}
+                >
+                  <img src={Grid} alt="Grid" className="w-4 h-4" />
                 </Button>
 
                 {/* Print Icon */}
-                <Button
+                {/* <Button
                   size="sm"
                   className={`text-sm transition-colors duration-200 ${
                     printViewEnabled
@@ -124,15 +150,31 @@ const Tickets = () => {
                   }}
                 >
                   <span className="sr-only">Print</span>🖨️
+                </Button> */}
+
+
+<Button
+                  size="sm"
+                  className={`text-sm transition-colors duration-200 ${
+                    printViewEnabled
+                      ? "bg-white dark:bg-[#3a3b40] text-black dark:text-gray-200 border-none dark:border-[#2c2d32] hover:bg-white dark:hover:bg-[#3a3b40]"
+                      : "text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-[#2c2d32] border-none dark:border-[#2c2d32] hover:bg-gray-100 dark:hover:bg-[#2c2d32]"
+                  }`}
+                  onClick={() => {
+                    setPrintViewEnabled(true);
+                    setGridViewEnabled(false);
+                  }}
+                >
+                  <img src={Cards} alt="Cards" className="w-4 h-4" />
                 </Button>
               </div>
             </div>
           </div>
 
           {printViewEnabled ? (
-            <TicketTable type={activeTab as 'all' | 'resolved' | 'unresolved'} />
+             <TicketCard type={activeTab as 'all' | 'resolved' | 'unresolved'} />
           ) : (
-            <TicketCard type={activeTab as 'all' | 'resolved' | 'unresolved'} />
+            <TicketTable type={activeTab as 'all' | 'resolved' | 'unresolved'} />
           )}
         </div>
       </main>

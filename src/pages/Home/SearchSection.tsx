@@ -14,9 +14,11 @@ import { RootState } from "../../redux/store";
 import { setInitialMessage } from "../../redux/chatSlice";
 import { useState } from "react";
 import NewChatUi from "../../components/NewChatUi";
+import { useNavigate } from "react-router-dom";
 import { askBart, getHistory, likeChat, unlikeChat, getUserChats, deleteChat, renameChat } from "../../Api/CommonApi";
 export function SearchSection() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [inputMessage, setInputMessage] = useState<string>("");
   const { showChatUi, initialMessage } = useSelector(
     (state: RootState) => state.chat
@@ -166,6 +168,7 @@ export function SearchSection() {
             </Button>
             <Button
               variant="default"
+              onClick={() => navigate("/password")}
               size="sm"
               className="text-orange-500 dark:text-[#ff8851] hover:bg-transparent dark:hover:text-[#ff7a3d] bg-transparent whitespace-nowrap transition-colors duration-200"
             >

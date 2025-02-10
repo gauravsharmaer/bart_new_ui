@@ -14,7 +14,7 @@ import CounterClockwiseIcon from "../../assets/CounterClockwise.svg";
 import DarkModeIcon from "../../assets/dark-mode.svg";
 import DashboardIcon from "../../assets/Dashboard.svg";
 import LightModeIcon from "../../assets/light-mode.svg";
-import PlusIcon from "../../assets/Plus.svg";
+import PlusIcon from "../../assets/New-Chat.svg";
 import SettingIcon from "../../assets/setting.svg";
 import StickerIcon from "../../assets/Sticker.svg";
 import SystemIcon from "../../assets/system.svg";
@@ -193,7 +193,7 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
             </Link>
           </li>
           <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#2c2d32] text-sm flex items-center transition-colors duration-200">
-            <Link to="/templates" className="flex items-center">
+            <Link to="/password" className="flex items-center">
               <img
                 src={DashboardIcon}
                 alt="Templates"

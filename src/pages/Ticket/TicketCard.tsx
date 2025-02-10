@@ -49,15 +49,15 @@ const TicketCard = ({ type }: TicketProps) => {
     );
   }
   return (
-    <div className="flex flex-wrap justify-around gap-3 h-[500px] overflow-y-auto">
-      {ticketData.map((ticket) => (
-        <Link
-          to={ticket.link}
-          target="_blank"
-          key={ticket.id}
-          className="w-full max-w-md transition-transform hover:scale-[1.02] dark:bg-[#1a1b1e] dark:rounded-xl hover:shadow-lg dark:hover:shadow-[#1a1b1e]"
-        >
-          <div className="bg-white dark:bg-[#1a1b1e] rounded-3xl border border-gray-200 dark:border-[#2c2d32] p-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-[500px] overflow-y-auto p-4">
+    {ticketData.map((ticket) => (
+      <Link
+        to={ticket.link}
+        target="_blank"
+        key={ticket.id}
+        className="block transition-transform hover:scale-[1.02]"
+      >
+        <div className="h-full bg-white dark:bg-[#1a1b1e] rounded-3xl border border-gray-200 dark:border-[#2c2d32] p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                 Jul 19, 06:30PM
