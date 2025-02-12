@@ -1,5 +1,6 @@
 import React from "react";
 import Arrow from "../../assets/ArrowLeft.svg"
+import { useNavigate } from "react-router-dom";
 
 const SidebarItem: React.FC<{
   title: string;
@@ -34,6 +35,8 @@ const Sidebar: React.FC<{
   selectedTemplate: string;
   onTemplateSelect: (template: string) => void;
 }> = ({ selectedTemplate, onTemplateSelect }) => {
+  const navigate = useNavigate();
+
   const templates = [
     "Password Management",
     "Equipment Requests",
@@ -54,7 +57,7 @@ const Sidebar: React.FC<{
       {/* Back Button */}
       <div className="flex items-center mb-4">
         <button
-          onClick={() => console.log("Back button clicked")}
+          onClick={() => navigate("/")}
           className="inline-flex items-center justify-center bg-none border-none cursor-pointer text-[30px] mr-[10px] text-black dark:text-white p-0 hover:opacity-80 transition-opacity duration-200"
         >
           <img src={Arrow} alt="Back Arrow" className="w-[25px] h-[25px] dark:opacity-80" />

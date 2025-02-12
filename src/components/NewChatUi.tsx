@@ -1,22 +1,15 @@
 import  { useEffect, useState, useRef } from "react";
-// import {
-//   askBart,
-//   getHistory,
-// } from "../Api/CommonApi";
 import ChatMessage from "./ChatMessage";
 import DotLoader from "../utils/DotLoader";
 import HistorySideBar from "./HistorySideBar";
 import ChatLogo from "../assets/Genie.svg";
-// import ChatInputBar from "./ChatInputBar";
 import BackGround from "../assets/bg_frame.svg";
 import { Message, ChatHistory } from "../Interface/Interface";
 import {  ExtendedChatUiProps } from "../props/Props";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../redux/store";
-import { useNavigate } from "react-router-dom";
-import { resetNewChatFlag, startNewChat } from "../redux/chatSlice";
+import { resetNewChatFlag} from "../redux/chatSlice";
 import { createUserMessagechatUi, createBotMessagechatUi, createErrorMessage } from "../utils/chatFields";
-// import { createTimestamp } from "../utils/chatUtils";
 import Inputbar from "./Inputbar";
 
 const ChatUi = ({ initialMessage, apiHandlers }: ExtendedChatUiProps) => {
@@ -32,11 +25,11 @@ const ChatUi = ({ initialMessage, apiHandlers }: ExtendedChatUiProps) => {
   const [isHistoryLoading, setIsHistoryLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isInitializedRef = useRef(false);
-  const navigate = useNavigate();
+  
   const { isNewChat, selectedChatId } = useSelector(
     (state: RootState) => state.chat
   );
-  console.log(chatId);
+  console.log(messages);
 
 
 
@@ -231,7 +224,7 @@ const ChatUi = ({ initialMessage, apiHandlers }: ExtendedChatUiProps) => {
 
       {/* Main container */}
       <div className="h-full flex p-2 box-border bg-[#f3f5f9]">
-      <button 
+      {/* <button 
         className="fixed top-32 right-20 z-50 bg-gray-300 text-white px-4 py-2 rounded-lg shadow-lg"
         onClick={() => {
           navigate("/");
@@ -239,9 +232,9 @@ const ChatUi = ({ initialMessage, apiHandlers }: ExtendedChatUiProps) => {
         }}
       >
         New Chat
-      </button>
+      </button> */}
         {/* Sidebar */}
-        <div className="flex-shrink-0 border-r border-white">
+        <div className="flex-shrink-0 -ml-[7px] -mb-[7px]">
           <HistorySideBar
             chatHistory={chatHistory}
             isLoading={isHistoryLoading}
@@ -255,8 +248,11 @@ const ChatUi = ({ initialMessage, apiHandlers }: ExtendedChatUiProps) => {
         </div>
 
         {/* Main Chat Section */}
-        <div className="flex-grow p-4">
-          <div className="h-[calc(100%-15px)] w-full mt-4 rounded-2xl overflow-hidden bg-center bg-no-repeat bg-cover" 
+        <div className="flex-grow pb-1.5 pt-1 pr-2 pl-3">
+
+
+          <div className="w-full h-[calc(100%-17px)] mt-4 rounded-[16px] overflow-hidden bg-cover bg-center"
+
                style={{ backgroundImage: `url(${BackGround})` }}>
             <div className="flex flex-col h-full">
               {/* Chat Messages */}
@@ -302,8 +298,8 @@ const ChatUi = ({ initialMessage, apiHandlers }: ExtendedChatUiProps) => {
                 </div>
               </div>
               {/* Input Bar */}
-              <div className="flex-shrink-0 px-8 py-0">
-                <div className="max-w-full mx-auto h-16 w-full">
+              <div className="flex-shrink-0 px-3 py-1">
+              <div className="max-w-full mx-0 h-16 w-full">
                   <Inputbar
                     onSubmit={async (message) => {
                       const userMessage = createUserMessagechatUi(message);

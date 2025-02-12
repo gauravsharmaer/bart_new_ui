@@ -298,19 +298,11 @@ import { ChatHistory } from "../Interface/Interface";
 import { Tooltip } from "@mui/material";
 import SidebarIcon from "../assets/chat.svg";
 import NewChaticon from "../assets/NewChat.svg";
+import {  useDispatch } from "react-redux";
+import { startNewChat } from "../redux/chatSlice";
+import { useNavigate } from "react-router-dom";
+import { HistorySideBarProps } from "../props/Props";
 
-interface HistorySideBarProps {
-  chatHistory: ChatHistory[];
-  isLoading: boolean;
-  isSidebarOpen: boolean;
-  onToggleSidebar: () => void;
-  onChatSelect: (chatId: string) => void;
-  onDeleteChat: (chatId: string) => Promise<void>;
-  onRenameChat: (chatId: string, newName: string) => Promise<void>;
-  setChatHistory: (history: ChatHistory[]) => void;
-  isGeneralChat?: boolean;
-  maxWidth?: string;
-}
 
 const HistorySideBar: React.FC<HistorySideBarProps> = ({
   chatHistory,
@@ -329,11 +321,13 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({
   const [chatToDelete, setChatToDelete] = useState<ChatHistory | null>(null);
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
-
+  const navigate = useNavigate();
   const handleDeleteClick = (chat: ChatHistory) => {
     setChatToDelete(chat);
     setActiveMenu(null);
   };
+
+  const dispatch = useDispatch();
 
   const handleDeleteConfirm = async () => {
     if (chatToDelete) {
@@ -608,7 +602,7 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({
 
   if (isLoading) {
     return (
-      <aside className="bg-white border-r border-gray-200 p-4 flex flex-col justify-between h-full w-[320px]">
+      <aside className="bg-white p-4 flex flex-col justify-between h-[calc(100vh-50px)] w-[320px]">
         <div className="flex items-center justify-center h-full">
           <div className="w-12 h-12 rounded-full border-4 border-gray-200 border-t-purple-600 animate-spin"></div>
         </div>
@@ -618,7 +612,8 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({
 
   return (
     <>
-      <aside className="bg-white border-r border-gray-200 flex flex-col justify-between h-full">
+       <aside className="bg-white flex flex-col justify-between h-full ">
+
         {/* Toggle Button - Always visible */}
         <div
           className={`flex items-center border-b border-gray-200 pt-4 ${
@@ -634,7 +629,7 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({
                 <img
                   src={SidebarIcon}
                   alt="Collapse Sidebar"
-                  className="w-18px h-18px"
+                  className="w-7 h-7"
                 />
               </Tooltip>
             ) : (
@@ -642,7 +637,7 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({
                 <img
                   src={SidebarIcon}
                   alt="Expand Sidebar"
-                  className="w-18px h-18px"
+                  className="w-10 h-5"
                 />
               </Tooltip>
             )}
@@ -652,9 +647,13 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({
               isSidebarOpen ? "w-auto opacity-100" : "w-0 opacity-0"
             }`}
           >
-            <span className="whitespace-nowrap font-passenger font-medium text-[#000000] flex items-center">
+                   <span className="whitespace-nowrap font-passenger font-medium text-[#000000] flex items-center pr-[15px]">
+
               Chat History
-              <img src={NewChaticon} alt="New Chat" className="ml-[120px] w-9 h-9" />
+              <img src={NewChaticon} alt="New Chat" className="ml-[120px] w-9 h-9"    onClick={() => {
+          navigate("/");
+          dispatch(startNewChat());
+        }}/>
             </span>
           </div>
         </div>

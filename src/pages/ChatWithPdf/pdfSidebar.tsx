@@ -1,11 +1,7 @@
 import React from 'react';
 import CloseIcon from '../../assets/ViewPDF.svg';
+import { PdfSidebarProps } from '../../props/Props';
 
-interface PdfSidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
-  pdfUrl: string;
-}
 
 const PdfSidebar: React.FC<PdfSidebarProps> = ({ isOpen, onClose, pdfUrl }) => {
 

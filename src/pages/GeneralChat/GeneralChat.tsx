@@ -3,115 +3,88 @@ import HistorySideBar from "../../components/HistorySideBar";
 import BackGround from "../../assets/bg_frame.svg";
 import SiteHeader from "../../components/Navbar";
 import InputBar from "../../components/Inputbar";
-import { getHistory, deleteChat, renameChat , getGeneralChatHistory,generalChat, unlikeChat, likeChat} from "../../Api/CommonApi";
+import {
+  getHistory,
+  deleteChat,
+  renameChat,
+  getGeneralChatHistory,
+  generalChat,
+  unlikeChat,
+  likeChat,
+} from "../../Api/CommonApi";
 import { ChatHistory, Message } from "../../Interface/Interface";
 import DotLoader from "../../utils/DotLoader";
 import Genie from "../../assets/Genie.svg";
 import ChatMessage from "../../components/ChatMessage";
 
-
 const GeneralChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [chatId, setChatId] = useState<string | null>(null);
+  // const [chatId, setChatId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
   const [isHistoryLoading, setIsHistoryLoading] = useState(true);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
-  const [isResponseLoading, setIsResponseLoading] = useState(false);
+  // const [isResponseLoading, setIsResponseLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-console.log(chatHistory)
+  console.log(chatHistory);
   // Styles matching ChatWithPdf
-  const chatScreenStyle: React.CSSProperties = {
-    backgroundImage: `url(${BackGround})`,
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "center center",
-    backgroundSize: "cover",
-    borderRadius: "16px",
-    overflow: "hidden",
-    height: "calc(100% - 15px)",
-    width: "100%",
-    marginTop: "16px",
-  };
-
-  const containerStyle: React.CSSProperties = {
-    backgroundColor: "#f3f5f9",
-    height: "100%",
-    display: "flex",
-    padding: "2px",
-    boxSizing: "border-box",
-  };
-
-
-
-  // const fetchChatHistory = async () => {
-  //   try {
-  //     const data = await getGeneralChatHistory();
-  //     const formattedData = data.map((chat, index) => {
-  //       // Status logic
-  //       if (index === 0) {
-
-  //         return {
-  //           ...chat,
-  //           status: "",
-  //         };
-  //       } else if (chat.name.startsWith("Hey") || chat.name.includes("h")) {
-  //         return {
-  //           ...chat,
-  //           status: "Resolved",
-  //         };
-  //       } else if ([1, 2, 5, 6].includes(index)) {
-  //         return { ...chat, status: "Ticket raised" };
-  //       } else {
-  //         return {
-  //           ...chat,
-  //           timestamp: `${index + 1} day${index === 0 ? "" : "s"} ago`,
-  //         };
-  //       }
-  //     });
-
-  //     setChatHistory(formattedData);
-  //   } catch (error) {
-  //     console.error("Error fetching chat history:", error);
-  //   } finally {
-  //     setIsHistoryLoading(false);
-  //   }
+  // const chatScreenStyle: React.CSSProperties = {
+  //   backgroundImage: `url(${BackGround})`,
+  //   backgroundRepeat: "no-repeat",
+  //   backgroundPosition: "center center",
+  //   backgroundSize: "cover",
+  //   borderRadius: "16px",
+  //   overflow: "hidden",
+  //   height: "calc(100% - 15px)",
+  //   width: "100%",
+  //   marginTop: "16px",
   // };
 
-
+  // const containerStyle: React.CSSProperties = {
+  //   backgroundColor: "#f3f5f9",
+  //   height: "100%",
+  //   display: "flex",
+  //   padding: "2px",
+  //   boxSizing: "border-box",
+  // };
 
   const fetchChatHistory = async () => {
     try {
       const data = await getGeneralChatHistory();
-      
+
       // Helper function to group chats by time period
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const groupChatsByTimePeriod = (chat: any) => {
         // Ensure timestamp is properly parsed
         const chatDate = chat.timestamp ? new Date(chat.timestamp) : new Date();
         const today = new Date();
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
-        
+
         // Check if the date is valid
         if (isNaN(chatDate.getTime())) {
-          return { ...chat, timeGroup: 'Today' }; // Default to Today if date is invalid
+          return { ...chat, timeGroup: "Today" }; // Default to Today if date is invalid
         }
-        
+
         const diffTime = Math.abs(today.getTime() - chatDate.getTime());
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
+
         // Format date for month and year display
-        const monthYear = chatDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+        const monthYear = chatDate.toLocaleString("default", {
+          month: "long",
+          year: "numeric",
+        });
         const year = chatDate.getFullYear();
 
         if (chatDate.toDateString() === today.toDateString()) {
-          return { ...chat, timeGroup: 'Today' };
+          return { ...chat, timeGroup: "Today" };
         } else if (chatDate.toDateString() === yesterday.toDateString()) {
-          return { ...chat, timeGroup: 'Yesterday' };
+          return { ...chat, timeGroup: "Yesterday" };
         } else if (diffDays <= 7) {
-          return { ...chat, timeGroup: 'Previous 7 days' };
+          return { ...chat, timeGroup: "Previous 7 days" };
         } else if (diffDays <= 30) {
-          return { ...chat, timeGroup: 'Previous 30 days' };
+          return { ...chat, timeGroup: "Previous 30 days" };
         } else if (chatDate.getFullYear() === today.getFullYear()) {
           return { ...chat, timeGroup: monthYear };
         } else {
@@ -119,7 +92,7 @@ console.log(chatHistory)
         }
       };
 
-      const formattedData = data.map(chat => groupChatsByTimePeriod(chat));
+      const formattedData = data.map((chat) => groupChatsByTimePeriod(chat));
       setChatHistory(formattedData);
     } catch (error) {
       console.error("Error fetching chat history:", error);
@@ -132,24 +105,20 @@ console.log(chatHistory)
     fetchChatHistory();
   }, []);
 
-
-
-  useEffect(() => {
-    if (chatHistory.length > 0) {
-      const updatedHistory = chatHistory.map((chat) => ({
-        ...chat,
-        isActive: chat.id === chatId,
-      }));
-      setChatHistory(updatedHistory);
-    }
-  }, [chatId]);
-
-
+  // useEffect(() => {
+  //   if (chatHistory.length > 0) {
+  //     const updatedHistory = chatHistory.map((chat) => ({
+  //       ...chat,
+  //       isActive: chat.id === chatId,
+  //     }));
+  //     setChatHistory(updatedHistory);
+  //   }
+  // }, [chatId, chatHistory]);
 
   const handleSubmit = async (message: string) => {
     try {
       setLoading(true);
-      setIsResponseLoading(true);
+      // setIsResponseLoading(true);
 
       // Get user ID from localStorage
       const userId = localStorage.getItem("user_id") || "";
@@ -162,13 +131,13 @@ console.log(chatHistory)
         button_display: false,
         number_of_buttons: 0,
         button_text: [],
-        history_id: Date.now().toString()
+        history_id: Date.now().toString(),
       };
 
-      setMessages(prevMessages => [...prevMessages, userMessage]);
+      setMessages((prevMessages) => [...prevMessages, userMessage]);
 
       const response = await generalChat({
-        question: message,  
+        question: message,
         user_id: userId,
       });
 
@@ -183,26 +152,29 @@ console.log(chatHistory)
           isUserMessage: false,
           timestamp: new Date().toLocaleTimeString(),
           button_display: response.display_settings?.button_display || false,
-          number_of_buttons: response.display_settings?.options?.buttons?.length || 0,
+          number_of_buttons:
+            response.display_settings?.options?.buttons?.length || 0,
           button_text: response.display_settings?.options?.buttons || [],
           ticket: response.display_settings?.ticket || false,
-          ticket_options: response.display_settings?.options?.ticket_options || undefined,
-          history_id: response.display_settings?.message_history[
-            response.display_settings.message_history.length - 1
-          ]?.history_id,
+          ticket_options:
+            response.display_settings?.options?.ticket_options || undefined,
+          history_id:
+            response.display_settings?.message_history[
+              response.display_settings.message_history.length - 1
+            ]?.history_id,
           like: response.display_settings?.message_history[
             response.display_settings.message_history.length - 1
           ]?.like,
-          un_like: response.display_settings?.message_history[
-            response.display_settings.message_history.length - 1
-          ]?.un_like,
+          un_like:
+            response.display_settings?.message_history[
+              response.display_settings.message_history.length - 1
+            ]?.un_like,
         };
-        
-        setMessages(prevMessages => [...prevMessages, botMessage]);
-      }
 
+        setMessages((prevMessages) => [...prevMessages, botMessage]);
+      }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
       // Add error message to chat
       const errorMessage: Message = {
         text: error instanceof Error ? error.message : "An error occurred",
@@ -211,16 +183,14 @@ console.log(chatHistory)
         button_display: false,
         number_of_buttons: 0,
         button_text: [],
-        history_id: Date.now().toString()
+        history_id: Date.now().toString(),
       };
-      setMessages(prevMessages => [...prevMessages, errorMessage]);
+      setMessages((prevMessages) => [...prevMessages, errorMessage]);
     } finally {
       setLoading(false);
-      setIsResponseLoading(false);
+      // setIsResponseLoading(false);
     }
   };
-
-
 
   const handleLike = async (history_id: string) => {
     if (!history_id) {
@@ -228,7 +198,7 @@ console.log(chatHistory)
       return;
     }
     try {
-        const result = await likeChat(history_id);
+      const result = await likeChat(history_id);
       setMessages((prevMessages) =>
         prevMessages.map((msg) =>
           msg.history_id === history_id
@@ -260,48 +230,11 @@ console.log(chatHistory)
     } catch (error) {
       console.error("Error disliking chat:", error);
     }
-  };  
-
+  };
 
   const handleNewMessage = (message: Message) => {
     setMessages((prev) => [...prev, message]);
   };
-
-
-  // const handleSubmit = async (message: string) => {
-  //   try {
-  //     setLoading(true);
-  //     setIsResponseLoading(true);
-
-  //     const userMessage: Message = {
-  //       text: message,
-  //       isUserMessage: true,
-  //       timestamp: new Date().toLocaleTimeString(),
-  //       history_id: Date.now().toString()
-  //     };
-
-  //     setMessages(prevMessages => [...prevMessages, userMessage]);
-
-  //     // TODO: Implement your general chat API call here
-  //     // const response = await generalChatApi(message, currentChatId);
-
-  //     // Placeholder bot response
-  //     setTimeout(() => {
-  //       const botMessage: Message = {
-  //         text: "This is a placeholder response. Implement your API call here.",
-  //         isUserMessage: false,
-  //         timestamp: new Date().toLocaleTimeString(),
-  //         history_id: Date.now().toString()
-  //       };
-  //       setMessages(prevMessages => [...prevMessages, botMessage]);
-  //       setLoading(false);
-  //       setIsResponseLoading(false);
-  //     }, 1000);
-
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //   }
-  // };
 
   const handleGetChat = async (chatId: string) => {
     try {
@@ -325,17 +258,12 @@ console.log(chatHistory)
     await renameChat(chatId, newName);
   };
 
-  // Add file upload handler
-
-
-  // Render messages with loading state
-
   return (
     <>
       <SiteHeader />
       <div className="absolute inset-x-0 bottom-0 top-14">
-        <div style={containerStyle}>
-          <div className="flex-shrink-0 border-r border-white">
+        <div className="h-full flex p-[0px] box-border bg-[#f3f5f9]">
+          <div className="flex-shrink-0 ">
             <HistorySideBar
               chatHistory={chatHistory}
               isLoading={isHistoryLoading}
@@ -350,9 +278,11 @@ console.log(chatHistory)
             />
           </div>
 
-
-          <div className="flex-grow p-4">
-            <div style={chatScreenStyle}>
+          <div className="flex-grow pt-0 w-[1200px] pb-4 px-4 pr-3 pl-3">
+            <div
+              className="w-full h-[calc(100%-2px)] mt-2 rounded-[16px] overflow-hidden bg-cover bg-center"
+              style={{ backgroundImage: `url(${BackGround})` }}
+            >
               <div className="flex flex-col h-full">
                 <div className="flex-grow overflow-hidden relative">
                   <div className="absolute inset-0 overflow-y-auto px-4 py-3">
@@ -402,7 +332,7 @@ console.log(chatHistory)
                       onSubmit={handleSubmit}
                       loading={loading}
                       enableVoiceInput={true}
-                      enableFileUpload={true}
+                      enableFileUpload={false}
                     />
                   </div>
                 </div>
@@ -415,4 +345,4 @@ console.log(chatHistory)
   );
 };
 
-export default GeneralChat; 
+export default GeneralChat;

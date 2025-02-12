@@ -264,10 +264,6 @@ const PdfMessage: React.FC<ChatMessageProps> = React.memo(
       }
     };
 
-    console.log("Message data:", {
-      ticket: message.ticket,
-      ticket_options: message.ticket_options,
-    });
 
     return (
       <div

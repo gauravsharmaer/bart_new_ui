@@ -21,8 +21,10 @@ import SystemIcon from "../../assets/system.svg";
 import Logouticon from "../../assets/log-out.svg";
 import DeleteChat from "../../assets/delete-chat.svg";
 import ChatHistoryTable from "../../components/ChatHistoryTable.tsx";
-import { startNewChat } from "../../redux/chatSlice.ts";
-// import { resetChat } from "../../redux/chatSlice";
+//import { startNewChat } from "../../redux/chatSlice.ts";
+import ChatbracesIcon from "../../assets/Chatbraces.svg";
+import DownIcon from "../../assets/down.svg"
+import UpIcon from "../../assets/up.svg"
 
 const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
   const navigate = useNavigate();
@@ -38,6 +40,8 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
   const isDark = selected === "dark";
 
   const [isChatHistoryOpen, setChatHistoryOpen] = useState(false); // State for ChatHistoryTable
+  const [showNewChatDropdown, setShowNewChatDropdown] = useState(false);
+  
 
   const handleOpenChatHistory = () => {
     setChatHistoryOpen(true);
@@ -46,6 +50,11 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
   const handleCloseChatHistory = () => {
     setChatHistoryOpen(false);
   };
+
+  const handleNewChatClick = () => {
+    setShowNewChatDropdown(!showNewChatDropdown);
+  };
+
 
   useEffect(() => {
     if (selected === "dark") {
@@ -110,7 +119,7 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
         } w-80 h-screen bg-white dark:bg-[#1a1b1e] shadow-md z-[1000] rounded-l-3xl overflow-hidden absolute right-[2px]`}
       >
         {/* Profile Section */}
-        <div className="flex items-center p-4 dark:bg-[#2c2d32]">
+        <div className="flex items-center p-4 dark:bg-[#2c2d32] border-b border-[#f6f6f6]">
           {localStorage.getItem("image") &&
           localStorage.getItem("image") !== "undefined" ? (
             <img
@@ -134,65 +143,57 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
           </div>
         </div>
 
-        {/* Toggle Section */}
-        <div className="p-3 border border-[#DDE0E4] dark:border-[#2c2d32] dark:bg-[#1a1b1e]">
-          <div className="flex justify-between items-center gap-2 bg-[#EEEEEE] dark:bg-[#2c2d32] p-1 rounded-2xl">
-            <div
-              className={`flex items-center justify-center w-14 h-14 rounded-lg transition-all duration-200 cursor-pointer ${
-                isSystem
-                  ? "bg-white dark:bg-[#3a3b40] w-28 h-10 shadow-md dark:shadow-[#1a1b1e]"
-                  : "text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 dark:hover:bg-[#3a3b40]/40"
-              }`}
-              onClick={() => setSelected("system")}
-            >
-              <img src={SystemIcon} alt="System Icon" className="w-6 h-6 " />
-            </div>
-            <div
-              className={`flex items-center justify-center w-14 h-14 rounded-lg transition-all duration-200 cursor-pointer ${
-                isLight
-                  ? "bg-white dark:bg-[#3a3b40] w-28 h-10 shadow-md dark:shadow-[#1a1b1e]"
-                  : "text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 dark:hover:bg-[#3a3b40]/40"
-              }`}
-              onClick={() => setSelected("light")}
-            >
-              <img
-                src={LightModeIcon}
-                alt="Light Mode Icon"
-                className="w-6 h-6 "
-              />
-            </div>
-            <div
-              className={`flex items-center justify-center w-14 h-14 rounded-lg transition-all duration-200 cursor-pointer ${
-                isDark
-                  ? "bg-white dark:bg-[#3a3b40] w-28 h-10 shadow-md dark:shadow-[#1a1b1e]"
-                  : "text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 dark:hover:bg-[#3a3b40]/40"
-              }`}
-              onClick={() => setSelected("dark")}
-            >
-              <img
-                src={DarkModeIcon}
-                alt="Dark Mode Icon"
-                className="w-6 h-6 "
-              />
-            </div>
-          </div>
-        </div>
+
 
         {/* Menu Items */}
         <ul className="list-none p-0 my-4">
-          <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#2c2d32] text-sm flex items-center transition-colors duration-200">
-            <Link 
-              to="/"
-              onClick={() => {
-                dispatch(startNewChat());
-              }} 
-              className="flex items-center"
+          <div className="px-4 pt-0">
+            <button 
+              onClick={handleNewChatClick}
+              className={`w-full flex items-center justify-between 
+                ${showNewChatDropdown ? 'bg-[#f6f6f6] dark:bg-[#2c2d32]' : 'bg-transparent'} 
+                text-[#16283F] dark:text-gray-200 rounded-lg px-4 py-3 text-sm 
+                hover:bg-[#f6f6f6] dark:hover:bg-[#3a3b40] transition-colors duration-200`}
             >
-              <img src={PlusIcon} alt="New Chat" className="mr-3 w-5 h-5 dark:bg-gray-500" />
-              New chat
-            </Link>
-          </li>
-          <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#2c2d32] text-sm flex items-center transition-colors duration-200">
+              <div className="flex items-center">
+                <img src={PlusIcon} alt="New Chat" className="mr-3 w-5 h-5 dark:bg-gray-500" />
+                New Chat
+              </div>
+              {showNewChatDropdown ? (
+                <img src={DownIcon} alt="Dropdown" className="w-4 h-4" />
+              ) : (
+                <img src={UpIcon} alt="Dropdown" className="w-4 h-4" />
+              )}
+            </button>
+            {showNewChatDropdown && (
+              <div className="flex flex-col mt-2 ml-4">
+                <div className="flex items-center mb-[-100px]">
+                  <img src={ChatbracesIcon} alt="Chat Options" className="w-18 h-24" />                
+                  </div>
+                <div className="flex flex-col mt-1">
+                  <div 
+                    className="flex items-center ml-4 px-0 py-2 rounded-lg cursor-pointer text-[#757575] dark:text-gray-200 hover:bg-[#f6f6f6] dark:hover:bg-[#2c2d32] text-sm transition-colors duration-200"
+                    onClick={() => navigate('/general-chat')}
+                  >
+                    <span className="mr-2 ml-2">General Chat</span>
+                  </div>
+                  <div 
+                    className="flex items-center ml-4 px-0 py-2 rounded-lg cursor-pointer text-[#757575] dark:text-gray-200 hover:bg-[#f6f6f6] dark:hover:bg-[#2c2d32] text-sm transition-colors duration-200"
+                    onClick={() => navigate("/chat-with-pdf")}
+                  >
+                    <span className="mr-2 ml-2">PDF Chat</span>
+                  </div>
+                  <div 
+                    className="flex items-center ml-4 px-0 py-2 rounded-lg cursor-pointer text-[#757575] dark:text-gray-200 hover:bg-[#f6f6f6] dark:hover:bg-[#2c2d32] text-sm transition-colors duration-200"
+                    onClick={() => navigate("/")}
+                  >
+                    <span className="mr-2 ml-2">BART Chat</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          <li className="mx-4 px-4 py-3 cursor-pointer text-[#16283F] dark:text-gray-200 hover:bg-[#f6f6f6] rounded-lg dark:hover:bg-[#2c2d32] text-sm flex items-center transition-colors duration-200 ">
             <Link to="/password" className="flex items-center">
               <img
                 src={DashboardIcon}
@@ -202,14 +203,14 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
               Templates
             </Link>
           </li>
-          <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#2c2d32] text-sm flex items-center transition-colors duration-200">
+          <li className="mx-4 px-4  py-3 cursor-pointer text-[#16283F] dark:text-gray-200 hover:bg-[#f6f6f6] rounded-lg dark:hover:bg-[#2c2d32] text-sm flex items-center transition-colors duration-200">
             <Link to="/tickets" className="flex items-center">
               <img src={StickerIcon} alt="Tickets" className="mr-3 w-5 h-5 dark:bg-gray-500" />
               Tickets
             </Link>
           </li>
           <li
-            className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#2c2d32] text-sm flex items-center transition-colors duration-200"
+            className="mx-4 px-4 py-3 cursor-pointer text-[#16283F] dark:text-gray-200 hover:bg-[#f6f6f6] rounded-lg dark:hover:bg-[#2c2d32] text-sm flex items-center transition-colors duration-200"
             onClick={handleOpenChatHistory}
           >
             <div className="flex items-center">
@@ -221,13 +222,13 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
               Chat History
             </div>
           </li>
-          <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#2c2d32] text-sm flex items-center transition-colors duration-200">
+          <li className="mx-4 px-4 py-3 cursor-pointer text-[#16283F] dark:text-gray-200 hover:bg-[#f6f6f6] rounded-lg dark:hover:bg-[#2c2d32] text-sm flex items-center transition-colors duration-200">
             <Link to="/settings" className="flex items-center">
               <img src={SettingIcon} alt="Settings" className="mr-3 w-5 h-5 dark:bg-gray-500" />
               Setting
             </Link>
           </li>
-          <li className="px-4 py-3 cursor-pointer text-[#16283F] dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#2c2d32] text-sm flex items-center transition-colors duration-200">
+          <li className="mx-4 px-4 py-3 cursor-pointer text-[#16283F] dark:text-gray-200 hover:bg-[#f6f6f6] rounded-lg dark:hover:bg-[#2c2d32] text-sm flex items-center transition-colors duration-200">
             <Link to="/settings" className="flex items-center">
               <img src={DeleteChat} alt="Settings" className="mr-3 w-5 h-5 dark:bg-gray-500" />
               Deleted Chat
@@ -250,9 +251,53 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
           </div>
         )}
 
+        {/* Toggle Section */}
+        <div className="absolute bottom-12 left-0 w-full p-3 border-t border-[#f6f6f6] dark:border-[#2c2d32] dark:bg-[#1a1b1e]">
+          <div className="flex justify-between items-center gap-2 bg-[#f6f6f6] dark:bg-[#2c2d32] p-1.5 rounded-2xl">
+            <div
+              className={`flex items-center justify-center w-28 h-10 rounded-lg transition-all duration-200 cursor-pointer ${
+                isSystem
+                  ? "bg-white dark:bg-[#3a3b40] w-28 h-10 shadow-md dark:shadow-[#1a1b1e]"
+                  : "text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 dark:hover:bg-[#3a3b40]/40"
+              }`}
+              onClick={() => setSelected("system")}
+            >
+              <img src={SystemIcon} alt="System Icon" className="w-6 h-6 " />
+            </div>
+            <div
+              className={`flex items-center justify-center w-28 h-10 rounded-lg transition-all duration-200 cursor-pointer ${
+                isLight
+                  ? "bg-white dark:bg-[#3a3b40] w-28 h-10 shadow-md dark:shadow-[#1a1b1e]"
+                  : "text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 dark:hover:bg-[#3a3b40]/40"
+              }`}
+              onClick={() => setSelected("light")}
+            >
+              <img
+                src={LightModeIcon}
+                alt="Light Mode Icon"
+                className="w-6 h-6 "
+              />
+            </div>
+            <div
+              className={`flex items-center justify-center w-28 h-10 rounded-lg transition-all duration-200 cursor-pointer ${
+                isDark
+                  ? "bg-white dark:bg-[#3a3b40] w-28 h-10 shadow-md dark:shadow-[#1a1b1e]"
+                  : "text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 dark:hover:bg-[#3a3b40]/40"
+              }`}
+              onClick={() => setSelected("dark")}
+            >
+              <img
+                src={DarkModeIcon}
+                alt="Dark Mode Icon"
+                className="w-6 h-6 "
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Log Out Section */}
         <div
-          className="absolute bottom-2 left-4 w-full px-4 py-3 text-[#16283F] dark:text-gray-200 cursor-pointer text-sm flex items-center border-t border-[#DDE0E4] dark:border-[#2c2d32] hover:bg-gray-100 dark:hover:bg-[#2c2d32] transition-colors duration-200"
+          className="absolute bottom-0 left-0 w-full px-4 py-3 text-[#16283F] dark:text-gray-200 cursor-pointer text-sm flex items-center border-t border-[#f6f6f6] dark:border-[#2c2d32] hover:bg-gray-100 dark:hover:bg-[#2c2d32] transition-colors duration-200"
           style={{ left: 0 }}
           onClick={handleLogout}
         >

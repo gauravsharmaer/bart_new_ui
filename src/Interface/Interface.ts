@@ -58,6 +58,8 @@ export interface ChatHistory {
   timestamp?: string;
   timeGroup?: string;
 maxWidth?: string;
+file_path?: string;
+original_file_name?: string;
 }
 export interface Message {
   text: string;
@@ -66,6 +68,7 @@ export interface Message {
   number_of_buttons: number;
   button_text: string[];
   id?: string;
+  pdfFile?: File;
   vertical_bar?: boolean;
   timestamp: string;
   like?: boolean;

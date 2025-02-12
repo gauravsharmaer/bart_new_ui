@@ -3,91 +3,89 @@ import HistorySideBar from "../../components/HistorySideBar";
 import BackGround from "../../assets/bg_frame.svg";
 import SiteHeader from "../../components/Navbar"; // Import the SiteHeader component
 import NewChatInputBar from "../../components/Inputbar";
-import PdfFileDisplay from '../../pages/ChatWithPdf/PdfFileDisplay';
+import PdfFileDisplay from "../../pages/ChatWithPdf/PdfFileDisplay";
 import PdfFileList from "../../pages/ChatWithPdf/PdfFileList"; // Ensure this is imported
-import { getPdfChatHistory, deleteChat, renameChat, chatWithDocs, getHistory } from "../../Api/CommonApi";
+import {
+  getPdfChatHistory,
+  deleteChat,
+  renameChat,
+  chatWithDocs,
+  getHistory,
+} from "../../Api/CommonApi";
 import { ChatHistory } from "../../Interface/Interface";
-import PdfMessage from '../ChatWithPdf/pdfMessage';
 import ChatMessage from "../../components/ChatMessage";
-import PdfSidebar from '../ChatWithPdf/pdfSidebar';
+import PdfSidebar from "../ChatWithPdf/pdfSidebar";
 import DotLoader from "../../utils/DotLoader"; // Add this import at the top
 import Genie from "../../assets/Genie.svg";
 import { createTimestamp } from "../../utils/chatUtils";
-// TypeScript interfaces
-interface ApiResponse {
-  response: string;
-  sources?: string[];
-}
+import { Message } from "../../Interface/Interface";
+// import { ChatInputBarProps } from "../../props/Props";
+// interface Message {
+//   text: string;
+//   isUserMessage: boolean;
+//   timestamp: string;
+//   button_display: boolean;
+//   number_of_buttons: number;
+//   button_text: string[];
+//   pdfFile?: File;
+//   history_id: string;
+//   like?: boolean;
+//   un_like?: boolean;
+// }
 
-interface Message {
-  text: string;
-  isUserMessage: boolean;
-  timestamp: string;
-  button_display: boolean;
-  number_of_buttons: number;
-  button_text: string[];
-  pdfFile?: File;
-  history_id: string;
-  like?: boolean;
-  un_like?: boolean;
-}
-
-interface ChatResponse {
-  response: string;
-}
-
-export interface ChatInputBarProps {
-  onSubmit: (message: string) => void;
-  loading?: boolean;
-  onFileUpload?: (file: File) => void;
-}
+// export interface ChatInputBarProps {
+//   onSubmit: (message: string) => void;
+//   loading?: boolean;
+//   onFileUpload?: (file: File) => void;
+// }
 
 const PDFChat = () => {
   const [pdfFiles, setPdfFiles] = useState<File[]>([]);
   const [pdfUrls, setPdfUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-  const [success, setSuccess] = useState<string>("");
+  // const [error, setError] = useState<string>("");
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isPdfSidebarOpen, setIsPdfSidebarOpen] = useState(false); // State for PdfSidebar
-  const [pdfId, setPdfId] = useState<string | null>(null);
+  // const [pdfId, setPdfId] = useState<string | null>(null);
   const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
   const [isHistoryLoading, setIsHistoryLoading] = useState(true);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [isResponseLoading, setIsResponseLoading] = useState(false); // Add this state
   const [isHistoryMode, setIsHistoryMode] = useState<boolean>(false); // New state for history mode
-  const [chatId, setChatId] = useState<string | null>(null);
+  // const [chatId, setChatId] = useState<string | null>(null);
   // Add these styles from ChatUi
-  const chatScreenStyle: React.CSSProperties = {
-    backgroundImage: `url(${BackGround})`,
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "center center",
-    backgroundSize: "cover",
-    borderRadius: "16px",
-    overflow: "hidden",
-    height: "calc(100% - 15px)",
-    width: "100%",
-    marginTop: "16px",
-  };
+  // const chatScreenStyle: React.CSSProperties = {
+  //   backgroundImage: `url(${BackGround})`,
+  //   backgroundRepeat: "no-repeat",
+  //   backgroundPosition: "center center",
+  //   backgroundSize: "cover",
+  //   borderRadius: "16px",
+  //   overflow: "hidden",
+  //   height: "calc(100% - 15px)",
+  //   width: "100%",
+  //   marginTop: "16px",
+  // };
 
-  const containerStyle: React.CSSProperties = {
-    backgroundColor: "#f3f5f9",
-    height: "100%",
-    display: "flex",
-    padding: "2px",
-    boxSizing: "border-box",
-  };
+  // const containerStyle: React.CSSProperties = {
+  //   backgroundColor: "#f3f5f9",
+  //   height: "100%",
+  //   display: "flex",
+  //   padding: "2px",
+  //   boxSizing: "border-box",
+  // };
 
   const handleFileUpload = (file: File) => {
     if (file.type === "application/pdf") {
       setPdfFiles([file]);
       setCurrentChatId(null); // Reset chat context
       setMessages([]); // Clear messages
-    } else {
-      setError('Please upload a PDF file');
-    }
+    } 
+    // else {
+    //   setError("Please upload a PDF file");
+    // }
   };
 
   const handleRemoveFile = (fileName: string) => {
@@ -102,7 +100,7 @@ const PDFChat = () => {
 
   const handleSubmit = async (message: string) => {
     if (!pdfFiles[0] && !currentChatId) {
-      setError('Please upload a PDF first');
+      // setError("Please upload a PDF first");
       return;
     }
 
@@ -122,11 +120,10 @@ const PDFChat = () => {
         number_of_buttons: 0,
         button_text: [],
         pdfFile: !currentChatId ? pdfFiles[0] : undefined,
-        history_id: createTimestamp()
-
+        history_id: createTimestamp(),
       };
 
-      setMessages(prevMessages => [...prevMessages, userMessage]);
+      setMessages((prevMessages) => [...prevMessages, userMessage]);
 
       // Only create PDF URL if it's the first message
       if (!currentChatId && pdfFiles[0]) {
@@ -141,7 +138,7 @@ const PDFChat = () => {
         message,
         currentChatId || undefined
       );
-      
+
       if (response) {
         // Store the chatId for subsequent messages
         if (response.chat_id) {
@@ -155,15 +152,13 @@ const PDFChat = () => {
           button_display: false,
           number_of_buttons: 0,
           button_text: [],
-          history_id: createTimestamp()
-
+          history_id: createTimestamp(),
         };
-        setMessages(prevMessages => [...prevMessages, botMessage]);
+        setMessages((prevMessages) => [...prevMessages, botMessage]);
       }
-
     } catch (error) {
-      console.error('Error:', error);
-      setError('Failed to send message');
+      console.error("Error:", error);
+      // setError("Failed to send message");
     } finally {
       setLoading(false);
       setIsResponseLoading(false); // Set response loading to false
@@ -172,7 +167,7 @@ const PDFChat = () => {
 
   // Handle like/dislike functions
   const handleLike = async (messageId: string) => {
-    const updatedMessages = messages.map(msg => {
+    const updatedMessages = messages.map((msg) => {
       if (msg.history_id === messageId) {
         return { ...msg, like: true, un_like: false };
       }
@@ -182,7 +177,7 @@ const PDFChat = () => {
   };
 
   const handleDislike = async (messageId: string) => {
-    const updatedMessages = messages.map(msg => {
+    const updatedMessages = messages.map((msg) => {
       if (msg.history_id === messageId) {
         return { ...msg, like: false, un_like: true };
       }
@@ -197,10 +192,10 @@ const PDFChat = () => {
       console.log("Full chat history response:", data);
 
       // Find the chat details from chatHistory array
-      const chatDetails = chatHistory.find(chat => chat.id === chatId);
+      const chatDetails = chatHistory.find((chat) => chat.id === chatId);
       if (chatDetails) {
         // console.log("Chat details:", chatDetails);
-        
+
         // Use the file_path directly from the chat details
         if (chatDetails.file_path) {
           setPdfUrls([chatDetails.file_path]);
@@ -225,14 +220,14 @@ const PDFChat = () => {
     try {
       const userId = localStorage.getItem("user_id") || "";
       const data = await getPdfChatHistory(userId);
-      const formattedData = data.map((chat, index) => {
+      const formattedData = data.map((chat) => {
         // Remove "Document Chat - " from the name
-        const nameWithoutPrefix = chat.name.replace(/^Document Chat - /, '');
+        const nameWithoutPrefix = chat.name.replace(/^Document Chat - /, "");
 
         return {
           ...chat,
           name: nameWithoutPrefix, // Update the name without the prefix
-          isActive: chat.id === pdfId,
+          // isActive: chat.id === pdfId,
         };
       });
 
@@ -248,15 +243,15 @@ const PDFChat = () => {
     setMessages((prev) => [...prev, message]);
   };
 
-  useEffect(() => {
-    if (chatHistory.length > 0) {
-      const updatedHistory = chatHistory.map((chat) => ({
-        ...chat,
-        isActive: chat.id === pdfId,
-      }));
-      setChatHistory(updatedHistory);
-    }
-  }, [pdfId]);
+  // useEffect(() => {
+  //   if (chatHistory.length > 0) {
+  //     const updatedHistory = chatHistory.map((chat) => ({
+  //       ...chat,
+  //       isActive: chat.id === pdfId,
+  //     }));
+  //     setChatHistory(updatedHistory);
+  //   }
+  // }, [pdfId]);
 
   const handleDeleteChat = async (chatId: string) => {
     await deleteChat(chatId);
@@ -274,12 +269,13 @@ const PDFChat = () => {
     return (
       <div className="flex-1 overflow-y-auto px-4 py-3">
         {/* Display PDF URL for both history and new chats */}
-        {(pdfUrls[0] || (messages[0]?.pdfFile)) && (
+        {(pdfUrls[0] || messages[0]?.pdfFile) && (
           <div className="flex justify-end mb-[-25px]">
             <PdfFileDisplay
               fileName={
-                currentChatId 
-                  ? chatHistory.find(chat => chat.id === currentChatId)?.original_file_name || "PDF Document"
+                currentChatId
+                  ? chatHistory.find((chat) => chat.id === currentChatId)
+                      ?.original_file_name || "PDF Document"
                   : messages[0]?.pdfFile?.name || "PDF Document"
               }
               onClick={() => {
@@ -302,9 +298,8 @@ const PDFChat = () => {
               isPdfContext={true}
             />
           </div>
-
         ))}
-        
+
         {/* Response Loading Indicator */}
         {isResponseLoading && (
           <div className="flex items-start w-full mt-2">
@@ -315,9 +310,7 @@ const PDFChat = () => {
             />
             <div className="flex-1">
               <div className="flex items-center">
-                <span className="text-sm font-semibold mr-2">
-                  BART Genie
-                </span>
+                <span className="text-sm font-semibold mr-2">BART Genie</span>
                 <span className="w-1 h-1 bg-gray-300 rounded-full mx-1"></span>
                 <span className="text-xs text-gray-400">
                   {new Date().toLocaleTimeString()}
@@ -339,9 +332,10 @@ const PDFChat = () => {
 
       {/* Existing Content */}
       <div className="absolute inset-x-0 bottom-0 top-14">
-        <div style={containerStyle}>
+      <div className="h-full flex p-[0px] box-border bg-[#f3f5f9]">
+
           {/* Sidebar */}
-          <div className="flex-shrink-0 border-r border-gray-200">
+          <div className="flex-shrink-0">
             <HistorySideBar
               chatHistory={chatHistory}
               isLoading={isHistoryLoading}
@@ -356,8 +350,9 @@ const PDFChat = () => {
           </div>
 
           {/* Main Chat Section */}
-          <div className={`flex-grow pt-0 w-[1200px] pb-4 px-4 transition-all duration-300 ${isPdfSidebarOpen ? 'mr-[460px]' : ''}`}>
-            <div style={chatScreenStyle}>
+          <div className={`flex-grow pt-0 w-[1200px] pb-4 px-4 pl-3 pr-3 transition-all duration-300 ${isPdfSidebarOpen ? 'mr-[460px]' : ''}`}>
+          <div className="w-full h-[calc(100%-2px)] mt-2 rounded-[16px] overflow-hidden bg-cover bg-center"
+              style={{ backgroundImage: `url(${BackGround})` }}>
               <div className="flex flex-col h-full">
                 {/* Messages Area */}
                 {renderMessages()}
@@ -388,10 +383,10 @@ const PDFChat = () => {
           </div>
 
           {/* PDF Viewer Sidebar */}
-          <PdfSidebar 
+          <PdfSidebar
             isOpen={isPdfSidebarOpen} // State for PdfSidebar
             onClose={() => setIsPdfSidebarOpen(false)} // Close PdfSidebar
-            pdfUrl={pdfUrls[0] || ''}
+            pdfUrl={pdfUrls[0] || ""}
           />
         </div>
       </div>

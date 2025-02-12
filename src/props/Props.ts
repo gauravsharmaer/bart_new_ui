@@ -113,6 +113,10 @@ export interface HistorySideBarProps {
   onToggleSidebar: () => void;
   chatHistory: (ChatHistory & { status?: string; timestamp?: string })[];
   isLoading: boolean;
+  isGeneralChat?: boolean;
+  maxWidth?: string;
+  onDeleteChat: (chatId: string) => Promise<void>;
+  onRenameChat: (chatId: string, newName: string) => Promise<void>;
   setChatHistory: React.Dispatch<
     React.SetStateAction<
       (ChatHistory & { status?: string; timestamp?: string })[]
@@ -128,6 +132,13 @@ export interface ChatUiProps {
   initialMessage?: string;
 }
 
+
+export interface PdfSidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+  pdfUrl: string;
+}
+
 export interface ExtendedChatUiProps extends ChatUiProps {
   apiHandlers: ApiHandlers;
   botName?: string;
@@ -137,3 +148,16 @@ export interface ExtendedChatUiProps extends ChatUiProps {
 export type TicketProps = {
   type: 'all' | 'resolved' | 'unresolved';
 };
+
+
+export interface PdfFileListProps {
+  pdfFiles: File[];
+  onRemove: (fileName: string) => void;
+}
+
+
+export interface PdfFileDisplayProps {
+  fileName: string;
+  timestamp?: string;
+  onClick?: () => void;
+}

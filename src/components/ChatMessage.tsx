@@ -32,6 +32,7 @@ import ThumbsUp from "../assets/thumb-up.svg";
 import ThumbsDown from "../assets/thumb-down.svg";
 import Copy from "../assets/copy.svg";
 import TextCopied from "../assets/TextCopied.svg";
+import Feedback from "../assets/Feedback.svg";
 // Add these helper functions at the top of the component
 
 // const createBotMessage = (result: any): Message => ({
@@ -64,9 +65,9 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
     const [clickedButton, setClickedButton] = useState<string | null>(null);
     const [showCopiedNotification, setShowCopiedNotification] = useState(false);
-
+    const [showFeedback, setShowFeedback] = useState(false);
     const [showVoiceOptions, setShowVoiceOptions] = useState(false);
-
+// console.log(message)
     // const [isSpeaking, setIsSpeaking] = useState(false);
     // const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(
     //   // null
@@ -76,6 +77,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [getAvatar] = useGetAvatarMutation();
+    const [activeReaction, setActiveReaction] = useState<"like" | "dislike" | null>(null);
 
     // Clean up speech synthesis when component unmounts
     // React.useEffect(() => {
@@ -319,6 +321,34 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
       if (selectedVoice) {
         handleSpeak(selectedVoice);
       }
+    };
+
+    const handleLikeClick = async () => {
+    
+     
+      try {
+        await onLike(message.history_id || "");
+        setActiveReaction("like");
+        setShowFeedback(true);
+        setTimeout(() => setShowFeedback(false), 2000);
+        // Optionally handle success response here
+      } catch (error) {
+        console.error("Error liking message:", error);
+      } 
+    };
+
+    const handleDislikeClick = async () => {
+
+     
+      try {
+        await onDislike(message.history_id || "");
+        setActiveReaction("dislike");
+        setShowFeedback(true);
+        setTimeout(() => setShowFeedback(false), 2000);
+        // Optionally handle success response here
+      } catch (error) {
+        console.error("Error disliking message:", error);
+      } 
     };
 
     console.log("Message data:", {
@@ -604,32 +634,34 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                   {!message.isUserMessage && (
                     <div className={`relative ${isPdfContext ? '' : 'pt-3'}`}>
                       <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-                        <button
-                          className={`p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40] ${
-                            message.like ? "text-green-600 dark:text-green-500" : ""
-                          }`}
-                          onClick={() => onLike(message.history_id || "")}
-                          aria-label="Like message"
-                        >
-                          <img
-                            src={ThumbsUp}
-                            alt="Thumbs Up"
-                            className="w-6 h-6 object-contain"
-                          />
-                        </button>
-                        <button
-                          className={`p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40] ${
-                            message.un_like ? "text-red-600 dark:text-red-500" : ""
-                          }`}
-                          onClick={() => onDislike(message.history_id || "")}
-                          aria-label="Dislike message"
-                        >
-                          <img
-                            src={ThumbsDown}
-                            alt="Thumbs Down"
-                            className="w-6 h-6 object-contain"
-                          />
-                        </button>
+                        {activeReaction !== "dislike" && (
+                          <button
+                            className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]"
+                            onClick={handleLikeClick}
+                            aria-label="Like message"
+                            disabled={isLoading}
+                          >
+                            <img
+                              src={ThumbsUp}
+                              alt="Thumbs Up"
+                              className="w-6 h-6 object-contain"
+                            />
+                          </button>
+                        )}
+                        {activeReaction !== "like" && (
+                          <button
+                             className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]"
+                            onClick={handleDislikeClick}
+                            aria-label="Dislike message"
+                            disabled={isLoading}
+                          >
+                            <img
+                              src={ThumbsDown}
+                              alt="Thumbs Down"
+                              className="w-6 h-6 object-contain"
+                            />
+                          </button>
+                        )}
                         {!isPdfContext && (
                           <button
                             className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40] relative"
@@ -733,6 +765,18 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
               </div>
             </div>
           )}
+
+
+
+{showFeedback && (
+          <div className="fixed top-16 left-1/2 transform -translate-x-1/2 z-50" style={{ top: '13%', left: '64%', marginLeft: '-50px' }}>
+            <img
+              src={Feedback}
+              alt="Feedback"
+              className="h-10 w-auto"
+            />
+          </div>
+        )}
         </div>
       </>
     );
