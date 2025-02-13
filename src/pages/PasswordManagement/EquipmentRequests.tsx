@@ -4,8 +4,13 @@ import reqEquipIcon from "../../assets/ReqEquip.svg";
 import reqNewHardIcon from "../../assets/ReqNewHard.svg";
 import reqSoftwareLicIcon from "../../assets/ReqSoftwareLic.svg";
 import caretLeftIcon from "../../assets/CaretLeft.svg";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import DarkBG from "../../assets/DarkTemplates.svg"
 
 const EquipmentRequests = () => {
+  const { isDarkMode } = useSelector((state: RootState) => state.theme);
+
   const cardsData = [
     {
       title: "Request New Hardware",
@@ -32,7 +37,7 @@ const EquipmentRequests = () => {
       <div
         className="relative w-[1113px] h-[690px] bg-white dark:bg-[#2c2d32] rounded-2xl p-6 shadow-lg dark:shadow-[#1a1b1e] overflow-hidden transition-colors duration-200"
         style={{
-          backgroundImage: `url(${bgHome})`,
+          backgroundImage: `url(${isDarkMode ? DarkBG : bgHome})`,
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center",

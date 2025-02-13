@@ -572,11 +572,11 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                 />
                 <div className="flex-1">
                   <div className="flex items-center justify-start">
-                    <span className="text-[14px] font-passenger font-light text-gray-900 dark:text-black mr-2 transition-colors duration-200">
+                    <span className="text-[14px] font-passenger font-light text-gray-900 dark:text-white mr-2 transition-colors duration-200">
                       BART Genie
                     </span>
-                    <span className="w-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-full mx-1"></span>
-                    <span className="text-[12px] font-passenger font-light text-gray-600 dark:text-black/70 transition-colors duration-200">
+                    <span className="w-1 h-1 bg-gray-300 dark:bg-white rounded-full mx-1"></span>
+                    <span className="text-[12px] font-passenger font-light text-gray-600 dark:text-white/70 transition-colors duration-200">
                       {(() => {
                         try {
                           const date = new Date(message.timestamp);
@@ -590,13 +590,16 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                   <div className="flex mt-2">
                     {(message.button_display ||
                       message.text.includes("verification code")) && (
-                      <div className="w-1 h-auto mr-2 bg-purple-600 dark:bg-purple-500 rounded-sm transition-colors duration-200"></div>
+                        <div
+                        className="w-1 h-auto mr-2 rounded-sm transition-colors duration-200 bg-[#523EC6] dark:bg-gradient-to-b from-[#523EC6] to-white"
+                        ></div>
+                      
                     )}
                     <div className="flex-1">
                       <div className="flex-1">
                         {message.isFromHistory ? (
                           <div
-                            className="text-sm text-gray-800 dark:text-black font-passenger transition-colors duration-200"
+                            className="text-sm text-gray-800 dark:text-white font-passenger transition-colors duration-200"
                             dangerouslySetInnerHTML={createMarkup(message.text, inline ? 'inline' : 'vertical')}
                           />
                         ) : (

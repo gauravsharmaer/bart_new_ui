@@ -1,6 +1,6 @@
 // ChatSidebar.tsx
 import React from "react";
-import VerifyMailCard from "../../components/ui/VerifyMailCard";
+// import VerifyMailCard from "../../components/ui/VerifyMailCard";
 
 const SideBar: React.FC = () => {
   return (
@@ -34,9 +34,9 @@ const SideBar: React.FC = () => {
           </span>
         </li>
       </ul>
-      <div className="mt-auto w-full">
+      {/* <div className="mt-auto w-full">
         <VerifyMailCard />
-      </div>
+      </div> */}
     </aside>
   );
 };

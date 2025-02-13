@@ -4,6 +4,7 @@ import DotLoader from "../utils/DotLoader";
 import HistorySideBar from "./HistorySideBar";
 import ChatLogo from "../assets/Genie.svg";
 import BackGround from "../assets/bg_frame.svg";
+import DarkBackground from "../assets/DarkChat.svg";
 import { Message, ChatHistory } from "../Interface/Interface";
 import {  ExtendedChatUiProps } from "../props/Props";
 import { useSelector, useDispatch } from "react-redux";
@@ -15,6 +16,7 @@ import Inputbar from "./Inputbar";
 const ChatUi = ({ initialMessage, apiHandlers }: ExtendedChatUiProps) => {
   const dispatch = useDispatch();
 
+  const { isDarkMode } = useSelector((state: RootState) => state.theme);
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
@@ -223,7 +225,7 @@ const ChatUi = ({ initialMessage, apiHandlers }: ExtendedChatUiProps) => {
     
 
       {/* Main container */}
-      <div className="h-full flex p-2 box-border bg-[#f3f5f9]">
+      <div className="h-full flex p-2 pr-0 pb-0 box-border bg-[#f3f5f9]">
       {/* <button 
         className="fixed top-32 right-20 z-50 bg-gray-300 text-white px-4 py-2 rounded-lg shadow-lg"
         onClick={() => {
@@ -234,7 +236,7 @@ const ChatUi = ({ initialMessage, apiHandlers }: ExtendedChatUiProps) => {
         New Chat
       </button> */}
         {/* Sidebar */}
-        <div className="flex-shrink-0 -ml-[7px] -mb-[7px]">
+        <div className="flex-shrink-0 -ml-[8px] -mb-[7px]">
           <HistorySideBar
             chatHistory={chatHistory}
             isLoading={isHistoryLoading}
@@ -248,12 +250,12 @@ const ChatUi = ({ initialMessage, apiHandlers }: ExtendedChatUiProps) => {
         </div>
 
         {/* Main Chat Section */}
-        <div className="flex-grow pb-1.5 pt-1 pr-2 pl-3">
+        <div className="flex-grow pb-1.5 pt-1 pr-3 pl-3 dark:bg-[#000000]">
 
 
           <div className="w-full h-[calc(100%-17px)] mt-4 rounded-[16px] overflow-hidden bg-cover bg-center"
 
-               style={{ backgroundImage: `url(${BackGround})` }}>
+               style={{ backgroundImage: `url(${isDarkMode ? DarkBackground : BackGround})` }}>
             <div className="flex flex-col h-full">
               {/* Chat Messages */}
               <div className="flex-grow overflow-hidden relative">

@@ -1,5 +1,6 @@
 import React from "react";
 import Arrow from "../../assets/ArrowLeft.svg"
+import DarkArrow from "../../assets/DarkArrowLeft.svg"
 import { useNavigate } from "react-router-dom";
 
 const SidebarItem: React.FC<{
@@ -53,17 +54,18 @@ const Sidebar: React.FC<{
   ];
 
   return (
-    <div className="w-[300px] max-w-[300px] h-full bg-white dark:bg-[#2c2d32] p-5 flex flex-col transition-colors duration-200">
+    <div className="w-[300px] max-w-[300px] h-full bg-white dark:bg-[#1e1e1e] p-5 flex flex-col transition-colors duration-200">
       {/* Back Button */}
       <div className="flex items-center mb-4">
         <button
           onClick={() => navigate("/")}
           className="inline-flex items-center justify-center bg-none border-none cursor-pointer text-[30px] mr-[10px] text-black dark:text-white p-0 hover:opacity-80 transition-opacity duration-200"
         >
-          <img src={Arrow} alt="Back Arrow" className="w-[25px] h-[25px] dark:opacity-80" />
+          <img src={Arrow} alt="Back Arrow" className="w-[25px] h-[25px] dark:opacity-80 dark:hidden" />
+          <img src={DarkArrow} alt="Dark Back Arrow" className="w-[25px] h-[25px] dark:opacity-80 hidden dark:block" />
         </button>
 
-        <h2 className="font-medium text-[20px] leading-[28px] m-1 text-[rgba(0,0,0,0.8)] dark:text-white mr-1 transition-colors duration-200">
+        <h2 className="font-medium text-[20px] leading-[28px] m-1 text-[rgba(0,0,0,0.8)] dark:text-[#f0f0f0] mr-1 transition-colors duration-200">
           All Templates
         </h2>
       </div>

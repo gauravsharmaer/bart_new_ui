@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import HistorySideBar from "../../components/HistorySideBar";
 import BackGround from "../../assets/bg_frame.svg";
+import DarkBackground from "../../assets/DarkChat.svg";
 import SiteHeader from "../../components/Navbar";
 import InputBar from "../../components/Inputbar";
 import {
@@ -16,6 +17,8 @@ import { ChatHistory, Message } from "../../Interface/Interface";
 import DotLoader from "../../utils/DotLoader";
 import Genie from "../../assets/Genie.svg";
 import ChatMessage from "../../components/ChatMessage";
+import { useSelector } from "react-redux"; // Import useSelector
+import { RootState } from "../../redux/store"; // Import RootState
 
 const GeneralChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -27,6 +30,7 @@ const GeneralChat = () => {
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   // const [isResponseLoading, setIsResponseLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { isDarkMode } = useSelector((state: RootState) => state.theme);
   console.log(chatHistory);
   // Styles matching ChatWithPdf
   // const chatScreenStyle: React.CSSProperties = {
@@ -278,10 +282,10 @@ const GeneralChat = () => {
             />
           </div>
 
-          <div className="flex-grow pt-0 w-[1200px] pb-4 px-4 pr-3 pl-3">
+          <div className="flex-grow pt-0 w-[1200px] dark:bg-[#000000] pb-4 px-4 pr-3 pl-3">
             <div
-              className="w-full h-[calc(100%-2px)] mt-2 rounded-[16px] overflow-hidden bg-cover bg-center"
-              style={{ backgroundImage: `url(${BackGround})` }}
+              className="w-full h-[calc(100%-2px)] mt-2  rounded-[16px] overflow-hidden bg-cover bg-center"
+                style={{ backgroundImage: `url(${isDarkMode ? DarkBackground : BackGround})` }}
             >
               <div className="flex flex-col h-full">
                 <div className="flex-grow overflow-hidden relative">

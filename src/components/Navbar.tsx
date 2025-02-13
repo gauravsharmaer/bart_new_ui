@@ -17,6 +17,8 @@ import { useDispatch } from "react-redux";
 import { resetChat,  setSelectedChatId } from "../redux/chatSlice";
 import { searchChatHistory } from "../Api/CommonApi";
 import { chatHistory } from "../Interface/Interface";
+import darkmenubar from "../assets/darkhamburger.svg";
+import darknotification from "../assets/dark-bell.svg";
 
 export function SiteHeader() {
   const [isNotificationOpen, setNotificationOpen] = useState(false);
@@ -116,14 +118,15 @@ export function SiteHeader() {
               </div>
             </Link>
             <nav className="flex items-center space-x-2">
-              <button
+
+            <button
                 onClick={() => {
                   navigate("/");
                   dispatch(resetChat());
                 }}
                 className={`relative flex items-center justify-center px-4 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary ${
                   location.pathname === "/"
-                    ? "text-primary bg-[#F3F5F9] dark:bg-[#2c2d32]"
+                    ? "text-primary bg-[#F3F5F9] dark:bg-[#ffffff]"
                     : "text-muted-foreground dark:text-gray-400 hover:bg-[#f3f5f9] dark:hover:text-gray-200"
                 }`}
               >
@@ -210,6 +213,10 @@ export function SiteHeader() {
                   Chat&nbsp;with&nbsp;Docs
                 </span>
               </Button>
+
+
+
+              
 
               {/* 
 
@@ -299,7 +306,12 @@ export function SiteHeader() {
               <img
                 src={notificationicon}
                 alt="Notifications"
-                className="h-6 w-6 dark:opacity-80"
+                className="h-6 w-6 dark:opacity-80 dark:hidden"
+              />
+              <img
+                src={darknotification}
+                alt="Notifications"
+                className="h-6 w-6 dark:opacity-80 hidden dark:block"
               />
               <span className="absolute bottom-6 left-5 h-4 w-4"></span>
             </Button>
@@ -326,7 +338,12 @@ export function SiteHeader() {
                 <img
                   src={menubar}
                   alt="Menu"
-                  className="h-7 w-7 dark:opacity-80"
+                  className="h-7 w-7 dark:opacity-80 dark:hidden"
+                />
+                 <img
+                  src={darkmenubar}
+                  alt="Menu"
+                  className="h-7 w-7 dark:opacity-80 hidden dark:block"
                 />
               </Button>
             </div>

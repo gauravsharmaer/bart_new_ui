@@ -83,8 +83,8 @@ export function SearchSection() {
               onKeyDown={handleKeyDown}
               placeholder=" Have any questions? Or choose a template below to get started"
               className="w-[75%] h-14 pl-4 pr-12 rounded-full py-3
-               text-[#000000] dark:text-gray-200 font-graphik font-normal opacity-50 dark:opacity-70 
-               dark:bg-[#2c2d32] dark:border-[#3a3b40] dark:placeholder-gray-400
+               text-[#000000] dark:text-[#000000] font-graphik font-normal opacity-50 dark:opacity-100 
+               dark:bg-[#FFFFFF] dark:border-[#E8E8E8] dark:placeholder-[#000000] opacity-50
                focus:outline-none focus:ring-1 focus:ring-[#E8E8E8] dark:focus:ring-[#3a3b40]"
               style={{
                 border: "2px solid #E8E8E8",
@@ -170,7 +170,7 @@ export function SearchSection() {
               variant="default"
               onClick={() => navigate("/password")}
               size="sm"
-              className="text-orange-500 dark:text-[#ff8851] hover:bg-transparent dark:hover:text-[#ff7a3d] bg-transparent whitespace-nowrap transition-colors duration-200"
+              className="text-orange-500 dark:text-[#EF613C] hover:bg-transparent dark:hover:text-[#ff7a3d] bg-transparent whitespace-nowrap transition-colors duration-200"
             >
               All Templates
             </Button>

@@ -1,14 +1,17 @@
 import bgHome from "../../assets/bg_templates.svg";
 import Card from "./Card";
 import caretLeftIcon from "../../assets/CaretLeft.svg";
-
-// Import icons
 import accessRightsIcon from "../../assets/AccessRig.svg";
 import softwareUpdateIcon from "../../assets/softwareupdate.svg";
 import installUninstallIcon from "../../assets/installunistall.svg";
 import licenseManagementIcon from "../../assets/LicenseMag.svg";
+import DarkBG from "../../assets/DarkTemplates.svg"
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store'; 
 
 const SoftwareSupport = () => {
+    const { isDarkMode } = useSelector((state: RootState) => state.theme);
+
   const cardsData = [
     {
       title: "Install/Uninstall Software",
@@ -40,10 +43,10 @@ const SoftwareSupport = () => {
 
   return (
     <div className="h-full w-full flex items-center justify-center p-4">
-      <div
+       <div
         className="relative w-[1113px] h-[690px] bg-white dark:bg-[#2c2d32] rounded-2xl p-6 shadow-lg dark:shadow-[#1a1b1e] overflow-hidden transition-colors duration-200"
         style={{
-          backgroundImage: `url(${bgHome})`,
+          backgroundImage: `url(${isDarkMode ? DarkBG : bgHome})`,
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center",

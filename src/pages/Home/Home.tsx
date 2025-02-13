@@ -4,12 +4,17 @@ import FacialConfirmationPopup from "./FacialConfirmationPopup";
 import { useState, useEffect } from "react";
 import VerifyAuthCapture from "./verifyAuthCapture";
 import bgHome from "../../assets/bg_home.svg"; // Import your SVG
+import DarkBackground from "../../assets/DarkHome.svg"; // Import dark background
 import ImageUploadPopup from "../../components/ui/ImageUploadPopup";
+import { useSelector } from "react-redux"; // Import useSelector
+import { RootState } from "../../redux/store"; // Import RootState
 
 const Home = () => {
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
   const [showImageUploadPopup, setShowImageUploadPopup] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+
+  const { isDarkMode } = useSelector((state: RootState) => state.theme); // Access theme state
 
   useEffect(() => {
     if (localStorage.getItem("isFaceVerified") === "false") {
@@ -23,9 +28,9 @@ const Home = () => {
 
   return (
     <div
-      className="dark:bg-[#1a1b1e] transition-colors duration-200"
+      className={`transition-colors duration-200 ${isDarkMode ? 'dark:bg-[#1a1b1e]' : ''}`} // Add dark mode class
       style={{
-        backgroundImage: `url(${bgHome})`,
+        backgroundImage: `url(${isDarkMode ? DarkBackground : bgHome})`, // Conditional background
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
