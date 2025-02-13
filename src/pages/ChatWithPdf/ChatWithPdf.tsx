@@ -11,37 +11,20 @@ import {
   renameChat,
   chatWithDocs,
   getHistory,
+  unlikeChat,
+  likeChat,
 } from "../../Api/CommonApi";
 import { ChatHistory } from "../../Interface/Interface";
 import ChatMessage from "../../components/ChatMessage";
 import PdfSidebar from "../ChatWithPdf/pdfSidebar";
 import DotLoader from "../../utils/DotLoader"; // Add this import at the top
 import Genie from "../../assets/Genie.svg";
-import { createTimestamp } from "../../utils/chatUtils";
+// import { createTimestamp } from "../../utils/chatUtils";
 import { Message } from "../../Interface/Interface";
 import DarkBackground from "../../assets/DarkChat.svg";
 import { useSelector } from "react-redux"; // Import useSelector
 import { RootState } from "../../redux/store"; // Import RootState
-// import { ChatInputBarProps } from "../../props/Props";
-// interface Message {
-//   text: string;
-//   isUserMessage: boolean;
-//   timestamp: string;
-//   button_display: boolean;
-//   number_of_buttons: number;
-//   button_text: string[];
-//   pdfFile?: File;
-//   history_id: string;
-//   like?: boolean;
-//   un_like?: boolean;
-// }
-
-// export interface ChatInputBarProps {
-//   onSubmit: (message: string) => void;
-//   loading?: boolean;
-//   onFileUpload?: (file: File) => void;
-// }
-
+import { createBotMessagechatUi, createErrorMessage, createUserMessagechatUiPdf } from "../../utils/chatFields";
 const PDFChat = () => {
   const [pdfFiles, setPdfFiles] = useState<File[]>([]);
   const [pdfUrls, setPdfUrls] = useState<string[]>([]);
@@ -58,39 +41,16 @@ const PDFChat = () => {
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [isResponseLoading, setIsResponseLoading] = useState(false); // Add this state
   const [isHistoryMode, setIsHistoryMode] = useState<boolean>(false); // New state for history mode
+  const isInitializedRef = useRef(false);
   const { isDarkMode } = useSelector((state: RootState) => state.theme);
-
-  // const [chatId, setChatId] = useState<string | null>(null);
-  // Add these styles from ChatUi
-  // const chatScreenStyle: React.CSSProperties = {
-  //   backgroundImage: `url(${BackGround})`,
-  //   backgroundRepeat: "no-repeat",
-  //   backgroundPosition: "center center",
-  //   backgroundSize: "cover",
-  //   borderRadius: "16px",
-  //   overflow: "hidden",
-  //   height: "calc(100% - 15px)",
-  //   width: "100%",
-  //   marginTop: "16px",
-  // };
-
-  // const containerStyle: React.CSSProperties = {
-  //   backgroundColor: "#f3f5f9",
-  //   height: "100%",
-  //   display: "flex",
-  //   padding: "2px",
-  //   boxSizing: "border-box",
-  // };
-
   const handleFileUpload = (file: File) => {
     if (file.type === "application/pdf") {
       setPdfFiles([file]);
       setCurrentChatId(null); // Reset chat context
       setMessages([]); // Clear messages
-    } 
-    // else {
-    //   setError("Please upload a PDF file");
-    // }
+      localStorage.removeItem("chat_id"); // Clear stored chat ID
+      isInitializedRef.current = false; // Reset initialization state
+    }
   };
 
   const handleRemoveFile = (fileName: string) => {
@@ -105,7 +65,6 @@ const PDFChat = () => {
 
   const handleSubmit = async (message: string) => {
     if (!pdfFiles[0] && !currentChatId) {
-      // setError("Please upload a PDF first");
       return;
     }
 
@@ -113,21 +72,8 @@ const PDFChat = () => {
       setLoading(true);
       setIsResponseLoading(true);
 
-      // Get user ID from localStorage
       const userId = localStorage.getItem("user_id") || "";
-
-      // Create new message
-      const userMessage: Message = {
-        text: message,
-        isUserMessage: true,
-        timestamp: createTimestamp(),
-        button_display: false,
-        number_of_buttons: 0,
-        button_text: [],
-        pdfFile: !currentChatId ? pdfFiles[0] : undefined,
-        history_id: createTimestamp(),
-      };
-
+      const userMessage = createUserMessagechatUiPdf(message, pdfFiles[0], currentChatId);
       setMessages((prevMessages) => [...prevMessages, userMessage]);
 
       // Only create PDF URL if it's the first message
@@ -136,59 +82,100 @@ const PDFChat = () => {
         setPdfUrls([pdfUrl]);
       }
 
-      // Make API call with the PDF file
+      // Make API call with the PDF file and chat_id based on initialization state
       const response = await chatWithDocs(
         pdfFiles[0],
         userId,
         message,
-        currentChatId || undefined
+        isInitializedRef.current ? (localStorage.getItem("chat_id") || undefined) : undefined
       );
 
       if (response) {
-        // Store the chatId for subsequent messages
         if (response.chat_id) {
           setCurrentChatId(response.chat_id);
+          localStorage.setItem("chat_id", response.chat_id);
+          
+          // Only fetch history if this was an initial message
+          if (!isInitializedRef.current) {
+            fetchPdfChatHistory();
+            isInitializedRef.current = true;
+          }
         }
 
-        const botMessage: Message = {
-          text: response.answer,
-          isUserMessage: false,
-          timestamp: createTimestamp(),
-          button_display: false,
-          number_of_buttons: 0,
-          button_text: [],
-          history_id: createTimestamp(),
-        };
+        const botMessage = createBotMessagechatUi(response);
         setMessages((prevMessages) => [...prevMessages, botMessage]);
       }
     } catch (error) {
       console.error("Error:", error);
-      // setError("Failed to send message");
+      const errorBotMessage = createErrorMessage(error);
+      setMessages((prevMessages) => [...prevMessages, errorBotMessage]);
     } finally {
       setLoading(false);
-      setIsResponseLoading(false); // Set response loading to false
+      setIsResponseLoading(false);
     }
   };
 
   // Handle like/dislike functions
-  const handleLike = async (messageId: string) => {
-    const updatedMessages = messages.map((msg) => {
-      if (msg.history_id === messageId) {
-        return { ...msg, like: true, un_like: false };
-      }
-      return msg;
-    });
-    setMessages(updatedMessages);
+  // const handleLike = async (messageId: string) => {
+  //   const updatedMessages = messages.map((msg) => {
+  //     if (msg.history_id === messageId) {
+  //       return { ...msg, like: true, un_like: false };
+  //     }
+  //     return msg;
+  //   });
+  //   setMessages(updatedMessages);
+  // };
+
+  const handleLike = async (history_id: string) => {
+    if (!history_id) {
+      console.error("History ID is required");
+      return;
+    }
+    try {
+      const result = await likeChat(history_id);
+      setMessages((prevMessages) =>
+
+        prevMessages.map((msg) =>
+          msg.history_id === history_id
+            ? { ...msg, like: true, un_like: false }
+            : msg
+        )
+      );
+      console.log(result);
+    } catch (error) {
+      console.error("Error liking chat:", error);
+    }
   };
 
-  const handleDislike = async (messageId: string) => {
-    const updatedMessages = messages.map((msg) => {
-      if (msg.history_id === messageId) {
-        return { ...msg, like: false, un_like: true };
-      }
-      return msg;
-    });
-    setMessages(updatedMessages);
+  // const handleDislike = async (messageId: string) => {
+  //   const updatedMessages = messages.map((msg) => {
+  //     if (msg.history_id === messageId) {
+  //       return { ...msg, like: false, un_like: true };
+  //     }
+  //     return msg;
+  //   });
+  //   setMessages(updatedMessages);
+  // };
+
+
+  const handleDislike = async (history_id: string) => {
+    if (!history_id) {
+      console.error("History ID is required");
+      return;
+    }
+    try {
+      const result = await unlikeChat(history_id);
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.history_id === history_id
+            ? { ...msg, like: false, un_like: true }
+            : msg
+        )
+      );
+      console.log(result);
+    } catch (error) {
+      console.error("Error disliking chat:", error);
+    }
   };
 
   const handleGetChat = async (chatId: string) => {
@@ -199,9 +186,6 @@ const PDFChat = () => {
       // Find the chat details from chatHistory array
       const chatDetails = chatHistory.find((chat) => chat.id === chatId);
       if (chatDetails) {
-        // console.log("Chat details:", chatDetails);
-
-        // Use the file_path directly from the chat details
         if (chatDetails.file_path) {
           setPdfUrls([chatDetails.file_path]);
           setIsPdfSidebarOpen(false);
@@ -214,8 +198,10 @@ const PDFChat = () => {
       }));
       setMessages(flattenedMessages);
       setCurrentChatId(chatId);
+      localStorage.setItem("chat_id", chatId); // Store chat ID in localStorage
+      isInitializedRef.current = true; // Mark as initialized since we're loading an existing chat
       setPdfFiles([]); // Reset PDF files array
-      setIsHistoryMode(true); // Set history mode when a chat is selected
+      setIsHistoryMode(true);
     } catch (error) {
       console.error("Error fetching chat:", error);
     }
@@ -248,15 +234,6 @@ const PDFChat = () => {
     setMessages((prev) => [...prev, message]);
   };
 
-  // useEffect(() => {
-  //   if (chatHistory.length > 0) {
-  //     const updatedHistory = chatHistory.map((chat) => ({
-  //       ...chat,
-  //       isActive: chat.id === pdfId,
-  //     }));
-  //     setChatHistory(updatedHistory);
-  //   }
-  // }, [pdfId]);
 
   const handleDeleteChat = async (chatId: string) => {
     await deleteChat(chatId);
@@ -355,9 +332,9 @@ const PDFChat = () => {
           </div>
 
           {/* Main Chat Section */}
-          <div className={`flex-grow pt-0 w-[1200px] pb-4 px-4 pl-3 pr-3 transition-all dark:bg-[#000000] duration-300 ${isPdfSidebarOpen ? 'mr-[460px]' : ''}`}>
+          <div className={`flex-grow pt-0 w-[1200px] pb-4 px-4 pl-3 pr-3 transition-all duration-300 ${isPdfSidebarOpen ? 'mr-[460px]' : ''}`}>
           <div className="w-full h-[calc(100%-2px)] mt-2 rounded-[16px] overflow-hidden bg-cover bg-center"
-              style={{ backgroundImage: `url(${isDarkMode ? DarkBackground : BackGround})` }}>
+                     style={{ backgroundImage: `url(${isDarkMode ? DarkBackground : BackGround})` }}>
               <div className="flex flex-col h-full">
                 {/* Messages Area */}
                 {renderMessages()}

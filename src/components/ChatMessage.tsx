@@ -67,7 +67,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     const [showCopiedNotification, setShowCopiedNotification] = useState(false);
     const [showFeedback, setShowFeedback] = useState(false);
     const [showVoiceOptions, setShowVoiceOptions] = useState(false);
-// console.log(message)
+console.log(message)
     // const [isSpeaking, setIsSpeaking] = useState(false);
     // const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(
     //   // null
@@ -77,7 +77,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [getAvatar] = useGetAvatarMutation();
-    const [activeReaction, setActiveReaction] = useState<"like" | "dislike" | null>(null);
+    // const [activeReaction, setActiveReaction] = useState<"like" | "dislike" | null>(null);
 
     // Clean up speech synthesis when component unmounts
     // React.useEffect(() => {
@@ -328,7 +328,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
      
       try {
         await onLike(message.history_id || "");
-        setActiveReaction("like");
+        // setActiveReaction("like");
         setShowFeedback(true);
         setTimeout(() => setShowFeedback(false), 2000);
         // Optionally handle success response here
@@ -342,7 +342,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
      
       try {
         await onDislike(message.history_id || "");
-        setActiveReaction("dislike");
+        // setActiveReaction("dislike");
         setShowFeedback(true);
         setTimeout(() => setShowFeedback(false), 2000);
         // Optionally handle success response here
@@ -637,34 +637,66 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                   {!message.isUserMessage && (
                     <div className={`relative ${isPdfContext ? '' : 'pt-3'}`}>
                       <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-                        {activeReaction !== "dislike" && (
-                          <button
-                            className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]"
-                            onClick={handleLikeClick}
-                            aria-label="Like message"
-                            disabled={isLoading}
-                          >
-                            <img
-                              src={ThumbsUp}
-                              alt="Thumbs Up"
-                              className="w-6 h-6 object-contain"
-                            />
-                          </button>
+                        {(!message.like && !message.un_like) ? (
+                          <>
+                            <button
+                              className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]"
+                              onClick={handleLikeClick}
+                              aria-label="Like message"
+                              disabled={isLoading}
+                            >
+                              <img
+                                src={ThumbsUp}
+                                alt="Thumbs Up"
+                                className="w-6 h-6 object-contain"
+                              />
+                            </button>
+                            <button
+                              className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]"
+                              onClick={handleDislikeClick}
+                              aria-label="Dislike message"
+                              disabled={isLoading}
+                            >
+                              <img
+                                src={ThumbsDown}
+                                alt="Thumbs Down"
+                                className="w-6 h-6 object-contain"
+                              />
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            {message.like && (
+                              <button
+                                className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]  dark:bg-[#3a3b40]"
+                                onClick={handleLikeClick}
+                                aria-label="Like message"
+                                disabled={isLoading}
+                              >
+                                <img
+                                  src={ThumbsUp}
+                                  alt="Thumbs Up"
+                                  className="w-6 h-6 object-contain"
+                                />
+                              </button>
+                            )}
+                            {message.un_like && (
+                              <button
+                                className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40] bg-gray-100 dark:bg-[#3a3b40]"
+                                onClick={handleDislikeClick}
+                                aria-label="Dislike message"
+                                disabled={isLoading}
+                              >
+                                <img
+                                  src={ThumbsDown}
+                                  alt="Thumbs Down"
+                                  className="w-6 h-6 object-contain"
+                                />
+                              </button>
+                            )}
+                          </>
                         )}
-                        {activeReaction !== "like" && (
-                          <button
-                             className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40]"
-                            onClick={handleDislikeClick}
-                            aria-label="Dislike message"
-                            disabled={isLoading}
-                          >
-                            <img
-                              src={ThumbsDown}
-                              alt="Thumbs Down"
-                              className="w-6 h-6 object-contain"
-                            />
-                          </button>
-                        )}
+
                         {!isPdfContext && (
                           <button
                             className="p-1 rounded transition-colors hover:bg-gray-100 dark:hover:bg-[#3a3b40] relative"
