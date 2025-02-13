@@ -58,8 +58,15 @@ export const createBotMessage = (result: any): Message => ({
     button_display: false,
     number_of_buttons: 0,
     button_text: [],
-
+ 
   });
+
+  export const createUserMessagechatUiPdf = (text: string, pdfFile: File, currentChatId: string | null): Message => ({
+    ...createUserMessagechatUi(text),
+    pdfFile: !currentChatId ? pdfFile : undefined,
+    
+  });
+  
 
   export const createErrorMessage = (error: unknown): Message => ({
     text: error instanceof Error ? error.message : "An error occurred",

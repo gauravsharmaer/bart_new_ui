@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import  { useState, useEffect, useRef } from "react";
 import HistorySideBar from "../../components/HistorySideBar";
 import BackGround from "../../assets/bg_frame.svg";
 import SiteHeader from "../../components/Navbar";
@@ -16,38 +16,33 @@ import { ChatHistory, Message } from "../../Interface/Interface";
 import DotLoader from "../../utils/DotLoader";
 import Genie from "../../assets/Genie.svg";
 import ChatMessage from "../../components/ChatMessage";
+import { createUserMessagechatUi,createBotMessagechatUi, createErrorMessage } from "../../utils/chatFields";
 
 const GeneralChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  // const [chatId, setChatId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
   const [isHistoryLoading, setIsHistoryLoading] = useState(true);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
-  // const [isResponseLoading, setIsResponseLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  console.log(chatHistory);
-  // Styles matching ChatWithPdf
-  // const chatScreenStyle: React.CSSProperties = {
-  //   backgroundImage: `url(${BackGround})`,
-  //   backgroundRepeat: "no-repeat",
-  //   backgroundPosition: "center center",
-  //   backgroundSize: "cover",
-  //   borderRadius: "16px",
-  //   overflow: "hidden",
-  //   height: "calc(100% - 15px)",
-  //   width: "100%",
-  //   marginTop: "16px",
-  // };
+  const isInitializedRef = useRef(false);
 
-  // const containerStyle: React.CSSProperties = {
-  //   backgroundColor: "#f3f5f9",
-  //   height: "100%",
-  //   display: "flex",
-  //   padding: "2px",
-  //   boxSizing: "border-box",
-  // };
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, loading]);
+
+  const resetChat = () => {
+    setMessages([]);
+    setCurrentChatId(null);
+    localStorage.removeItem("chat_id");
+    isInitializedRef.current = false;
+    setLoading(false);
+  };
 
   const fetchChatHistory = async () => {
     try {
@@ -105,90 +100,42 @@ const GeneralChat = () => {
     fetchChatHistory();
   }, []);
 
-  // useEffect(() => {
-  //   if (chatHistory.length > 0) {
-  //     const updatedHistory = chatHistory.map((chat) => ({
-  //       ...chat,
-  //       isActive: chat.id === chatId,
-  //     }));
-  //     setChatHistory(updatedHistory);
-  //   }
-  // }, [chatId, chatHistory]);
-
   const handleSubmit = async (message: string) => {
     try {
       setLoading(true);
-      // setIsResponseLoading(true);
-
-      // Get user ID from localStorage
       const userId = localStorage.getItem("user_id") || "";
-
-      // Create new message
-      const userMessage: Message = {
-        text: message,
-        isUserMessage: true,
-        timestamp: new Date().toLocaleTimeString(),
-        button_display: false,
-        number_of_buttons: 0,
-        button_text: [],
-        history_id: Date.now().toString(),
-      };
-
+      const userMessage = createUserMessagechatUi(message);
       setMessages((prevMessages) => [...prevMessages, userMessage]);
 
+      // If this is the first message in a new chat, don't send chat_id
       const response = await generalChat({
         question: message,
         user_id: userId,
+        chat_id: isInitializedRef.current ? (localStorage.getItem("chat_id") || "")
+        : ""
       });
 
       if (response) {
-        // Store the chatId for subsequent messages
         if (response.chat_id) {
           setCurrentChatId(response.chat_id);
+          localStorage.setItem("chat_id", response.chat_id);
+          
+          // Only fetch history if this was an initial message
+          if (!isInitializedRef.current) {
+            fetchChatHistory();
+            isInitializedRef.current = true;
+          }
         }
 
-        const botMessage: Message = {
-          text: response.answer,
-          isUserMessage: false,
-          timestamp: new Date().toLocaleTimeString(),
-          button_display: response.display_settings?.button_display || false,
-          number_of_buttons:
-            response.display_settings?.options?.buttons?.length || 0,
-          button_text: response.display_settings?.options?.buttons || [],
-          ticket: response.display_settings?.ticket || false,
-          ticket_options:
-            response.display_settings?.options?.ticket_options || undefined,
-          history_id:
-            response.display_settings?.message_history[
-              response.display_settings.message_history.length - 1
-            ]?.history_id,
-          like: response.display_settings?.message_history[
-            response.display_settings.message_history.length - 1
-          ]?.like,
-          un_like:
-            response.display_settings?.message_history[
-              response.display_settings.message_history.length - 1
-            ]?.un_like,
-        };
-
+        const botMessage = createBotMessagechatUi(response);
         setMessages((prevMessages) => [...prevMessages, botMessage]);
       }
     } catch (error) {
       console.error("Error:", error);
-      // Add error message to chat
-      const errorMessage: Message = {
-        text: error instanceof Error ? error.message : "An error occurred",
-        isUserMessage: false,
-        timestamp: new Date().toLocaleTimeString(),
-        button_display: false,
-        number_of_buttons: 0,
-        button_text: [],
-        history_id: Date.now().toString(),
-      };
-      setMessages((prevMessages) => [...prevMessages, errorMessage]);
+      const errorBotMessage = createErrorMessage(error);
+      setMessages((prevMessages) => [...prevMessages, errorBotMessage]);
     } finally {
       setLoading(false);
-      // setIsResponseLoading(false);
     }
   };
 
@@ -238,6 +185,7 @@ const GeneralChat = () => {
 
   const handleGetChat = async (chatId: string) => {
     try {
+      resetChat(); // Reset chat before loading a new one
       const data = await getHistory(chatId);
       const flattenedMessages = data.flat().map((message) => ({
         ...message,
@@ -245,6 +193,8 @@ const GeneralChat = () => {
       }));
       setMessages(flattenedMessages);
       setCurrentChatId(chatId);
+      localStorage.setItem("chat_id", chatId);
+      isInitializedRef.current = true; // Mark as initialized since we're loading an existing chat
     } catch (error) {
       console.error("Error fetching chat:", error);
     }
@@ -346,3 +296,4 @@ const GeneralChat = () => {
 };
 
 export default GeneralChat;
+
