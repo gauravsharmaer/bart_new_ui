@@ -11,11 +11,11 @@ interface VoiceOptionsProps {
 const VoiceOptions: React.FC<VoiceOptionsProps> = ({
   showVoiceOptions,
   handleVoiceIconClick,
-  setShowVoiceOptions,
+  // setShowVoiceOptions,
 }) => {
   return (
     showVoiceOptions && (
-      <div className="absolute z-50 top-[-55px] -left-11">
+      <div className="absolute z-50 top-[-45px] -left-7">
         <div className="relative group">
           <img
             src={VoicesIcon}

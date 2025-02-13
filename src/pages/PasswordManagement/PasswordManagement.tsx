@@ -5,6 +5,7 @@ import PasswordPage from "./PasswordPage";
 import EquipmentPage from "./EquipmentRequests";
 import SoftwarePage from "./SoftwareSupport";
 
+
 const PasswordManagement = () => {
   const [selectedTemplate, setSelectedTemplate] = useState<string>(
     "Password Management"

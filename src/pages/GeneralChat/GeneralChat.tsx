@@ -2,6 +2,7 @@ import  { useState, useEffect, useRef } from "react";
 import HistorySideBar from "../../components/HistorySideBar";
 import BackGround from "../../assets/bg_frame.svg";
 import SiteHeader from "../../components/Navbar";
+import DarkBackground from "../../assets/DarkChat.svg";
 import InputBar from "../../components/Inputbar";
 import {
   getHistory,
@@ -17,6 +18,8 @@ import DotLoader from "../../utils/DotLoader";
 import Genie from "../../assets/Genie.svg";
 import ChatMessage from "../../components/ChatMessage";
 import { createUserMessagechatUi,createBotMessagechatUi, createErrorMessage } from "../../utils/chatFields";
+import { useSelector } from "react-redux"; // Import useSelector
+import { RootState } from "../../redux/store"; // Import RootState
 
 const GeneralChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -27,7 +30,7 @@ const GeneralChat = () => {
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isInitializedRef = useRef(false);
-
+  const { isDarkMode } = useSelector((state: RootState) => state.theme);
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -231,7 +234,8 @@ const GeneralChat = () => {
           <div className="flex-grow pt-0 w-[1200px] pb-4 px-4 pr-3 pl-3">
             <div
               className="w-full h-[calc(100%-2px)] mt-2 rounded-[16px] overflow-hidden bg-cover bg-center"
-              style={{ backgroundImage: `url(${BackGround})` }}
+              style={{ backgroundImage: `url(${isDarkMode ? DarkBackground : BackGround})` }}
+
             >
               <div className="flex flex-col h-full">
                 <div className="flex-grow overflow-hidden relative">

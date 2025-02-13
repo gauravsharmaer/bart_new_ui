@@ -219,6 +219,10 @@ import {
 import VoiceChatCard from "./VoiceChatCard";
 import Filetext from "../assets/Pdf.svg";
 import plus from "../assets/Plus.svg";
+import darkplus from "../assets/darkplus.svg";
+import darkarrowIcon from "../assets/darkArrow.svg";
+import darkFiletext from "../assets/dark-document.svg";
+
 
 interface InputBarProps {
   onSubmit: (message: string) => void;
@@ -333,7 +337,7 @@ const InputBar: React.FC<InputBarProps> = ({
     <div className="relative">
       <div className={showVoiceCard ? "blur-background" : ""}>
         <form onSubmit={(e) => { e.preventDefault(); submitMessage(); }} className="relative">
-          <div className="flex items-center gap-2 p-2 bg-white rounded-[15px] border border-gray-200">
+          <div className="flex items-center gap-2 p-2 bg-white rounded-[15px] border border-gray-200 dark:border-none dark:bg-[#1E1E1E] dark:text-[#ffffff] dark:opacity-90">
             {enableFileUpload && (
               <div className="flex gap-2">
                 <button
@@ -341,14 +345,17 @@ const InputBar: React.FC<InputBarProps> = ({
                   className="w-14 h-10 flex items-center justify-center"
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  <img src={plus} alt="File" className="w-full h-full object-contain" />
+                  <img src={plus} alt="File" className="w-full h-full object-contain dark:hidden" />
+                  <img src={darkplus} alt="File" className="w-full h-full object-contain hidden dark:block" />
                 </button>
                 <button
                   type="button"
-                  className="w-14 h-10 flex items-center justify-center bg-[#f9f9f9] shadow-[inset_0_0_1px_rgba(128,128,128,0.5)] rounded-[10px] hover:bg-gray-100"
+                  className="w-14 h-10 flex items-center justify-center bg-[#f9f9f9] dark:bg-[#000000] shadow-[inset_0_0_1px_rgba(128,128,128,0.5)] rounded-[10px] hover:bg-gray-100"
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  <img src={Filetext} alt="File" className="w-full h-full object-contain" />
+                  <img src={Filetext} alt="File" className="w-full h-full object-contain dark:hidden" />
+                  <img src={darkFiletext} alt="File" className="w-full h-full object-contain hidden dark:block" />
+
                 </button>
                 <input
                   type="file"
@@ -364,7 +371,7 @@ const InputBar: React.FC<InputBarProps> = ({
               <button
                 type="button"
                 onClick={handleSpeechInput}
-                className={`w-14 h-10 flex items-center justify-center bg-[#f9f9f9] shadow-[inset_0_0_1px_rgba(128,128,128,0.5)] rounded-[10px] ${
+                className={`w-14 h-10 flex items-center justify-center bg-[#f9f9f9] dark:bg-[#000000] shadow-[inset_0_0_1px_rgba(128,128,128,0.5)] rounded-[10px] ${
                   isListening ? "text-red-500" : "text-gray-500 hover:text-gray-700"
                 }`}
               >
@@ -387,9 +394,11 @@ const InputBar: React.FC<InputBarProps> = ({
             <button
               type="submit"
               disabled={loading}
-              className="w-12 h-10 flex items-center justify-center bg-[#f9f9f9] shadow-[inset_0_0_1px_rgba(128,128,128,0.5)] rounded-[10px] hover:bg-gray-100"
+              className="w-12 h-10 flex items-center justify-center bg-[#f9f9f9] dark:bg-[#000000] shadow-[inset_0_0_1px_rgba(128,128,128,0.5)] rounded-[10px] hover:bg-gray-100"
             >
-              <img src={arrowIcon} alt="Send" className="w-6 h-6" />
+              <img src={arrowIcon} alt="Send" className="w-6 h-6 dark:hidden" />
+              <img src={darkarrowIcon} alt="Send" className="w-6 h-6 hidden dark:block" />
+
             </button>
           </div>
         </form>

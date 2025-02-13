@@ -19,7 +19,7 @@ const ChatButtonCard: React.FC<ChatButtonCardProps> = ({
           onClick={() => onButtonClick(button)}
           className={`
             px-5 py-2.5 
-            border border-gray-200 dark:border-[#2c2d32]
+            border border-gray-200 dark:border-[#4f4f4f] dark:border-opacity-100 dark:border-[0.7px]
             rounded-lg
             text-sm font-medium
             transition-all duration-200
@@ -27,7 +27,7 @@ const ChatButtonCard: React.FC<ChatButtonCardProps> = ({
             ${
               clickedButton === button
                 ? "bg-orange-500 dark:bg-[#ff8851] text-white dark:text-gray-100 border-transparent"
-                : "bg-white dark:bg-[#2c2d32] text-gray-700 dark:text-gray-200"
+                : "bg-white dark:bg-[#111111] dark:bg-opacity-30 text-gray-700 dark:text-[#ffffff]"
             }
           `}
         >

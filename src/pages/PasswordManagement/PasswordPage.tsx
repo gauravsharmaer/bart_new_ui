@@ -4,8 +4,15 @@ import multifacauthIcon from "../../assets/multifacauth.svg";
 import passwordResetIcon from "../../assets/passwordreset.svg";
 import unlockAccIcon from "../../assets/unlockacc.svg";
 import caretLeftIcon from "../../assets/CaretLeft.svg";
+import DarkBG from "../../assets/DarkTemplates.svg"
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store'; // Adjust this import path as needed
+
+
 
 const PasswordPage = () => {
+  const { isDarkMode } = useSelector((state: RootState) => state.theme);
+  
   const cardsData = [
     {
       title: "Password Reset",
@@ -33,7 +40,7 @@ const PasswordPage = () => {
       <div
         className="relative w-[1113px] h-[690px] bg-white dark:bg-[#2c2d32] rounded-2xl p-6 shadow-lg dark:shadow-[#1a1b1e] overflow-hidden transition-colors duration-200"
         style={{
-          backgroundImage: `url(${bgHome})`,
+          backgroundImage: `url(${isDarkMode ? DarkBG : bgHome})`,
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center",

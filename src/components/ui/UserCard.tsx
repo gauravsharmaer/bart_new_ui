@@ -39,15 +39,15 @@ const UserCard: React.FC<UserCardProps> = ({ name, text }) => {
           <div className="flex-grow">
             <div className="flex items-center gap-1 mb-1">
               {/* User Name */}
-              <span className="text-[12px] font-passenger font-light text-gray-900 dark:text-gray-200 transition-colors duration-200">
+              <span className="text-[12px] font-passenger font-light text-gray-900 dark:text-white transition-colors duration-200">
                 {formattedName}
               </span>
               {/* Centered Dot */}
-              <span className="text-[12px] font-passenger font-light text-gray-900 dark:text-gray-200 transition-colors duration-200">
+              <span className="text-[12px] font-passenger font-light text-gray-900 dark:text-white transition-colors duration-200">
                 •
               </span>
               {/* Timestamp */}
-              <span className="text-[12px] font-passenger font-light text-gray-600 dark:text-gray-400 transition-colors duration-200">
+              <span className="text-[12px] font-passenger font-light text-gray-600 dark:text-[#ffffff] dark:opacity-60 transition-colors duration-200">
                 {currentTime}
               </span>
             </div>

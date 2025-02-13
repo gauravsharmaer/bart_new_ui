@@ -21,6 +21,9 @@ import DotLoader from "../../utils/DotLoader"; // Add this import at the top
 import Genie from "../../assets/Genie.svg";
 // import { createTimestamp } from "../../utils/chatUtils";
 import { Message } from "../../Interface/Interface";
+import DarkBackground from "../../assets/DarkChat.svg";
+import { useSelector } from "react-redux"; // Import useSelector
+import { RootState } from "../../redux/store"; // Import RootState
 import { createBotMessagechatUi, createErrorMessage, createUserMessagechatUiPdf } from "../../utils/chatFields";
 const PDFChat = () => {
   const [pdfFiles, setPdfFiles] = useState<File[]>([]);
@@ -39,7 +42,7 @@ const PDFChat = () => {
   const [isResponseLoading, setIsResponseLoading] = useState(false); // Add this state
   const [isHistoryMode, setIsHistoryMode] = useState<boolean>(false); // New state for history mode
   const isInitializedRef = useRef(false);
-
+  const { isDarkMode } = useSelector((state: RootState) => state.theme);
   const handleFileUpload = (file: File) => {
     if (file.type === "application/pdf") {
       setPdfFiles([file]);
@@ -331,7 +334,7 @@ const PDFChat = () => {
           {/* Main Chat Section */}
           <div className={`flex-grow pt-0 w-[1200px] pb-4 px-4 pl-3 pr-3 transition-all duration-300 ${isPdfSidebarOpen ? 'mr-[460px]' : ''}`}>
           <div className="w-full h-[calc(100%-2px)] mt-2 rounded-[16px] overflow-hidden bg-cover bg-center"
-              style={{ backgroundImage: `url(${BackGround})` }}>
+                     style={{ backgroundImage: `url(${isDarkMode ? DarkBackground : BackGround})` }}>
               <div className="flex flex-col h-full">
                 {/* Messages Area */}
                 {renderMessages()}
