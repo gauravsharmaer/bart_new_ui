@@ -26,9 +26,9 @@ const Tickets = () => {
       <SiteHeader />
 
       <main className="flex flex-col px-6 py-8">
-        <div className="w-full max-w-[1096px] mx-auto space-y-6">
+        <div className="w-full max-w-none mx-auto space-y-6 ">
           {/* Header */}
-          <div className="w-full max-w-[1096px] flex items-center justify-between h-[40px] bg-white dark:bg-[#1a1b1e] px-1 text-sm font-semibold rounded-md">
+          <div className="w-full max-w-none flex items-center justify-between h-[40px] bg-white dark:bg-[#1a1b1e] px-1 text-sm font-semibold rounded-md">
             <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-200">My tickets</h1>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4" />
@@ -39,8 +39,7 @@ const Tickets = () => {
                 dark:placeholder-gray-400 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-[#3a3b40] transition-colors duration-200"
               /> */}
 
-
-<input
+              <input
                 type="text"
                 placeholder="Search tickets"
                 className="pl-10 pr-4 py-2 w-full sm:w-[280px] border border-gray-300 dark:border-[#2c2d32]  dark:bg-[#2c2d32] dark:text-gray-200 
@@ -93,7 +92,7 @@ const Tickets = () => {
             <div className="flex items-center gap-2">
               {/* Apply Filters with Dropdown */}
               <div className="relative">
-                <button className="flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 
+                <button className="flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-200 
                 bg-white dark:bg-[#2c2d32] border border-gray-300 dark:border-[#3a3b40] rounded-lg shadow-sm 
                 hover:bg-gray-200 dark:hover:bg-[#3a3b40] transition-colors duration-200">
                   Apply filters
@@ -102,7 +101,7 @@ const Tickets = () => {
               </div>
 
               {/* Icons Container */}
-              <div className="flex items-center gap-2 border border-gray-200 dark:border-[#2c2d32] rounded-lg p-2 bg-gray-100 dark:bg-[#2c2d32]">
+              <div className="flex items-center gap-2 border border-gray-200 dark:border-[#2c2d32] rounded-lg pt-1 pb-1 pl-1 pr-1 w-35  bg-gray-100 dark:bg-[#2c2d32]">
                 {/* Grid View Icon */}
                 {/* <Button
                   variant="outline"

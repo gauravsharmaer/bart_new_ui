@@ -603,7 +603,7 @@ console.log(message)
                             dangerouslySetInnerHTML={createMarkup(message.text, inline ? 'inline' : 'vertical')}
                           />
                         ) : (
-                          <TypingEffect text={message.text} speed={1} />
+                          <TypingEffect text={message.text} speed={1} inline={inline} />
                         )}
                       </div>
 

@@ -42,9 +42,10 @@ const SoftwareSupport = () => {
   const secondRow = cardsData.slice(3);
 
   return (
-    <div className="h-full w-full flex items-center justify-center p-4">
-       <div
-        className="relative w-[1113px] h-[690px] bg-white dark:bg-[#2c2d32] rounded-2xl p-6 shadow-lg dark:shadow-[#1a1b1e] overflow-hidden transition-colors duration-200"
+    <div className="h-full w-full flex items-center justify-center p-4 pr-0 pt-0 pb-0">
+      {/* Background with White Container */}
+      <div
+        className="relative w-full max-w-none h-full  bg-white dark:bg-[#2c2d32] rounded-2xl p-6 shadow-lg dark:shadow-[#1a1b1e] overflow-hidden transition-colors duration-200"
         style={{
           backgroundImage: `url(${isDarkMode ? DarkBG : bgHome})`,
           backgroundSize: "cover",

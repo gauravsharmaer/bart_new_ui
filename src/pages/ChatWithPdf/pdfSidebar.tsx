@@ -1,10 +1,13 @@
 import React from 'react';
 import CloseIcon from '../../assets/ViewPDF.svg';
 import { PdfSidebarProps } from '../../props/Props';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+
 
 
 const PdfSidebar: React.FC<PdfSidebarProps> = ({ isOpen, onClose, pdfUrl }) => {
-
+  const { isDarkMode } = useSelector((state: RootState) => state.theme);
   const getViewerUrl = (url: string) => {
     // Use Google Docs viewer for S3 hosted PDFs
     return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
@@ -12,17 +15,17 @@ const PdfSidebar: React.FC<PdfSidebarProps> = ({ isOpen, onClose, pdfUrl }) => {
 
   return (
     <div
-    className={`fixed inset-y-0 right-2 transform transition-all duration-300 ease-in-out z-50 
+    className={`fixed inset-y-0 right-0 transform transition-all duration-300 ease-in-out z-50
       ${isOpen ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 pointer-events-none'}`}
     style={{
-        backgroundColor: '#f3f5f9',
-        height: 'calc(100% - 88px)',
-        marginTop: '72px',
+        backgroundColor:'#f3f5f9',
+        height: 'calc(100% - 50px)',
+        marginTop: '55px',
         borderRadius: '16px',
-        width: '450px',
+        width: '460px',
       }}
     >
-      <div className="h-full flex flex-col bg-white rounded-2xl overflow-hidden">
+      <div className="h-full flex flex-col bg-white rounded-4xl overflow-hidden dark:bg-black">
         {/* Header with Close Icon */}
         <div className="relative p-2 rounded-t-lg">
           <img
@@ -32,7 +35,7 @@ const PdfSidebar: React.FC<PdfSidebarProps> = ({ isOpen, onClose, pdfUrl }) => {
             onClick={onClose}
           />
           <div className="ml-8">
-            <span className="text-white text-sm block">View PDF</span>
+            <span className="text-white text-sm block"></span>
             {/* <span className="text-black text-sm font-medium block ml-[-25px] mt-[8px]">PDF Viewer</span> */}
           </div>
         </div>
@@ -46,7 +49,7 @@ const PdfSidebar: React.FC<PdfSidebarProps> = ({ isOpen, onClose, pdfUrl }) => {
                 className="w-full h-full border-0"
                 title="PDF Preview"
                 style={{
-                  backgroundColor: 'white',
+                  backgroundColor: isDarkMode ? 'black' : 'white',
                 }}
               />
             )}

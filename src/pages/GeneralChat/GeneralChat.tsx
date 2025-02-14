@@ -18,8 +18,9 @@ import DotLoader from "../../utils/DotLoader";
 import Genie from "../../assets/Genie.svg";
 import ChatMessage from "../../components/ChatMessage";
 import { createUserMessagechatUi,createBotMessagechatUi, createErrorMessage } from "../../utils/chatFields";
-import { useSelector } from "react-redux"; // Import useSelector
+import { useSelector, useDispatch } from "react-redux"; // Import useSelector and useDispatch
 import { RootState } from "../../redux/store"; // Import RootState
+import { resetNewChatFlag } from "../../redux/chatSlice";
 
 const GeneralChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -31,6 +32,9 @@ const GeneralChat = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isInitializedRef = useRef(false);
   const { isDarkMode } = useSelector((state: RootState) => state.theme);
+  const { isNewChat } = useSelector((state: RootState) => state.chat);
+  const dispatch = useDispatch();
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -211,8 +215,21 @@ const GeneralChat = () => {
     await renameChat(chatId, newName);
   };
 
+  // Reset chat when a new chat is initiated
+  useEffect(() => {
+    if (isNewChat) {
+      resetChat(); // Reset chat state
+      setMessages([]); // Clear messages
+      setCurrentChatId(null); // Clear current chat ID
+      localStorage.removeItem("chat_id"); // Clear stored chat ID
+      // Reset the isNewChat flag after handling the new chat initialization
+      dispatch(resetNewChatFlag());
+    }
+  }, [isNewChat, dispatch]);
+
   return (
     <>
+
       <SiteHeader />
       <div className="absolute inset-x-0 bottom-0 top-14">
         <div className="h-full flex p-[0px] box-border bg-[#f3f5f9]">
@@ -231,7 +248,7 @@ const GeneralChat = () => {
             />
           </div>
 
-          <div className="flex-grow pt-0 w-[1200px] pb-4 px-4 pr-3 pl-3">
+          <div className="flex-grow pt-0 w-[1200px] pb-4 px-4 pr-3 pl-3 dark:bg-[#000000]">
             <div
               className="w-full h-[calc(100%-2px)] mt-2 rounded-[16px] overflow-hidden bg-cover bg-center"
               style={{ backgroundImage: `url(${isDarkMode ? DarkBackground : BackGround})` }}
