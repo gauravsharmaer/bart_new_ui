@@ -52,7 +52,7 @@ export const TicketTable = ({ type }: TicketProps) => {
 
   return (
     <div className="w-full border border-gray-200 dark:border-[#2c2d32] rounded-lg overflow-hidden">
-      <div className="max-h-[500px] overflow-y-auto">
+      <div className="max-h-[50vh] overflow-y-auto">
         <table className="min-w-full table-fixed">
           <thead className="sticky top-0 bg-gray-50 dark:bg-[#2c2d32]">
             <tr className="text-sm text-gray-600 dark:text-gray-400">

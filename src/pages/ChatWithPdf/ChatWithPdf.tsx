@@ -22,9 +22,10 @@ import Genie from "../../assets/Genie.svg";
 // import { createTimestamp } from "../../utils/chatUtils";
 import { Message } from "../../Interface/Interface";
 import DarkBackground from "../../assets/DarkChat.svg";
-import { useSelector } from "react-redux"; // Import useSelector
+import { useSelector, useDispatch } from "react-redux"; // Import useSelector and useDispatch
 import { RootState } from "../../redux/store"; // Import RootState
 import { createBotMessagechatUi, createErrorMessage, createUserMessagechatUiPdf } from "../../utils/chatFields";
+import { resetNewChatFlag } from "../../redux/chatSlice";
 const PDFChat = () => {
   const [pdfFiles, setPdfFiles] = useState<File[]>([]);
   const [pdfUrls, setPdfUrls] = useState<string[]>([]);
@@ -43,6 +44,9 @@ const PDFChat = () => {
   const [isHistoryMode, setIsHistoryMode] = useState<boolean>(false); // New state for history mode
   const isInitializedRef = useRef(false);
   const { isDarkMode } = useSelector((state: RootState) => state.theme);
+  const { isNewChat } = useSelector((state: RootState) => state.chat);
+  const dispatch = useDispatch();
+
   const handleFileUpload = (file: File) => {
     if (file.type === "application/pdf") {
       setPdfFiles([file]);
@@ -218,9 +222,9 @@ const PDFChat = () => {
         return {
           ...chat,
           name: nameWithoutPrefix, // Update the name without the prefix
-          // isActive: chat.id === pdfId,
+          //isActive: chat.id === chatId,
         };
-      });
+      })
 
       setChatHistory(formattedData);
     } catch (error) {
@@ -246,6 +250,25 @@ const PDFChat = () => {
   useEffect(() => {
     fetchPdfChatHistory();
   }, []);
+
+  // Reset chat when a new chat is initiated
+  useEffect(() => {
+    if (isNewChat) {
+      resetChat(); // Reset chat state
+      setMessages([]); // Clear messages
+      setCurrentChatId(null); // Clear current chat ID
+      localStorage.removeItem("chat_id"); // Clear stored chat ID
+      // Reset the isNewChat flag after handling the new chat initialization
+      dispatch(resetNewChatFlag());
+    }
+  }, [isNewChat, dispatch]);
+
+  const resetChat = () => {
+    setPdfFiles([]);
+    setPdfUrls([]);
+    setIsHistoryMode(false);
+    isInitializedRef.current = false;
+  };
 
   const renderMessages = () => {
     return (
@@ -332,7 +355,7 @@ const PDFChat = () => {
           </div>
 
           {/* Main Chat Section */}
-          <div className={`flex-grow pt-0 w-[1200px] pb-4 px-4 pl-3 pr-3 transition-all duration-300 ${isPdfSidebarOpen ? 'mr-[460px]' : ''}`}>
+          <div className={`flex-grow pt-0 w-[1200px] pb-4 px-4 pl-3 pr-3 dark:bg-[#000000] transition-all duration-300 ${isPdfSidebarOpen ? 'mr-[460px]' : ''}`}>
           <div className="w-full h-[calc(100%-2px)] mt-2 rounded-[16px] overflow-hidden bg-cover bg-center"
                      style={{ backgroundImage: `url(${isDarkMode ? DarkBackground : BackGround})` }}>
               <div className="flex flex-col h-full">

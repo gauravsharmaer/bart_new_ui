@@ -5,9 +5,10 @@ import createMarkup from "../utils/chatUtils";
 interface TypingEffectProps {
   text: string;
   speed?: number; // Speed in milliseconds
+  inline?: boolean; // Add inline prop
 }
 
-const TypingEffect: React.FC<TypingEffectProps> = ({ text, speed = 50 }) => {
+const TypingEffect: React.FC<TypingEffectProps> = ({ text, speed = 50, inline = false }) => {
   const [displayedText, setDisplayedText] = useState("");
 
   useEffect(() => {
@@ -38,7 +39,7 @@ const TypingEffect: React.FC<TypingEffectProps> = ({ text, speed = 50 }) => {
     // />
     <div
       className="text-sm opacity-80 font-passenger text-[#00000]"
-      dangerouslySetInnerHTML={createMarkup(displayedText)}
+      dangerouslySetInnerHTML={createMarkup(displayedText, inline ? 'inline' : 'vertical')}
     />
   );
 };

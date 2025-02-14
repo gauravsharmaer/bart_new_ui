@@ -126,15 +126,17 @@ export function SiteHeader() {
                 }}
                 className={`relative flex items-center justify-center px-4 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary ${
                   location.pathname === "/"
-                    ? "text-primary bg-[#F3F5F9] dark:bg-[#ffffff]"
-                    : "text-muted-foreground dark:text-gray-400 hover:bg-[#f3f5f9] dark:hover:text-gray-200"
+                    ? "text-[#000000] bg-white dark:bg-white"
+                    : "text-muted-foreground dark:text-gray-400 hover:bg-[#f3f5f9] dark:hover:bg-[#2c2d32]"
                 }`}
               >
-                <span className="z-10 font-passenger font-medium text-[#000000] dark:text-gray-200">
-                  Home
+                <span className="z-10 font-passenger font-medium text-[#000000] dark:text-[#ffffff]">
+                  <span className={location.pathname === "/" ? "dark:text-[#000000]" : ""}>
+                    Home
+                  </span>
                 </span>
                 {location.pathname === "/" && (
-                  <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-[#2c2d32] pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-white pointer-events-none"></div>
                 )}
               </button>
               {/* <button
@@ -173,15 +175,17 @@ export function SiteHeader() {
                 to="/"
                 className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary border-none ${
                   location.pathname === "/"
-                    ? "text-primary bg-[#F3F5F9] dark:bg-[#2c2d32]"
-                    : "text-muted-foreground dark:text-gray-400 hover:bg-[#f3f5f9] dark:hover:text-gray-200"
+                    ? "text-[#000000] bg-white dark:bg-white"
+                    : "text-muted-foreground dark:text-gray-400 hover:bg-[#f3f5f9] dark:hover:bg-[#2c2d32]"
                 }`}
               >
-                <span className="z-10 font-passenger font-medium text-[#000000] dark:text-gray-200">
-                  Bart&nbsp;Chat
+                <span className="z-10 font-passenger font-medium text-[#000000] dark:text-[#ffffff]">
+                  <span className={location.pathname === "/" ? "dark:text-[#000000]" : ""}>
+                    Bart&nbsp;Chat
+                  </span>
                 </span>
                 {location.pathname === "/" && (
-                  <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-[#2c2d32] pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-white pointer-events-none"></div>
                 )}
               </Link>
 
@@ -189,34 +193,39 @@ export function SiteHeader() {
                 to="/general-chat"
                 className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary border-none ${
                   location.pathname === "/general-chat"
-                    ? "text-primary bg-[#F3F5F9] dark:bg-[#2c2d32]"
-                    : "text-muted-foreground dark:text-gray-400 hover:bg-[#f3f5f9] dark:hover:text-gray-200"
+                    ? "text-[#000000] bg-white dark:bg-white"
+                    : "text-muted-foreground dark:text-gray-400 hover:bg-[#f3f5f9] dark:hover:bg-[#2c2d32]"
                 }`}
               >
-                <span className="z-10 font-passenger font-medium text-[#000000] dark:text-gray-200">
-                  General&nbsp;Chat
+                <span className="z-10 font-passenger font-medium text-[#000000] dark:text-[#ffffff]">
+                  <span className={location.pathname === "/general-chat" ? "dark:text-[#000000]" : ""}>
+                    General&nbsp;Chat
+                  </span>
                 </span>
                 {location.pathname === "/general-chat" && (
-                  <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-[#2c2d32] pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-white pointer-events-none"></div>
                 )}
               </Link>
 
-              <Button
-                variant="outline"
-                size="sm"
-                className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary border-none ${
-                  location.pathname === "/chat-with-pdf" ? "text-primary bg-[#F3F5F9] dark:bg-[#2c2d32]" : "text-muted-foreground dark:text-gray-400 hover:bg-[#f3f5f9] dark:hover:text-gray-200"
+              <Link
+                to="/chat-with-pdf"
+                className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full border-none ${
+                  location.pathname === "/chat-with-pdf"
+                    ? "text-[#000000] bg-white dark:bg-white"
+                    : "text-muted-foreground dark:text-gray-400 hover:bg-[#f3f5f9] dark:hover:bg-[#2c2d32]"
                 }`}
                 onClick={() => navigate("/chat-with-pdf")}
               >
-                <span className="z-10 font-passenger font-medium text-[#000000] dark:text-gray-200">
-                  Chat&nbsp;with&nbsp;Docs
+                <span className="z-10 font-passenger font-medium text-[#000000] dark:text-[#ffffff]">
+                  <span className={location.pathname === "/chat-with-pdf" ? "dark:text-[#000000]" : ""}>
+                    Chat&nbsp;with&nbsp;Docs
+                  </span>
                 </span>
-              </Button>
+                {location.pathname === "/chat-with-pdf" && (
+                  <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-white pointer-events-none"></div>
+                )}
+              </Link>
 
-
-
-              
 
               {/* 
 
@@ -254,7 +263,7 @@ export function SiteHeader() {
             </nav>
           </div>
 
-          <div className="flex flex-1 items-center justify-center px-2 pl-[250px]">
+          <div className="flex flex-1 items-center justify-center px-2 pl-10">
             {location.pathname !== "/password" && (
             <div className="flex w-[500px] items-center border border-gray-200 dark:bg-[#1a1b1e] dark:border-[#2c2d32] rounded-full relative">
                 <MagnifyingGlass
