@@ -11,6 +11,7 @@ import OneLoginCallBack from "../pages/Callback/OneLoginCallBack";
 import Settings from "../pages/Settings/Settings";
 import PDFChat from "../pages/ChatWithPdf/ChatWithPdf";
 import GeneralChat from "../pages/GeneralChat/GeneralChat";
+import RealTimeChat from "../pages/RealTimeChat/RealTimeChat";
 const AppRoutes = () => {
   const authenticated = useSelector<RootState>(
     (state) => state.auth.authenticated
@@ -59,6 +60,10 @@ const AppRoutes = () => {
         <Route
         path="/general-chat"
         element={authenticated ? <GeneralChat /> : <Navigate to="/login" />}
+        />
+        <Route
+        path="/real-time-chat"
+        element={authenticated ? <RealTimeChat /> : <Navigate to="/login" />}
         />
     </Routes>
 
