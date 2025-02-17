@@ -1,22 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-// import { toast } from "react-toastify";
+
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { NODE_API_URL } from "../config";
-// import { API_URL } from "../config";
-export interface AuthState {
-  loading: boolean;
-  authenticated: boolean;
-
-  logged_in: boolean;
-  data: {
-    _id: string;
-    name: string;
-    email: string;
-
-    image: string;
-    phoneNumber: string;
-  };
-}
+import { AuthState } from "../Interface/Interface";
 
 const initialState: AuthState = {
   loading: true,
@@ -31,29 +17,6 @@ const initialState: AuthState = {
     phoneNumber: "",
   },
 };
-
-// export const userLogin = createAsyncThunk(
-//   "login",
-//   async (credentials: { email: string; password: string }) => {
-//     const response = await fetch(`http://localhost:4000/api/users/login`, {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       credentials: "include",
-//       body: JSON.stringify(credentials),
-//     });
-
-//     if (!response.ok) {
-//       const data = await response.json();
-//       toast.error(data.message);
-//       throw new Error(data.error_msg || "Error ");
-//     }
-//     const data = await response.json();
-//     toast.success(data.message);
-//     return response.status;
-//   }
-// );
 
 export const currentProfile = createAsyncThunk(
   "getCurrentProfile",
@@ -81,17 +44,6 @@ export const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // builder.addCase(userLogin.fulfilled, (state, action) => {
-    //   if (action.payload === 200) {
-    //     state.authenticated = true;
-    //   }
-    //   return state;
-    // });
-
-    // builder.addCase(userLogin.rejected, (state) => {
-    //   return state;
-    // });
-
     builder.addCase(currentProfile.fulfilled, (state, action) => {
       if (action.payload.data) {
         state.data = action.payload.data;
@@ -103,10 +55,6 @@ export const authSlice = createSlice({
     builder.addCase(currentProfile.pending, (state) => {
       state.loading = true;
     });
-
-    // builder.addCase(userLogin.pending, (state) => {
-    //   state.loading = true;
-    // });
   },
 });
 

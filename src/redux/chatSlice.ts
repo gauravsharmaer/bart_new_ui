@@ -1,14 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ChatSliceState } from "../Interface/Interface";
 
-interface ChatState {
-  showChatUi: boolean;
-  initialMessage: string;
-  isNewChat: boolean;
-  selectedChatId: string | null;
-  shouldUpdateHistory: boolean;
-}
-
-const initialState: ChatState = {
+const initialState: ChatSliceState = {
   showChatUi: false,
   initialMessage: "",
   isNewChat: false,

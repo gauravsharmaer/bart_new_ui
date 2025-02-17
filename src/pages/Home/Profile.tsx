@@ -23,8 +23,8 @@ import DeleteChat from "../../assets/delete-chat.svg";
 import ChatHistoryTable from "../../components/ChatHistoryTable.tsx";
 //import { startNewChat } from "../../redux/chatSlice.ts";
 import ChatbracesIcon from "../../assets/Chatbraces.svg";
-import DownIcon from "../../assets/down.svg"
-import UpIcon from "../../assets/up.svg"
+import DownIcon from "../../assets/down.svg";
+import UpIcon from "../../assets/up.svg";
 
 const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
   const navigate = useNavigate();
@@ -41,7 +41,6 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
 
   const [isChatHistoryOpen, setChatHistoryOpen] = useState(false); // State for ChatHistoryTable
   const [showNewChatDropdown, setShowNewChatDropdown] = useState(false);
-  
 
   const handleOpenChatHistory = () => {
     setChatHistoryOpen(true);
@@ -54,7 +53,6 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
   const handleNewChatClick = () => {
     setShowNewChatDropdown(!showNewChatDropdown);
   };
-
 
   useEffect(() => {
     if (selected === "dark") {
@@ -143,20 +141,26 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
           </div>
         </div>
 
-
-
         {/* Menu Items */}
         <ul className="list-none p-0 my-4">
           <div className="px-4 pt-0">
-            <button 
+            <button
               onClick={handleNewChatClick}
               className={`w-full flex items-center justify-between 
-                ${showNewChatDropdown ? 'bg-[#f6f6f6] dark:bg-[#2c2d32]' : 'bg-transparent'} 
+                ${
+                  showNewChatDropdown
+                    ? "bg-[#f6f6f6] dark:bg-[#2c2d32]"
+                    : "bg-transparent"
+                } 
                 text-[#16283F] dark:text-gray-200 rounded-lg px-4 py-3 text-sm 
                 hover:bg-[#f6f6f6] dark:hover:bg-[#3a3b40] transition-colors duration-200`}
             >
               <div className="flex items-center">
-                <img src={PlusIcon} alt="New Chat" className="mr-3 w-5 h-5 dark:bg-gray-500" />
+                <img
+                  src={PlusIcon}
+                  alt="New Chat"
+                  className="mr-3 w-5 h-5 dark:bg-gray-500"
+                />
                 New Chat
               </div>
               {showNewChatDropdown ? (
@@ -168,22 +172,26 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
             {showNewChatDropdown && (
               <div className="flex flex-col mt-2 ml-4">
                 <div className="flex items-center mb-[-100px]">
-                  <img src={ChatbracesIcon} alt="Chat Options" className="w-18 h-24" />                
-                  </div>
+                  <img
+                    src={ChatbracesIcon}
+                    alt="Chat Options"
+                    className="w-18 h-24"
+                  />
+                </div>
                 <div className="flex flex-col mt-1">
-                  <div 
+                  <div
                     className="flex items-center ml-4 px-0 py-2 rounded-lg cursor-pointer text-[#757575] dark:text-gray-200 hover:bg-[#f6f6f6] dark:hover:bg-[#2c2d32] text-sm transition-colors duration-200"
-                    onClick={() => navigate('/general-chat')}
+                    onClick={() => navigate("/general-chat")}
                   >
                     <span className="mr-2 ml-2">General Chat</span>
                   </div>
-                  <div 
+                  <div
                     className="flex items-center ml-4 px-0 py-2 rounded-lg cursor-pointer text-[#757575] dark:text-gray-200 hover:bg-[#f6f6f6] dark:hover:bg-[#2c2d32] text-sm transition-colors duration-200"
                     onClick={() => navigate("/chat-with-pdf")}
                   >
                     <span className="mr-2 ml-2">PDF Chat</span>
                   </div>
-                  <div 
+                  <div
                     className="flex items-center ml-4 px-0 py-2 rounded-lg cursor-pointer text-[#757575] dark:text-gray-200 hover:bg-[#f6f6f6] dark:hover:bg-[#2c2d32] text-sm transition-colors duration-200"
                     onClick={() => navigate("/")}
                   >
@@ -205,7 +213,11 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
           </li>
           <li className="mx-4 px-4  py-3 cursor-pointer text-[#16283F] dark:text-gray-200 hover:bg-[#f6f6f6] rounded-lg dark:hover:bg-[#2c2d32] text-sm flex items-center transition-colors duration-200">
             <Link to="/tickets" className="flex items-center">
-              <img src={StickerIcon} alt="Tickets" className="mr-3 w-5 h-5 dark:bg-gray-500" />
+              <img
+                src={StickerIcon}
+                alt="Tickets"
+                className="mr-3 w-5 h-5 dark:bg-gray-500"
+              />
               Tickets
             </Link>
           </li>
@@ -224,13 +236,21 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }): JSX.Element => {
           </li>
           <li className="mx-4 px-4 py-3 cursor-pointer text-[#16283F] dark:text-gray-200 hover:bg-[#f6f6f6] rounded-lg dark:hover:bg-[#2c2d32] text-sm flex items-center transition-colors duration-200">
             <Link to="/settings" className="flex items-center">
-              <img src={SettingIcon} alt="Settings" className="mr-3 w-5 h-5 dark:bg-gray-500" />
+              <img
+                src={SettingIcon}
+                alt="Settings"
+                className="mr-3 w-5 h-5 dark:bg-gray-500"
+              />
               Setting
             </Link>
           </li>
           <li className="mx-4 px-4 py-3 cursor-pointer text-[#16283F] dark:text-gray-200 hover:bg-[#f6f6f6] rounded-lg dark:hover:bg-[#2c2d32] text-sm flex items-center transition-colors duration-200">
             <Link to="/settings" className="flex items-center">
-              <img src={DeleteChat} alt="Settings" className="mr-3 w-5 h-5 dark:bg-gray-500" />
+              <img
+                src={DeleteChat}
+                alt="Settings"
+                className="mr-3 w-5 h-5 dark:bg-gray-500"
+              />
               Deleted Chat
             </Link>
           </li>
