@@ -33,6 +33,10 @@ import ThumbsDown from "../assets/thumb-down.svg";
 import Copy from "../assets/copy.svg";
 import TextCopied from "../assets/TextCopied.svg";
 import Feedback from "../assets/Feedback.svg";
+import darkTextCopied from "../assets/darkTextCopied.svg";
+import darkFeedback from "../assets/darkFeedback.svg";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 // Add these helper functions at the top of the component
 
 // const createBotMessage = (result: any): Message => ({
@@ -67,6 +71,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
     const [showCopiedNotification, setShowCopiedNotification] = useState(false);
     const [showFeedback, setShowFeedback] = useState(false);
     const [showVoiceOptions, setShowVoiceOptions] = useState(false);
+    const { isDarkMode } = useSelector((state: RootState) => state.theme);
 console.log(message)
     // const [isSpeaking, setIsSpeaking] = useState(false);
     // const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(
@@ -545,7 +550,7 @@ console.log(message)
         {showCopiedNotification && (
           <div className="fixed top-16 left-1/2 transform -translate-x-1/2 z-50" style={{ top: '13%', left: '64%', marginLeft: '-50px' }}>
             <img
-              src={TextCopied}
+              src={isDarkMode ? darkTextCopied : TextCopied}
               alt="Text Copied"
               className="h-10 w-auto"
             />
@@ -555,12 +560,13 @@ console.log(message)
         <div
           className={`flex ${
             message.isUserMessage ? "justify-end" : "justify-start"
-          } mb-4`}
+          } mb-1`}
         >
           {message.isUserMessage ? (
             <UserCard
               name={localStorage.getItem("name") || "User"}
               text={message.text}
+              timestamp={message.timestamp}
             />
           ) : (
             <div className={`flex items-start ${isPdfContext ? 'flex-col' : ''} w-full`}>
@@ -587,7 +593,7 @@ console.log(message)
                       })()}
                     </span>
                   </div>
-                  <div className="flex mt-2">
+                  <div className="flex mt-1">
                     {(message.button_display ||
                       message.text.includes("verification code")) && (
                         <div
@@ -740,11 +746,11 @@ console.log(message)
 
           {isLoading && (
             <div className="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm flex items-center justify-center z-50">
-              <div className="relative w-[500px] bg-white dark:bg-[#2c2d32] rounded-3xl p-4 shadow-lg dark:shadow-[#1a1b1e]">
+              <div className="relative w-[500px] bg-white dark:bg-[#313131] rounded-3xl p-4 shadow-lg dark:shadow-[#1a1b1e]">
                 <div className="rounded-lg p-6">
                   <div className="flex flex-col items-center">
                     <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-600 dark:border-purple-500"></div>
-                    <p className="text-gray-900 dark:text-black mt-4 transition-colors duration-200">
+                    <p className="text-gray-900 dark:text-white mt-4 transition-colors duration-200">
                       Generating avatar video...
                     </p>
                   </div>
@@ -806,7 +812,7 @@ console.log(message)
 {showFeedback && (
           <div className="fixed top-16 left-1/2 transform -translate-x-1/2 z-50" style={{ top: '13%', left: '64%', marginLeft: '-50px' }}>
             <img
-              src={Feedback}
+              src={isDarkMode ? darkFeedback : Feedback}
               alt="Feedback"
               className="h-10 w-auto"
             />

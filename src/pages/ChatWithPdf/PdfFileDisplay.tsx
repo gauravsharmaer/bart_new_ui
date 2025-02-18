@@ -9,7 +9,7 @@ const PdfFileDisplay: React.FC<PdfFileDisplayProps> = ({
   onClick,
 }) => {
   return (
-    <div className="inline-flex items-center gap-2 bg-[#f8f8f8] dark:bg-[#000000] rounded-[14px] px-1 py-3 cursor-pointer
+    <div className="inline-flex items-center gap-2 bg-[#f8f8f8] dark:bg-[#f8f8f8] rounded-[14px] px-1 py-3 cursor-pointer
      hover:bg-gray-50 border border-dotted border-[#d1cfc5] shadow-sm"
       style={{ marginRight: '32px' }}
       onClick={onClick}
@@ -19,8 +19,8 @@ const PdfFileDisplay: React.FC<PdfFileDisplayProps> = ({
           <img src={pdfIcon} alt="PDF" className="w-12 h-12" />
         </div>
         <div className="flex flex-col">
-          <p className="text-sm text-gray-900 dark:text-[#f0f0f0] font-medium">{fileName}</p>
-          <p className="text-xs text-[#000000] dark:text-[#f0f0f0] opacity-60">Click to open file</p>
+          <p className="text-sm text-gray-900 dark:text-[#000000] font-medium">{fileName}</p>
+          <p className="text-xs text-[#000000] dark:text-[#000000] opacity-60">Click to open file</p>
         </div>
       </div>
     </div>

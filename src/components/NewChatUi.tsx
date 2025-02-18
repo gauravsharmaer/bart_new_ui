@@ -225,7 +225,7 @@ const ChatUi = ({ initialMessage, apiHandlers }: ExtendedChatUiProps) => {
     
 
       {/* Main container */}
-      <div className="h-full flex p-2 pr-0 pb-0 box-border bg-[#f3f5f9]">
+      <div className="h-full flex p-2 pt-4 pr-0 pb-0 box-border bg-[#f3f5f9]">
       {/* <button 
         className="fixed top-32 right-20 z-50 bg-gray-300 text-white px-4 py-2 rounded-lg shadow-lg"
         onClick={() => {
@@ -250,7 +250,7 @@ const ChatUi = ({ initialMessage, apiHandlers }: ExtendedChatUiProps) => {
         </div>
 
         {/* Main Chat Section */}
-        <div className="flex-grow pb-1.5 pt-1 pr-3 pl-3 dark:bg-[#000000]">
+        <div className="flex-grow pb-1.5 -mt-2 pr-3 pl-3 dark:bg-[#000000]">
 
 
           <div className="w-full h-[calc(100%-17px)] mt-4 rounded-[16px] overflow-hidden bg-cover bg-center"
@@ -274,7 +274,7 @@ const ChatUi = ({ initialMessage, apiHandlers }: ExtendedChatUiProps) => {
                     />
                   ))}
                   {loading && (
-                    <div className="flex items-start w-full mt-2">
+                    <div className="flex items-start w-full mx-2">
                       <img
                         src={ChatLogo}
                         alt="BART Genie"

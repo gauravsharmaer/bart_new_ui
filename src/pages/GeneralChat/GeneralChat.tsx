@@ -271,7 +271,7 @@ const GeneralChat = () => {
                       />
                     ))}
                     {loading && (
-                      <div className="flex items-start w-full mt-2">
+                      <div className="flex items-start w-full mx-2">
                         <img
                           src={Genie}
                           alt="BART Genie"

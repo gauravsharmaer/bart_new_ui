@@ -68,6 +68,7 @@ export interface CardProps {
 export interface UserCardProps {
   name: string;
   text: string;
+  timestamp: string;
 }
 export interface CardBackgroundProps {
   children?: React.ReactNode;

@@ -2,14 +2,30 @@ import React from "react";
 import { formatName } from "../../utils/NameFormatter";
 import { BackendBaseUrl } from "../../config";
 import { getInitials } from "../../utils/NameInitials";
-import { UserCardProps } from "../../props/Props";
 
-const UserCard: React.FC<UserCardProps> = ({ name, text }) => {
-  const currentTime = new Date().toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  });
+interface UserCardProps {
+  name: string;
+  text: string;
+  timestamp: string;
+}
+
+const UserCard: React.FC<UserCardProps> = ({ name, text, timestamp }) => {
+  const formattedTime = (() => {
+    try {
+      const date = new Date(timestamp);
+      return date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+    } catch {
+      return new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+    }
+  })();
 
   const formattedName = formatName(name);
 
@@ -18,7 +34,7 @@ const UserCard: React.FC<UserCardProps> = ({ name, text }) => {
       {/* Main User Message Container */}
       <div className="rounded-lg flex items-start gap-4 max-w-md w-auto p-4">
         {/* Message Container with Background */}
-        <div className="rounded-lg flex items-start gap-4 max-w-md w-auto p-4 bg-[#A3A3A3]/[0.07] dark:bg-[#2c2d32] transition-colors duration-200">
+        <div className="rounded-lg flex items-start gap-4 max-w-md w-auto p-4 bg-[#A3A3A3]/[0.07] dark:bg-[#222121] transition-colors duration-200">
           {/* Profile Icon */}
           <div className="w-10 h-10 flex-shrink-0">
             {localStorage.getItem("image") &&
@@ -48,7 +64,7 @@ const UserCard: React.FC<UserCardProps> = ({ name, text }) => {
               </span>
               {/* Timestamp */}
               <span className="text-[12px] font-passenger font-light text-gray-600 dark:text-[#ffffff] dark:opacity-60 transition-colors duration-200">
-                {currentTime}
+                {formattedTime}
               </span>
             </div>
             {/* User Chat Text */}
