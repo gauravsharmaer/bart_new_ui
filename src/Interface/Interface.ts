@@ -232,3 +232,62 @@ export interface ApiHandlers {
   renameChat: typeof renameChat;
 
 }
+
+
+
+export interface realTimeMessage {
+  _id?: string;
+  sender: string;
+  content: string;
+  timestamp: Date;
+  read: boolean;
+  edited?: boolean;
+}
+
+export interface User {
+  socketId: string;
+  userId: string;
+  username: string;
+}
+
+export interface ChatState {
+  isConnected: boolean;
+  isLoading: boolean;
+  error: string | null;
+  selectedUser: User | null;
+}
+
+
+
+export  interface UserState {
+  searchPopupOpen: boolean;
+}
+
+
+export interface ThemeState {
+  isDarkMode: boolean;
+}
+
+
+export interface ChatSliceState {
+  showChatUi: boolean;
+  initialMessage: string;
+  isNewChat: boolean;
+  selectedChatId: string | null;
+  shouldUpdateHistory: boolean;
+}
+
+export interface AuthState {
+  loading: boolean;
+  authenticated: boolean;
+
+  logged_in: boolean;
+  data: {
+    _id: string;
+    name: string;
+    email: string;
+
+    image: string;
+    phoneNumber: string;
+  };
+}
