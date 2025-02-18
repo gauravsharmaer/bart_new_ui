@@ -10,8 +10,8 @@ import genie from "../assets/Genie.svg";
 import notificationicon from "../assets/notification-bell.svg";
 
 import menubar from "../assets/menu-bar.svg";
-import { BackendBaseUrl } from "../config";
-import { getInitials } from "../utils/NameInitials";
+// import { BackendBaseUrl } from "../config";
+// import { getInitials } from "../utils/NameInitials";
 import { useDispatch } from "react-redux";
 
 import { resetChat,  setSelectedChatId } from "../redux/chatSlice";
@@ -19,6 +19,10 @@ import { searchChatHistory } from "../Api/CommonApi";
 import { chatHistory } from "../Interface/Interface";
 import darkmenubar from "../assets/darkhamburger.svg";
 import darknotification from "../assets/dark-bell.svg";
+
+import Search from "../assets/NavSearch.svg"
+import darkSearch from "../assets/darkNavSearch.svg"
+
 
 export function SiteHeader() {
   const [isNotificationOpen, setNotificationOpen] = useState(false);
@@ -31,6 +35,7 @@ export function SiteHeader() {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
 
   const handleSearch = async (query: string) => {
     try {
@@ -103,10 +108,17 @@ export function SiteHeader() {
     setNotificationOpen(false); // Close notification if profile opens
   };
 
+  const toggleSearch = () => {
+    setIsSearchVisible(!isSearchVisible);
+    if (!isSearchVisible) {
+      setShowSuggestions(false);
+    }
+  };
+
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-[#DDE0E4] dark:border-[#2c2d32] bg-background/95 dark:bg-[#1a1b1e] backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:supports-[backdrop-filter]:bg-[#1a1b1e]/60">
-        <div className="flex items-center h-14 px-10">
+      <header className="sticky top-0 z-50 w-full  bg-background/95 dark:bg-[#1e1e1e] backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-[#000000] border-opacity-10 dark:border-none">
+        <div className="flex items-center h-14 px-9 justify-between">
           <div className="flex items-center space-x-6">
             <Link to="/" className="flex items-center space-x-2">
               <div className="h-8 w-8">
@@ -117,26 +129,27 @@ export function SiteHeader() {
                 />
               </div>
             </Link>
-            <nav className="flex items-center space-x-2">
+          </div>
 
+          <nav className="flex items-center justify-center space-x-2">
             <button
                 onClick={() => {
                   navigate("/");
                   dispatch(resetChat());
                 }}
-                className={`relative flex items-center justify-center px-4 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary ${
+                className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary ${
                   location.pathname === "/"
                     ? "text-[#000000] bg-white dark:bg-white"
                     : "text-muted-foreground dark:text-gray-400 hover:bg-[#f3f5f9] dark:hover:bg-[#2c2d32]"
                 }`}
               >
                 <span className="z-10 font-passenger font-medium text-[#000000] dark:text-[#ffffff]">
-                  <span className={location.pathname === "/" ? "dark:text-[#000000]" : ""}>
-                    Home
+                <span className={location.pathname === "/" ? "text-[#ef613c] dark:text-black" : ""}>
+                Home
                   </span>
                 </span>
                 {location.pathname === "/" && (
-                  <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-white pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-full bg-[#f0f0f0] dark:bg-white pointer-events-none"></div>
                 )}
               </button>
               {/* <button
@@ -171,6 +184,24 @@ export function SiteHeader() {
                 )}
               </Link> */}
 
+              {/* <Link
+                to="/"
+                className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary border-none ${
+                  location.pathname === "/"
+                    ? "text-[#000000] bg-white dark:bg-white"
+                    : "text-muted-foreground dark:text-gray-400 hover:bg-[#f3f5f9] dark:hover:bg-[#2c2d32]"
+                }`}
+              >
+                <span className="z-10 font-passenger font-medium text-[#000000] dark:text-[#ffffff]">
+                  <span className={location.pathname === "/" ? "text-[#ef613c] dark:text-[#000000]" : ""}>
+                    BART&nbsp;Chat
+                  </span>
+                </span>
+                {location.pathname === "/" && (
+                  <div className="absolute inset-0 rounded-full bg-[#f0f0f0] dark:bg-white pointer-events-none"></div>
+                )}
+              </Link> */}
+
               <Link
                 to="/"
                 className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary border-none ${
@@ -180,12 +211,12 @@ export function SiteHeader() {
                 }`}
               >
                 <span className="z-10 font-passenger font-medium text-[#000000] dark:text-[#ffffff]">
-                  <span className={location.pathname === "/" ? "dark:text-[#000000]" : ""}>
-                    Bart&nbsp;Chat
+                  <span className={location.pathname === "/" ? "text-[#ef613c] dark:text-[#000000]" : ""}>
+                    BART&nbsp;Chat
                   </span>
                 </span>
                 {location.pathname === "/" && (
-                  <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-white pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-full bg-[#f0f0f0] dark:bg-white pointer-events-none"></div>
                 )}
               </Link>
 
@@ -198,12 +229,12 @@ export function SiteHeader() {
                 }`}
               >
                 <span className="z-10 font-passenger font-medium text-[#000000] dark:text-[#ffffff]">
-                  <span className={location.pathname === "/general-chat" ? "dark:text-[#000000]" : ""}>
+                  <span className={location.pathname === "/general-chat" ? "text-[#ef613c] dark:text-[#000000]" : ""}>
                     General&nbsp;Chat
                   </span>
                 </span>
                 {location.pathname === "/general-chat" && (
-                  <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-white pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-full bg-[#f0f0f0] dark:bg-white pointer-events-none"></div>
                 )}
               </Link>
 
@@ -217,15 +248,33 @@ export function SiteHeader() {
                 onClick={() => navigate("/chat-with-pdf")}
               >
                 <span className="z-10 font-passenger font-medium text-[#000000] dark:text-[#ffffff]">
-                  <span className={location.pathname === "/chat-with-pdf" ? "dark:text-[#000000]" : ""}>
+                  <span className={location.pathname === "/chat-with-pdf" ? "text-[#ef613c] dark:text-[#000000]" : ""}>
                     Chat&nbsp;with&nbsp;Docs
                   </span>
                 </span>
                 {location.pathname === "/chat-with-pdf" && (
-                  <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-white pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-full bg-[#f0f0f0] dark:bg-white pointer-events-none"></div>
                 )}
               </Link>
 
+                <Link
+                to="/real-time-chat"
+                className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full border-none ${
+                  location.pathname === "/real-time-chat"
+                    ? "text-[#000000] bg-white dark:bg-white"
+                    : "text-muted-foreground dark:text-gray-400 hover:bg-[#f3f5f9] dark:hover:bg-[#2c2d32]"
+                }`}
+                onClick={() => navigate("/real-time-chat")}
+              >
+                <span className="z-10 font-passenger font-medium text-[#000000] dark:text-[#ffffff]">
+                  <span className={location.pathname === "/real-time-chat" ? "text-[#ef613c] dark:text-[#000000]" : ""}>
+                    Message
+                  </span>
+                </span>
+                {location.pathname === "//real-time-chat" && (
+                  <div className="absolute inset-0 rounded-full bg-[#f0f0f0] dark:bg-white pointer-events-none"></div>
+                )}
+              </Link>
 
               {/* 
 
@@ -261,51 +310,70 @@ export function SiteHeader() {
                 )}
               </Link> */}
             </nav>
-          </div>
 
-          <div className="flex flex-1 items-center justify-center px-2 pl-10">
-            {location.pathname !== "/password" && (
-            <div className="flex w-[500px] items-center border border-gray-200 dark:bg-[#1a1b1e] dark:border-[#2c2d32] rounded-full relative">
-                <MagnifyingGlass
-                  size={20}
-                  className="absolute left-3 text-muted-foreground text-[#8F9099] dark:text-gray-400"
-                />
-                <Input
-                  type="search"
-                  value={searchQuery}
-                  onChange={handleInputChange}
-                  onFocus={handleInputFocus}
-                  placeholder="Search chats, ticket id and more..."
-                  className="h-9 lg:w-[600px] rounded-full pl-10 font-passenger font-normal text-[#606775]  dark:text-gray-200 dark:placeholder-gray-400 dark:border-none focus:outline-none focus:ring-1 focus:ring-[#3a3b40] dark:focus:ring-[#3a3b40]"
-                />
-                {showSuggestions && (
-                  <div className="absolute top-full left-0 w-full mt-1 bg-white dark:bg-[#1a1b1e] rounded-lg shadow-lg border border-gray-200 dark:border-[#2c2d32] max-h-[300px] overflow-y-auto z-50">
-                    {isSearching ? (
-                      <div className="flex items-center justify-center p-4">
-                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900 dark:border-gray-200"></div>
-                      </div>
-                    ) : searchResults.length > 0 ? (
-                      searchResults.map((result) => (
-                        <div
-                          key={result.id}
-                          onClick={() => handleSuggestionClick(result.id)}
-                          className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-[#2c2d32] cursor-pointer dark:text-gray-200"
-                        >
-                          <p className="text-sm font-medium">{result.name}</p>
+          <div className="flex items-center space-x-1 relative">
+            {/* Search Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative dark:hover:bg-[#2c2d32] transition-colors duration-200"
+              onClick={toggleSearch}
+            >
+              <img
+                src={Search}
+                alt="Search"
+                className="h-7 w-7 dark:opacity-80 dark:hidden"
+              />
+              <img
+                src={darkSearch}
+                alt="Search"
+                className="h-7 w-7 dark:opacity-80 hidden dark:block"
+              />
+            </Button>
+
+            {/* Search Input */}
+            {isSearchVisible && location.pathname !== "/password" && location.pathname !== "/tickets" && (
+              <div className="absolute right-40 w-[300px] mt-1">
+                <div className="flex items-center border border-gray-200 dark:bg-[#1a1b1e] dark:border-[#2c2d32] rounded-full relative bg-white">
+                  <MagnifyingGlass
+                    size={20}
+                    className="absolute left-3 text-muted-foreground text-[#8F9099] dark:text-gray-400"
+                  />
+                  <Input
+                    type="search"
+                    value={searchQuery}
+                    onChange={handleInputChange}
+                    onFocus={handleInputFocus}
+                    placeholder="Search chats, ticket id and more..."
+                    className="h-9 w-full rounded-full pl-10 font-passenger font-normal text-[#606775] dark:text-gray-200 dark:placeholder-gray-400 dark:border-none focus:outline-none focus:ring-1 focus:ring-[#3a3b40] dark:focus:ring-[#3a3b40] dark:bg-[#313131]"
+                  />
+                  {showSuggestions && (
+                    <div className="absolute top-full left-0 w-full mt-1 bg-white dark:bg-[#1a1b1e] rounded-lg shadow-lg border border-gray-200 dark:border-[#2c2d32] max-h-[300px] overflow-y-auto z-50">
+                      {isSearching ? (
+                        <div className="flex items-center justify-center p-4">
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900 dark:border-gray-200"></div>
                         </div>
-                      ))
-                    ) : (
-                      <div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
-                        No results found
-                      </div>
-                    )}
-                  </div>
-                )}
+                      ) : searchResults.length > 0 ? (
+                        searchResults.map((result) => (
+                          <div
+                            key={result.id}
+                            onClick={() => handleSuggestionClick(result.id)}
+                            className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-[#2c2d32] cursor-pointer dark:text-gray-200"
+                          >
+                            <p className="text-sm font-medium">{result.name}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
+                          No results found
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
-          </div>
 
-          <div className="flex items-center space-x-4">
             <Button
               variant="ghost"
               size="icon"
@@ -324,8 +392,9 @@ export function SiteHeader() {
               />
               <span className="absolute bottom-6 left-5 h-4 w-4"></span>
             </Button>
+           
             <div className="flex items-center space-x-4">
-              {localStorage.getItem("image") &&
+              {/* {localStorage.getItem("image") &&
               localStorage.getItem("image") !== "undefined" ? (
                 <img
                   src={`${BackendBaseUrl}/${localStorage.getItem("image")}`}
@@ -335,8 +404,8 @@ export function SiteHeader() {
               ) : (
                 <div className="w-12 h-12 rounded-full bg-[#FF6F61] flex justify-center items-center text-xl text-white mr-3">
                   {getInitials(localStorage.getItem("name") || "")}
-                </div>
-              )}
+                </div>x
+              )} */}
 
               <Button
                 variant="ghost"
@@ -347,18 +416,19 @@ export function SiteHeader() {
                 <img
                   src={menubar}
                   alt="Menu"
-                  className="h-7 w-7 dark:opacity-80 dark:hidden"
+                  className="h-9 w-9 dark:opacity-80 dark:hidden"
                 />
                  <img
                   src={darkmenubar}
                   alt="Menu"
-                  className="h-7 w-7 dark:opacity-80 hidden dark:block"
+                  className="h-9 w-9 dark:opacity-80 hidden dark:block"
                 />
               </Button>
             </div>
           </div>
         </div>
       </header>
+      
       <div
         className={`fixed top-0 ${
           isNotificationOpen ? "right-0" : "-right-[367px]"

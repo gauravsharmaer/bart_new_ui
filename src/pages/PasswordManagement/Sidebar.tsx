@@ -54,9 +54,9 @@ const Sidebar: React.FC<{
   ];
 
   return (
-    <div className="w-[300px] max-w-[300px] h-full bg-white dark:bg-[#1e1e1e] p-5 flex flex-col transition-colors duration-200">
+    <div className="w-[300px] max-w-[300px] h-full bg-white dark:bg-[#1e1e1e] p-5 flex flex-col transition-colors duration-200 border-t border-white dark:border-[#f0f0f0] dark:border-opacity-10">
       {/* Back Button */}
-      <div className="flex items-center mb-4">
+      <div className="flex items-center mb-4 ">
         <button
           onClick={() => navigate("/")}
           className="inline-flex items-center justify-center bg-none border-none cursor-pointer text-[30px] mr-[10px] text-black dark:text-white p-0 hover:opacity-80 transition-opacity duration-200"
@@ -69,6 +69,8 @@ const Sidebar: React.FC<{
           All Templates
         </h2>
       </div>
+      {/* Full border here */}
+      <div className="border-b border-gray-300 dark:border-[#f0f0f0] dark:border-opacity-10 mb-4 mx-[-20px]"></div>
       <ul className="list-none p-0 m-0 flex flex-col gap-3">
         {templates.map((template) => (
           <SidebarItem

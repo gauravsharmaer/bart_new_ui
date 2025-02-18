@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import VerifyAuthCapture from "./verifyAuthCapture";
 import bgHome from "../../assets/bg_home.svg"; // Import your SVG
 import DarkBackground from "../../assets/DarkHome.svg"; // Import dark background
-import ImageUploadPopup from "../../components/ui/ImageUploadPopup";
+import ImageUploadPopup from "./ImageUploadPopup";
 import { useSelector } from "react-redux"; // Import useSelector
 import { RootState } from "../../redux/store"; // Import RootState
 

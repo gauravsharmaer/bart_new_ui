@@ -201,7 +201,7 @@ const createMarkup = (text: string, listStyle: 'inline' | 'vertical' = 'vertical
   // Process markdown-style links with consistent styling
   processedText = processedText.replace(
     /\[(.*?)\]\((.*?)\)/g,
-    '<a href="$2" target="_blank" class="inline border border-red-300 dark:border-white  bg-white dark:bg-black text-black dark:text-white  rounded-md font-bold px-1 py-0.5 hover:bg-gray-200 transition duration-200 ease-in-out">$1</a>'
+    '<a href="$2" target="_blank" class="inline border border-red-300 dark:border-[#4f4f4f]  bg-white dark:bg-[#111111] dark:bg-opacity-30 text-black dark:text-white  rounded-md font-bold px-1 py-0.5 hover:bg-gray-200 transition duration-200 ease-in-out">$1</a>'
   );
 
   // Process existing HTML links and add classes
@@ -223,7 +223,7 @@ const createMarkup = (text: string, listStyle: 'inline' | 'vertical' = 'vertical
     // Modify link styling
     .replace(
       /<a(?![^>]*class=)/g,
-      '<a class="inline-flex items-center border border-red-300 dark:border-white  bg-white dark:bg-black rounded-md font-bold px-2 py-1 hover:bg-gray-200 transition duration-200 ease-in-out"'
+      '<a class="inline-flex items-center border border-red-300 dark:border-[#4f4f4f]  bg-white dark:bg-[#111111] dark:bg-opacity-30 rounded-md font-bold px-2 py-1 hover:bg-gray-200 transition duration-200 ease-in-out"'
     );
 
   // Remove <br> tags between list items

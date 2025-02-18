@@ -70,17 +70,11 @@
 
 
 
-
-
-
-
-
-
-
-
 import React from "react";
 import DeleteIcon from "../assets/Delete.gif";
 import { DeleteChatModalProps } from "../props/Props";
+
+
 
 // interface DeleteChatModalProps {
 //   chatName: string;
@@ -97,19 +91,24 @@ const DeleteChatModal: React.FC<DeleteChatModalProps> = ({
 }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-20 z-50">
-      <div className="bg-white rounded-2xl w-[380px] h-[280px]p-6 shadow-lg">
+      <div className="bg-white rounded-2xl w-[380px] h-[280px]p-6 shadow-lg dark:bg-[#313131]">
         <div className="flex flex-col items-center mt-6">
           {/* Delete Icon */}
           <div className="mb-4">
             <img
               src={DeleteIcon}
               alt="Delete Icon"
-              className="w-8 h-8 text-[#FF5600]"
+              className="w-8 h-8 text-[#FF5600] dark:hidden"
+            />
+            <img
+              src={DeleteIcon}
+              alt="Delete Icon"
+              className="w-8 h-8 text-[#FF5600] hidden dark:block"
             />
           </div>
 
           {/* Title */}
-          <h2 className="text-lg font-semibold text-[#202B3B] mb-2">
+          <h2 className="text-lg font-semibold text-[#202B3B] dark:text-[#ffffff] mb-2">
             Delete Chat?
           </h2>
 
@@ -121,16 +120,16 @@ const DeleteChatModal: React.FC<DeleteChatModalProps> = ({
           </p>
 
           {/* Buttons Container */}
-          <div className="flex w-full border-t border-[#D7D7D7]">
+          <div className="flex w-full border-t border-[#D7D7D7] dark:border-[#4f4f4f]">
             <button
               onClick={onCancel}
-              className="w-full py-5 text-[#808080] text-lg font-regular hover:bg-gray-50 border-r border-[#D7D7D7] rounded-bl-2xl"
+              className="w-full py-5 text-[#808080] text-lg font-regular hover:bg-gray-50 dark:hover:bg-[#4f4f4f] border-r border-[#D7D7D7] dark:border-[#4f4f4f] rounded-bl-2xl"
             >
               Cancel
             </button>
             <button
               onClick={() => onDelete(chatId)}
-              className="w-full py-5 text-[#ED2B31] text-lg font-regular hover:bg-gray-50 rounded-br-2xl"
+              className="w-full py-5 text-[#ED2B31] text-lg font-regular hover:bg-gray-50 dark:hover:bg-[#4f4f4f] rounded-br-2xl"
             >
               Delete
             </button>

@@ -1,4 +1,4 @@
-import { CardBackgroundProps } from "../props/Props";
+import { CardBackgroundProps } from "../../props/Props";
 const CardBackground = ({ children }: CardBackgroundProps) => {
   return (
     <div

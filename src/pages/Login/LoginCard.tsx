@@ -4,7 +4,7 @@ import { useState } from "react";
 import oneLogin from "../../assets/oneLogin.png";
 
 import bartLogo from "../../assets/bartLogo.svg";
-import CardBackground from "../../components/CardBackground";
+import CardBackground from "./CardBackground";
 import { initiateOneLogin } from "../../utils/OneLoginAuth";
 import { LoginApiService } from "./api";
 import { Link } from "react-router-dom";

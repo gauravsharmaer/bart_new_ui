@@ -45,7 +45,7 @@ export const TicketTable = ({ type }: TicketProps) => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-12 h-12 rounded-full border-4 border-gray-200 border-t-purple-600 animate-spin"></div>
+        <div className="w-12 h-12 rounded-full border-4 border-gray-200 border-t-[#523ec6] dark:border-t-[#ef613c] animate-spin"></div>
       </div>
     );
   }
@@ -53,9 +53,9 @@ export const TicketTable = ({ type }: TicketProps) => {
   return (
     <div className="w-full border border-gray-200 dark:border-[#2c2d32] rounded-lg overflow-hidden">
       <div className="max-h-[50vh] overflow-y-auto">
-        <table className="min-w-full table-fixed">
+        <table className="min-w-full table-fixed ">
           <thead className="sticky top-0 bg-gray-50 dark:bg-[#2c2d32]">
-            <tr className="text-sm text-gray-600 dark:text-gray-400">
+            <tr className="text-sm text-gray-600 dark:text-[#f0f0f0] border-b border:none dark:border-[#ebebeb]">
               <th className="whitespace-nowrap px-6 py-3 text-left font-medium w-[20%]">Name</th>
               <th className="whitespace-nowrap px-6 py-3 text-left font-medium w-[15%]">Ticket no</th>
               <th className="whitespace-nowrap px-6 py-3 text-left font-medium w-[20%]">Date and time</th>
@@ -69,19 +69,19 @@ export const TicketTable = ({ type }: TicketProps) => {
               <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-[#2c2d32] cursor-pointer transition-colors duration-200">
                 <td className="px-6 py-4 w-[15%]">
                   <Link to={item.link} target="_blank" className="block w-full">
-                    <span className="text-sm dark:text-gray-200 truncate block w-[100px]">{item.name}</span>
+                    <span className="text-sm dark:text-[#f0f0f0] truncate block w-[100px]">{item.name}</span>
                   </Link>
                 </td>
                 <td className="px-6 py-4 w-[15%]">
                   <Link to={item.link} target="_blank" className="block w-full">
-                    <span className="text-purple-600 dark:text-purple-400 text-sm truncate block">
+                    <span className="text-purple-600 dark:text-[#D6F4E4] text-sm truncate block">
                       {item.ticket_id}
                     </span>
                   </Link>
                 </td>
                 <td className="px-6 py-4 w-[20%]">
                   <Link to={item.link} target="_blank" className="block w-full">
-                    <span className="text-sm text-gray-600 dark:text-gray-400 truncate block">
+                    <span className="text-sm text-gray-600 dark:text-[#81878c] truncate block">
                       {new Date(item.created_at).toLocaleString()}
                     </span>
                   </Link>
@@ -94,7 +94,7 @@ export const TicketTable = ({ type }: TicketProps) => {
                         alt="Genie logo"
                         className="h-6 w-6 rounded-full dark:opacity-90 flex-shrink-0"
                       />
-                      <span className="text-sm text-gray-600 dark:text-gray-400 truncate">No one</span>
+                      <span className="text-sm text-gray-600 dark:[#81878c] truncate">No one</span>
                     </div>
                   </Link>
                 </td>
@@ -104,7 +104,7 @@ export const TicketTable = ({ type }: TicketProps) => {
                       className={`text-sm font-medium truncate block ${
                         item.status?.toLowerCase() === "resolved"
                           ? "text-green-500 dark:text-green-400"
-                          : "text-red-500 dark:text-red-400"
+                          : "text-red-500 dark:text-[#81878c]"
                       }`}
                     >
                       {item.status}
@@ -114,11 +114,11 @@ export const TicketTable = ({ type }: TicketProps) => {
                 <td className="px-6 py-4 w-[12.5%]">
                   <Link to={item.link} target="_blank" className="block w-full">
                     {idx % 2 === 0 ? (
-                      <span className="text-orange-500 dark:text-[#ff8851] text-sm hover:text-orange-600 dark:hover:text-[#ff7a3d] transition-colors duration-200 truncate block">
+                      <span className="text-orange-500 dark:text-[#74a5f3] text-sm hover:text-orange-600 dark:hover:text-[#ff7a3d] transition-colors duration-200 truncate block">
                         See update
                       </span>
                     ) : (
-                      <span className="text-green-600 dark:text-green-400 text-sm hover:text-green-700 dark:hover:text-green-300 transition-colors duration-200 truncate block">
+                      <span className="text-green-600 dark:text-[#2b8957] text-sm hover:text-green-700 dark:hover:text-green-300 transition-colors duration-200 truncate block">
                         Resolved
                       </span>
                     )}

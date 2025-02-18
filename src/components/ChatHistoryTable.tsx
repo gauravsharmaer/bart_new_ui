@@ -2,10 +2,14 @@ import { useState, useEffect } from "react";
 import { getUserChats, deleteChat } from "../Api/CommonApi";
 import DeleteChatModal from "./DeleteChatModal";
 import DeleteIcon from "../assets/delete.svg";
+import DarkDeleteIcon from "../assets/darkdelete.svg";
 import Arrow from "../assets/ArrowLeft.svg";
+import darkSearchIcon from "../assets/darkNavSearch.svg"
 import SearchIcon from "../assets/search.svg";
 import DeleteAllChatsModal from "./DeleteAllChatsModal";
 import { ChatHistory } from "../Interface/Interface";
+import DarkArrow from "../assets/DarkArrowLeft.svg"
+
 
 const ChatHistorySidebar = ({ onClose }: { onClose: () => void }) => {
   const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
@@ -103,7 +107,7 @@ const ChatHistorySidebar = ({ onClose }: { onClose: () => void }) => {
   );
 
   return (
-    <div className="fixed right-0 top-0 h-full w-[630px] bg-white dark:bg-[#1a1b1e] shadow-lg dark:shadow-[#1a1b1e] z-50 flex flex-col rounded-3xl transition-colors duration-200">
+    <div className="fixed right-0 top-0 h-full w-[630px] bg-white dark:bg-[#313131] shadow-lg dark:shadow-[#1a1b1e] z-50 flex flex-col rounded-3xl transition-colors duration-200">
       {/* Header */}
       <div className="p-4">
         <div className="flex items-start">
@@ -111,7 +115,12 @@ const ChatHistorySidebar = ({ onClose }: { onClose: () => void }) => {
             <img
               src={Arrow}
               alt="Arrow Left"
-              className="w-5 h-5 text-gray-500 dark:text-gray-400 mt-1"
+              className="w-5 h-5 text-gray-500 dark:text-gray-400 mt-1 dark:hidden"
+            />
+             <img
+              src={DarkArrow}
+              alt="Arrow Left"
+              className="w-5 h-5 text-gray-500 dark:text-gray-400 mt-1 hidden dark:block"
             />
           </button>
           <div className="mt-2">
@@ -131,12 +140,17 @@ const ChatHistorySidebar = ({ onClose }: { onClose: () => void }) => {
           <img
             src={SearchIcon}
             alt="Search"
-            className="absolute left-5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500"
+            className="absolute left-5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500 dark:hidden"
+          />
+          <img
+            src={darkSearchIcon}
+            alt="Search"
+            className="absolute left-5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500 hidden dark:block"
           />
           <input
             type="text"
             placeholder="Search chat"
-            className="w-full h-[50px] pl-10 pr-4 py-2.5 rounded-lg bg-[#F3F5F9] dark:bg-[#2c2d32] 
+            className="w-full h-[50px] pl-10 pr-4 py-2.5 rounded-lg bg-[#F3F5F9] dark:bg-[#383838] 
             placeholder-[#000000] dark:placeholder-white/70 text-gray-900 dark:text-white
             focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500 transition-colors duration-200"
             value={searchQuery}
@@ -154,7 +168,7 @@ const ChatHistorySidebar = ({ onClose }: { onClose: () => void }) => {
         ) : (
           <div className="flex flex-col">
             {/* Header */}
-            <div className="w-full bg-[#FAFAFA] dark:bg-[#2c2d32] border-b border-[#EBEBEB] dark:border-[#3a3b40] transition-colors duration-200">
+            <div className="w-full bg-[#FAFAFA] dark:bg-[#1e1e1e] border-b border-[#EBEBEB] dark:border-[#ebebeb] dark:border-opacity-70 transition-colors duration-200">
               <div className="flex py-2 px-8">
                 <div className="w-1/3 text-base text-gray-900 dark:text-white">Chat</div>
                 <div className="w-1/3 text-base text-center text-gray-900 dark:text-white">Status</div>
@@ -168,7 +182,7 @@ const ChatHistorySidebar = ({ onClose }: { onClose: () => void }) => {
               {filteredChats.map((chat) => (
                 <div
                   key={chat.id}
-                  className="flex items-center py-2 px-8 border-b border-[#EBEBEB] dark:border-[#3a3b40] w-full 
+                  className="flex items-center py-2 px-8 border-b border-[#EBEBEB] dark:border-[#4f4f4f] w-full 
                   hover:bg-gray-50 dark:hover:bg-[#2c2d32] transition-colors duration-200"
                 >
                   <div className="w-1/3">
@@ -181,8 +195,8 @@ const ChatHistorySidebar = ({ onClose }: { onClose: () => void }) => {
                       <span
                         className={`px-2 py-1 rounded-md text-sm ${
                           chat.status === "Resolved"
-                            ? "text-[#27B452] dark:text-green-400"
-                            : "text-[#9039FF] dark:text-purple-400"
+                            ? "text-[#27B452] dark:text-[#27B452]"
+                            : "text-[#9039FF] dark:text-[#B071FF]"
                         } transition-colors duration-200`}
                       >
                         {chat.status}
@@ -200,7 +214,12 @@ const ChatHistorySidebar = ({ onClose }: { onClose: () => void }) => {
                       <img
                         src={DeleteIcon}
                         alt="Delete"
-                        className="w-4 h-4 text-gray-400 dark:text-gray-500"
+                        className="w-4 h-4 text-gray-400 dark:text-gray-500 dark:hidden"
+                      />
+                      <img
+                        src={DarkDeleteIcon}
+                        alt="Delete"
+                        className="w-4 h-4 text-gray-400 dark:text-gray-500 hidden dark:block"
                       />
                     </button>
                   </div>

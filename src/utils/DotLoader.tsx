@@ -6,7 +6,8 @@ const DotLoader: React.FC = React.memo(() => (
       <div
         key={i}
         data-testid="dot"
-        className={`dot w-2 h-2 bg-black rounded-full animate-pulse ${
+        className={`dot w-2 h-2 bg-black dark:bg-white rounded-full animate-pulse ${
+        
           i > 0 ? `delay-${i}00` : ""
         }`}
       ></div>

@@ -46,7 +46,7 @@ const Card = ({ title, description, icon }: CardProps) => {
       </div>
       
       {/* Arrows with Hover Effect */}
-      <div className="absolute bottom-3 left-3 flex justify-start items-center z-10">
+      <div className="absolute bottom-3 left-5 flex justify-start items-center z-10">
         {/* Light Mode Arrows */}
         <img
           src={Arrow}

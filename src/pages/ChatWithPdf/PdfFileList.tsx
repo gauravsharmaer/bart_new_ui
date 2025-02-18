@@ -7,7 +7,7 @@ import { PdfFileListProps } from "../../props/Props"
 
 const PdfFileList: React.FC<PdfFileListProps> = ({ pdfFiles, onRemove }) => {
   return (
-    <div className="flex flex-wrap gap-3 p-3 bg-[#F7F5E8] rounded-lg ml-4 mr-3 mb-[-17px] border border-dotted border-gray-400">
+    <div className="flex flex-wrap gap-3 p-3 bg-[#F7F5E] dark:bg-[#313131] rounded-2xl ml-4 mr-3 mb-[-17px] border border-dotted border-gray-400 dark:border-[#5d5d5d]">
       {pdfFiles.map((file, index) => (
         <div key={index} className="relative flex flex-col items-center">
           <button 
@@ -18,7 +18,7 @@ const PdfFileList: React.FC<PdfFileListProps> = ({ pdfFiles, onRemove }) => {
           </button>
           <img src={pdfDisplayIcon} alt="PDF" className="w-24 h-24 mb-1" />
           <div className="text-center" style={{ width: '160px' }}>
-            <span className="text-xs font-semibold text-gray-700 truncate">
+            <span className="text-xs font-semibold text-gray-700 truncate dark:text-[#ffffff]">
               {file.name}
             </span>
           </div>

@@ -25,7 +25,7 @@ const PdfSidebar: React.FC<PdfSidebarProps> = ({ isOpen, onClose, pdfUrl }) => {
         width: '460px',
       }}
     >
-      <div className="h-full flex flex-col bg-white rounded-4xl overflow-hidden dark:bg-black">
+      <div className="h-full flex flex-col bg-white rounded-4xl overflow-hidden dark:bg-[#313131]">
         {/* Header with Close Icon */}
         <div className="relative p-2 rounded-t-lg">
           <img
@@ -41,21 +41,19 @@ const PdfSidebar: React.FC<PdfSidebarProps> = ({ isOpen, onClose, pdfUrl }) => {
         </div>
 
         {/* PDF Container */}
-        <div className="flex-1 overflow-hidden p-3 mt-[-10px]">
-          <div className="bg-white rounded-lg h-full shadow-inner">
+        <div className="flex-1 overflow-hidden p-3 mt-[-5px]">
             {pdfUrl && (
               <iframe
                 src={getViewerUrl(pdfUrl)}
                 className="w-full h-full border-0"
                 title="PDF Preview"
                 style={{
-                  backgroundColor: isDarkMode ? 'black' : 'white',
+                  backgroundColor: isDarkMode ? 'white' : 'white',
                 }}
               />
             )}
           </div>
         </div>
-      </div>
     </div>
   );
 };

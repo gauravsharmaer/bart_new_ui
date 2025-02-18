@@ -1,26 +1,31 @@
 import React from "react";
 import VoicesIcon from "../assets/Voices.svg";
-import { VOICE_OPTIONS } from "../redux/features/avatarSlice";
+import DarkVoicesIcon from "../assets/darkVoices.svg";
 
+import { VOICE_OPTIONS } from "../redux/features/avatarSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 interface VoiceOptionsProps {
   showVoiceOptions: boolean;
   handleVoiceIconClick: (voiceIndex: number) => void;
   setShowVoiceOptions: (show: boolean) => void;
 }
 
+
 const VoiceOptions: React.FC<VoiceOptionsProps> = ({
   showVoiceOptions,
   handleVoiceIconClick,
   // setShowVoiceOptions,
-}) => {
+}) => { 
+  const { isDarkMode } = useSelector((state: RootState) => state.theme);
   return (
     showVoiceOptions && (
-      <div className="absolute z-50 top-[-45px] -left-7">
+      <div className="absolute z-50 top-[-6px] -left-7">
         <div className="relative group">
           <img
-            src={VoicesIcon}
+            src={isDarkMode ? DarkVoicesIcon : VoicesIcon}  
             alt="Voice Options"
-            className="w-60 h-60 object-contain hover:opacity-90 transition-opacity cursor-pointer"
+            className="w-30 h-20 object-contain hover:opacity-90 transition-opacity cursor-pointer"
             onMouseMove={(e) => {
               const rect = e.currentTarget.getBoundingClientRect();
               const x = e.clientX - rect.left;

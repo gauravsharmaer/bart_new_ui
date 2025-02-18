@@ -16,6 +16,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import darkSidebarIcon from "../assets/dark-chat.svg";
 import DarkNewChatIcon from "../assets/DarkNewChat.svg"
+import darkRenameIcon from "../assets/darkrename.svg";
+
 
 const HistorySideBar: React.FC<HistorySideBarProps> = ({
   chatHistory,
@@ -26,7 +28,6 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({
   onDeleteChat,
   onRenameChat,
   setChatHistory,
-  isGeneralChat = false,
   maxWidth,
 }) => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
@@ -95,242 +96,113 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({
     setActiveMenu(null);
   };
 
-  const renderChatList = () => {
-    if (!isGeneralChat) {
-      return chatHistory.map((chat) => (
-        <div
-          key={chat.id}
-          className={`text-black opacity-150 cursor-pointer p-2 rounded font-regular flex items-center justify-between group relative  ${
-            chat.isActive
-              ? "bg-[#f3f5f9] dark:bg-[#ffffff]"
-              : "hover:bg-[#f3f5f9] dark:hover:bg-black dark:hover:rounded-lg"
-          }`}
-          onMouseLeave={closeMenu}
-        >
-          {/* Left section: Chat details */}
-          <div className="flex flex-col flex-grow">
-            {editingChatId === chat.id ? (
-              <input
-                type="text"
-                value={editingName}
-                onChange={(e) => setEditingName(e.target.value)}
-                onBlur={() => handleRenameSubmit(chat.id)}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    handleRenameSubmit(chat.id);
-                  }
-                }}
-                className="border rounded px-2 py-1 text-sm w-[140px]"
-                autoFocus
-              />
-            ) : (
-              <span
-                onClick={() => onChatSelect(chat.id)}
-                className={`truncate font-passenger font-light ${
-                  chat.isActive 
-                    ? 'text-white dark:text-black' 
-                    : 'text-[#000000] dark:text-[#f0f0f0] opacity-80'
-                } text-sm`}
-                style={{ maxWidth: maxWidth || '140px' }}
-                title={chat.name}
-              >
-                {chat.name}
-              </span>
-            )}
-          </div>
-
-          {/* Right section: Tags */}
-          <div className="flex items-center gap-2">
-            {chat.status ? (
-              <span className={`text-xs py-1 px-2 rounded-md font-medium bg-[#ECE4FF] text-[#5232A0]`}>
-                {chat.status}
-              </span>
-            ) : (
-              <span className="text-xs text-[#FF5600]">
-                {chat.timestamp}
-              </span>
-            )}
-          </div>
-          <div className="relative">
-            <button
-              onClick={(event) => toggleMenu(chat.id, event)}
-              className="focus:outline-none p-1 rounded-full invisible group-hover:visible"
-            >
-              <img
-                src={DotsMenuIcon}
-                alt="Menu"
-                className="w-3.5 h-3.5 dark:hidden"
-              />
-              <img
-                src={darkDotsMenuIcon}
-                alt="Menu"
-                className="w-3.5 h-3.5 hidden dark:block"
-              />
-            </button>
-            {activeMenu === chat.id && (
-              <div
-                className="absolute bg-white rounded-lg shadow-lg w-[130px]"
-                style={{
-                  position: "fixed",
-                  top: dropdownPosition.top,
-                  left: dropdownPosition.left,
-                  boxShadow: "0px 4px 6px rgba(68, 68, 68, 0.1)",
-                  zIndex: 9999,
-                }}
-              >
-                <ul className="text-sm">
-                  <li
-                    onClick={() => handleRenameClick(chat)}
-                    className="px-4 py-3 cursor-pointer flex items-center gap-2"
-                  >
-                    <img
-                      src={RenameIcon}
-                      alt="Rename"
-                      className="w-6 h-6"
-                    />
-                    Rename
-                  </li>
-                  <li
-                    onClick={() => handleDeleteClick(chat)}
-                    className="px-4 py-3 cursor-pointer text-red-600 flex items-center gap-2"
-                  >
-                    <img
-                      src={DeleteIcon}
-                      alt="Delete"
-                      className="w-6 h-6"
-                    />
-                    Delete
-                  </li>
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
-      ));
-    }
-
-    const groupedChats = chatHistory.reduce((groups: { [key: string]: ChatHistory[] }, chat) => {
-      const group = chat.timeGroup || 'Other';
-      if (!groups[group]) {
-        groups[group] = [];
-      }
-      groups[group].push(chat);
-      return groups;
-    }, {});
-
-    return Object.entries(groupedChats).map(([timeGroup, chats]) => (
-      <div key={timeGroup} className="mb-6">
-        <h3 className="text-sm font-bold text-black mb-2 ml-2  dark:text-[#f0f0f0] opacity-80">{timeGroup}</h3>
-        {chats.map((chat) => (
-          <div
-            key={chat.id}
-            className={`text-black opacity-150 cursor-pointer p-2 rounded font-regular flex items-center justify-between group relative mb-1 ${
-              chat.isActive
-              ? "bg-[#f3f5f9] dark:bg-[#ffffff] "
-              : "hover:bg-[#f3f5f9] dark:hover:bg-black dark:hover:rounded-lg"
-          }`}
-            onMouseLeave={closeMenu}
+  const renderChatItem = (chat: ChatHistory) => (
+    <div
+      key={chat.id}
+      className={`text-black opacity-150 cursor-pointer p-2 rounded font-regular flex items-center justify-between group relative ${
+        chat.isActive
+          ? "bg-[#f3f5f9] dark:bg-[#000000]"
+          : "hover:bg-[#f3f5f9] dark:hover:bg-black dark:hover:rounded-lg"
+      }`}
+      onMouseLeave={closeMenu}
+    >
+      {/* Left section: Chat details */}
+      <div className="flex flex-col flex-grow">
+        {editingChatId === chat.id ? (
+          <input
+            type="text"
+            value={editingName}
+            onChange={(e) => setEditingName(e.target.value)}
+            onBlur={() => handleRenameSubmit(chat.id)}
+            onKeyPress={(e) => {
+              if (e.key === "Enter") {
+                handleRenameSubmit(chat.id);
+              }
+            }}
+            className="border rounded px-2 py-1 text-sm w-[140px]"
+            autoFocus
+          />
+        ) : (
+          <span
+            onClick={() => onChatSelect(chat.id)}
+            className={`truncate font-passenger font-light ${
+              chat.isActive 
+                ? 'text-black dark:text-white' 
+                : 'text-[#000000] dark:text-[#f0f0f0] opacity-80'
+            } text-sm`}
+            style={{ maxWidth: maxWidth || '250px' }}
+            title={chat.name}
           >
-            {/* Left section: Chat details */}
-            <div className="flex flex-col flex-grow">
-              {editingChatId === chat.id ? (
-                <input
-                  type="text"
-                  value={editingName}
-                  onChange={(e) => setEditingName(e.target.value)}
-                  onBlur={() => handleRenameSubmit(chat.id)}
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter") {
-                      handleRenameSubmit(chat.id);
-                    }
-                  }}
-                  className="border rounded px-2 py-1 text-sm w-[140px]"
-                  autoFocus
-                />
-              ) : (
-                <span
-                  onClick={() => onChatSelect(chat.id)}
-                  className={`truncate font-passenger font-light ${
-                    chat.isActive 
-                      ? 'text-black dark:text-white' 
-                      : 'text-[#000000] dark:text-[#f0f0f0] opacity-80'
-                  } text-sm`}
-                  style={{ maxWidth: maxWidth || '140px' }}
-                  title={chat.name}
-                >
-                  {chat.name}
-                </span>
-              )}
-            </div>
+            {chat.name}
+          </span>
+        )}
+      </div>
 
-            {/* Right section: Tags */}
-            <div className="flex items-center gap-2">
-              {chat.status ? (
-                <span className={`text-xs py-1 px-2 rounded-md font-medium bg-[#ECE4FF] text-[#5232A0]`}>
-                  {chat.status}
-                </span>
-              ) : null}
-            </div>
-
-            {/* Menu button */}
-            <div className="relative">
-              <button
-                onClick={(event) => toggleMenu(chat.id, event)}
-                className="focus:outline-none p-1 rounded-full invisible group-hover:visible"
+      {/* Menu button */}
+      <div className="relative">
+        <button
+          onClick={(event) => toggleMenu(chat.id, event)}
+          className="focus:outline-none p-1 rounded-full invisible group-hover:visible"
+        >
+          <img
+            src={DotsMenuIcon}
+            alt="Menu"
+            className="w-3.5 h-3.5 dark:hidden"
+          />
+          <img
+            src={darkDotsMenuIcon}
+            alt="Menu"
+            className="w-3.5 h-3.5 hidden dark:block"
+          />
+        </button>
+        {activeMenu === chat.id && (
+          <div
+            className="absolute bg-white dark:bg-[#313131] rounded-lg shadow-lg w-[130px]"
+            style={{
+              position: "fixed",
+              top: dropdownPosition.top,
+              left: dropdownPosition.left,
+              boxShadow: "0px 4px 6px rgba(68, 68, 68, 0.1)",
+              zIndex: 9999,
+            }}
+          >
+            <ul className="text-sm">
+              <li
+                onClick={() => handleRenameClick(chat)}
+                className="px-4 py-3 cursor-pointer flex items-center gap-2 dark:text-[#ffffff]"
               >
                 <img
-                src={DotsMenuIcon}
-                alt="Menu"
-                className="w-3.5 h-3.5 dark:hidden"
-              />
-              <img
-                src={darkDotsMenuIcon}
-                alt="Menu"
-                className="w-3.5 h-3.5 hidden dark:block"
-              />
-              </button>
-              {activeMenu === chat.id && (
-                <div
-                  className="absolute bg-white rounded-lg shadow-lg w-[130px]"
-                  style={{
-                    position: "fixed",
-                    top: dropdownPosition.top,
-                    left: dropdownPosition.left,
-                    boxShadow: "0px 4px 6px rgba(68, 68, 68, 0.1)",
-                    zIndex: 9999,
-                  }}
-                >
-                  <ul className="text-sm">
-                    <li
-                      onClick={() => handleRenameClick(chat)}
-                      className="px-4 py-3 cursor-pointer flex items-center gap-2"
-                    >
-                      <img
-                        src={RenameIcon}
-                        alt="Rename"
-                        className="w-6 h-6"
-                      />
-                      Rename
-                    </li>
-                    <li
-                      onClick={() => handleDeleteClick(chat)}
-                      className="px-4 py-3 cursor-pointer text-red-600 flex items-center gap-2"
-                    >
-                      <img
-                        src={DeleteIcon}
-                        alt="Delete"
-                        className="w-6 h-6"
-                      />
-                      Delete
-                    </li>
-                  </ul>
-                </div>
-              )}
-            </div>
+                  src={RenameIcon}
+                  alt="Rename"
+                  className="w-6 h-6 dark:hidden"
+                />
+                <img
+                  src={darkRenameIcon}
+                  alt="Rename"
+                  className="w-6 h-6 hidden dark:block"
+                />
+                Rename
+              </li>
+              <li
+                onClick={() => handleDeleteClick(chat)}
+                className="px-4 py-3 cursor-pointer text-red-600 flex items-center gap-2 dark:text-[#ED2B31]"
+              >
+                <img
+                  src={DeleteIcon}
+                  alt="Delete"
+                  className="w-6 h-6"
+                />
+                Delete
+              </li>
+            </ul>
           </div>
-        ))}
+        )}
       </div>
-    ));
+    </div>
+  );
+
+  const renderChatList = () => {
+    return chatHistory.map((chat) => renderChatItem(chat));
   };
 
   if (isLoading) {
@@ -349,7 +221,7 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({
 
         {/* Toggle Button - Always visible */}
         <div
-          className={`flex items-center border-b border-gray-200 dark:border-[#f0f0f0] dark:border-opacity-10 pt-4 ${
+          className={`flex items-center border-b border-t border-gray-200 dark:border-[#f0f0f0] dark:border-opacity-10 pt-2 ${
             isSidebarOpen ? "w-[320px]" : "w-[50px]"
           } transition-all duration-300`}
         >
