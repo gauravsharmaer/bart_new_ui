@@ -143,6 +143,7 @@ const HistorySideBar: React.FC<HistorySideBarProps> = ({
         <button
           onClick={(event) => toggleMenu(chat.id, event)}
           className="focus:outline-none p-1 rounded-full invisible group-hover:visible"
+          data-testid="menu-button"
         >
           <img
             src={DotsMenuIcon}

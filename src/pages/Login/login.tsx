@@ -3,9 +3,9 @@ import LoginCard from "./LoginCard";
 
 const Login = () => {
   return (
-    <GradientBackground>
+    <GradientBackground data-testid="gradient-background">
       <div className="flex justify-center items-center h-screen">
-        <LoginCard />
+        <LoginCard data-testid="login-card" />
       </div>
     </GradientBackground>
   );

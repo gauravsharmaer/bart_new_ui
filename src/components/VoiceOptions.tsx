@@ -5,11 +5,8 @@ import DarkVoicesIcon from "../assets/darkVoices.svg";
 import { VOICE_OPTIONS } from "../redux/features/avatarSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-interface VoiceOptionsProps {
-  showVoiceOptions: boolean;
-  handleVoiceIconClick: (voiceIndex: number) => void;
-  setShowVoiceOptions: (show: boolean) => void;
-}
+import { VoiceOptionsProps } from "../props/Props"
+
 
 
 const VoiceOptions: React.FC<VoiceOptionsProps> = ({

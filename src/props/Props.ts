@@ -69,6 +69,7 @@ export interface UserCardProps {
   name: string;
   text: string;
   timestamp: string;
+  isUserMessage?: boolean;
 }
 export interface CardBackgroundProps {
   children?: React.ReactNode;
@@ -161,4 +162,31 @@ export interface PdfFileDisplayProps {
   fileName: string;
   timestamp?: string;
   onClick?: () => void;
+}
+
+
+export interface VoiceOptionsProps {
+  showVoiceOptions: boolean;
+  handleVoiceIconClick: (voiceIndex: number) => void;
+  setShowVoiceOptions: (show: boolean) => void;
+}
+
+
+export interface VoiceChatCardProps {
+  text: string;
+  onClose: () => void;
+}
+
+
+export interface TypingEffectProps {
+  text: string;
+  speed?: number; // Speed in milliseconds
+  inline?: boolean; // Add inline prop
+}
+
+
+export interface UserCardProps {
+  name: string;
+  text: string;
+  timestamp: string;
 }

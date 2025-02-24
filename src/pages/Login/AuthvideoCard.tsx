@@ -25,30 +25,7 @@ import {
 } from "../../utils/CommonAuthValues";
 import FaceVerification from "../../components/ui/FacialAuthenticationCard";
 
-// interface ApiError {
-//   message: string;
 
-// }
-
-// const MAX_NO_FACE_FRAMES = 10;
-// // const MODEL_URL = "/models";
-
-// const API_URL_FACE = `${NODE_API_URL}/login-with-face`;
-// const BLINK_THRESHOLD = 0.3;
-// const OPEN_EYE_THRESHOLD = 0.4;
-// const HEAD_TURN_THRESHOLD = 0.02;
-// const ANALYSIS_INTERVAL = 500;
-// const ANALYSIS_OPTIONS = new TinyFaceDetectorOptions({ inputSize: 224 });
-
-// type Instructions = {
-//   right: string;
-//   left: string;
-//   blink: JSX.Element;
-// };
-
-// interface VerifyAuthProps {
-//   onVerificationComplete?: () => void;
-// }
 
 const AuthvideoCard: React.FC<VerifyAuthProps> = ({ onBackClick }) => {
   const dispatch = useDispatch<AppDispatch>();

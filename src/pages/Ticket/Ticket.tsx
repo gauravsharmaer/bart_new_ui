@@ -1,15 +1,10 @@
-// Tickets.tsx
 import { Search } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { SiteHeader } from "../../components/Navbar";
-// import { Table } from "./Table";
+
 import { useState } from "react";
 import { CaretDown } from "phosphor-react";
-// import { ResolvedTicketTable } from "./ResolvedTicketTable";
-// import { UnResolvedTicketTable } from "./UnResolvedTicketTable";
-// import SupportTicket from "./SupportTicketCard";
-// import SupportResolvedTicketCard from "./SupportResolvedTicketCard";
-// import SupportUnResolvedTicketCard from "./SupportUnResolvedTicketCard";
+
 import { TicketTable } from "./TicketTable";
 import TicketCard from "./TicketCard";
 import Grid from "../../assets/GridFour.svg"
@@ -37,13 +32,7 @@ const Tickets = () => {
             <h1 className="text-xl font-semibold text-gray-900 dark:text-[#f0f0f0]">My tickets</h1>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4" />
-              {/* <input
-                type="text"
-                placeholder="Search tickets"
-                className="pl-10 pr-4 py-2 w-full sm:w-[280px] border border-gray-200 dark:border-[#2c2d32] dark:bg-[#2c2d32] dark:text-gray-200 
-                dark:placeholder-gray-400 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-[#3a3b40] transition-colors duration-200"
-              /> */}
-
+             
               <input
                 type="text"
                 placeholder="Search tickets"
@@ -108,21 +97,7 @@ const Tickets = () => {
               {/* Icons Container */}
               <div className="flex items-center gap-2 border border-gray-200 dark:border-[#2c2d32] rounded-lg pt-1 pb-1 pl-1 pr-1 w-35  bg-gray-100 dark:bg-[#1e1e1e]">
                 {/* Grid View Icon */}
-                {/* <Button
-                  variant="outline"
-                  size="sm"
-                  className={`text-sm transition-colors duration-200 ${
-                    gridViewEnabled
-                     ? "bg-white dark:bg-[#3a3b40] text-black dark:text-gray-200 border-gray-300 dark:border-[#2c2d32]"
-                      : "text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-[#2c2d32]"
-                  }`}
-                  onClick={() => {
-                    setGridViewEnabled(true);
-                    setPrintViewEnabled(false);
-                  }}
-                >
-                  <span className="sr-only">Grid view</span>⊞
-                </Button> */}
+              
 
               <Button
                   variant="outline"
@@ -143,20 +118,7 @@ const Tickets = () => {
                 </Button>
 
                 {/* Print Icon */}
-                {/* <Button
-                  size="sm"
-                  className={`text-sm transition-colors duration-200 ${
-                    printViewEnabled
-                      ? "bg-white dark:bg-[#3a3b40] text-black dark:text-gray-200 border-gray-300 dark:border-[#2c2d32]"
-                      : "text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-[#2c2d32]"
-                  }`}
-                  onClick={() => {
-                    setPrintViewEnabled(true);
-                    setGridViewEnabled(false);
-                  }}
-                >
-                  <span className="sr-only">Print</span>🖨️
-                </Button> */}
+      
 
 
                 <Button
@@ -181,9 +143,15 @@ const Tickets = () => {
           </div>
 
           {printViewEnabled ? (
-             <TicketCard type={activeTab as 'all' | 'resolved' | 'unresolved'} />
+             <TicketCard 
+               type={activeTab as 'all' | 'resolved' | 'unresolved'} 
+               data-type={activeTab}
+             />
           ) : (
-            <TicketTable type={activeTab as 'all' | 'resolved' | 'unresolved'} />
+            <TicketTable 
+              type={activeTab as 'all' | 'resolved' | 'unresolved'}
+              data-type={activeTab}
+            />
           )}
         </div>
       </main>

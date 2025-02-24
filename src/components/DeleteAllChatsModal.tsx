@@ -1,10 +1,7 @@
 import React from "react";
 import DeleteIcon from "../assets/Delete.gif";
 import { DeleteAllChatsModalProps } from "../props/Props";
-// interface DeleteAllChatsModalProps {
-//   onCancel: () => void;
-//   onDelete: () => void;
-// }
+
 
 const DeleteAllChatsModal: React.FC<DeleteAllChatsModalProps> = ({
   onCancel,
@@ -12,7 +9,7 @@ const DeleteAllChatsModal: React.FC<DeleteAllChatsModalProps> = ({
 }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-20 z-50">
-      <div className="bg-white rounded-2xl w-[390px] h-[226px] p-6 shadow-lg">
+      <div className="bg-white rounded-2xl w-[390px] h-[226px] p-6 shadow-lg" role="dialog">
         <div className="flex flex-col items-center mt-2">
           {/* Delete Icon */}
           <div className="mb-1">

@@ -69,12 +69,7 @@ const Home = () => {
               </button>
               <div className="rounded-lg p-6">
                 <div className="flex flex-col items-center">
-                  {/* <h2 className="text-white/90 text-2xl font-normal mb-3">
-          Verify Your Authentication
-        </h2>
-        <p className="text-white/70 text-base mb-6">
-          Please complete the verification process to continue
-        </p> */}
+         
                   <VerifyAuthCapture
                     onVerificationComplete={() => {
                       setShowPopup(false);

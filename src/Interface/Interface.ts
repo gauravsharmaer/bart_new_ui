@@ -128,6 +128,7 @@ export interface VerifyOTPRequest {
   otp: number;
   email: string;
   chat_id: string;
+
 }
 
 export interface VerifyOTPResponse {

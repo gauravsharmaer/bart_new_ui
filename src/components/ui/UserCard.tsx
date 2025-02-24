@@ -2,12 +2,8 @@ import React from "react";
 import { formatName } from "../../utils/NameFormatter";
 import { BackendBaseUrl } from "../../config";
 import { getInitials } from "../../utils/NameInitials";
+import { UserCardProps } from "../../props/Props";
 
-interface UserCardProps {
-  name: string;
-  text: string;
-  timestamp: string;
-}
 
 const UserCard: React.FC<UserCardProps> = ({ name, text, timestamp }) => {
   const formattedTime = (() => {

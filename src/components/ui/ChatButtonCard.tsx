@@ -1,9 +1,3 @@
-// interface ChatButtonCardProps {
-//   buttons: string[];
-//   onButtonClick: (button: string) => void;
-//   clickedButton: string | null;
-// }
-
 import { ChatButtonCardProps } from "../../props/Props";
 
 const ChatButtonCard: React.FC<ChatButtonCardProps> = ({
@@ -12,7 +6,7 @@ const ChatButtonCard: React.FC<ChatButtonCardProps> = ({
   clickedButton,
 }) => {
   return (
-    <div className="flex gap-2.5">
+    <div className="flex gap-2.5" data-testid="chat-button-container">
       {buttons.map((button, index) => (
         <button
           key={index}

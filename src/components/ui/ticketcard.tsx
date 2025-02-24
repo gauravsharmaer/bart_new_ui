@@ -21,9 +21,10 @@ const TicketCard: React.FC<CardProps> = ({
     <div className="bg-white dark:bg-[#2c2d32] shadow-md dark:shadow-[#1a1b1e] rounded-lg p-4 mt-4 
     border border-gray-200 dark:border-[#3a3b40] max-w-sm transition-all duration-200 
     hover:shadow-lg dark:hover:shadow-[#1a1b1e]/50">
-      <Link to={ticket_link || "#"} target="_blank" className="block">
-        <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-          Ticket Status:{" "}
+      {ticket_link? (
+        <Link to={ticket_link} target="_blank" className="block">
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+            Ticket Status:{" "}
           <span className="text-red-500 dark:text-red-400 font-semibold">
             Open
           </span>
@@ -49,6 +50,14 @@ const TicketCard: React.FC<CardProps> = ({
           </div>
         </div>
       </Link>
+      ) : (
+        <a href="#" className="block">
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+         no link provided
+          </div>
+          
+      </a>
+      )}
     </div>
   );
 };

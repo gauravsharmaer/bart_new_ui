@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { MagnifyingGlass } from "@phosphor-icons/react";
 import { Button } from "./ui/button";
-// import DocIcon from "../assets/document.svg";
+
 import { Input } from "./ui/input";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Notification from "../pages/Home/Notification";
@@ -10,8 +10,7 @@ import genie from "../assets/Genie.svg";
 import notificationicon from "../assets/notification-bell.svg";
 
 import menubar from "../assets/menu-bar.svg";
-// import { BackendBaseUrl } from "../config";
-// import { getInitials } from "../utils/NameInitials";
+
 import { useDispatch } from "react-redux";
 
 import { resetChat,  setSelectedChatId } from "../redux/chatSlice";
@@ -152,55 +151,7 @@ export function SiteHeader() {
                   <div className="absolute inset-0 rounded-full bg-[#f0f0f0] dark:bg-white pointer-events-none"></div>
                 )}
               </button>
-              {/* <button
-                onClick={() => {
-                  navigate("/");
-                  dispatch(startNewChat());
-                }}
-                className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary ${
-                  location.pathname === "/new-chat"
-                    ? "text-primary bg-[#F3F5F9] dark:bg-[#2c2d32]"
-                    : "text-muted-foreground dark:text-gray-400 dark:hover:text-gray-200"
-                }`}
-              >
-                <span className="z-10 font-passenger font-medium text-[#000000] dark:text-gray-200">
-                  New Chat
-                </span>
-              </button> */}
 
-              {/* <Link
-                to="/general-chat"
-                className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary border-none ${
-                  location.pathname === "/general-chat"
-                    ? "text-primary bg-[#F3F5F9] dark:bg-[#2c2d32]"
-                    : "text-muted-foreground dark:text-gray-400 dark:hover:text-gray-200"
-                }`}
-              >
-                <span className="z-10 font-passenger font-medium text-[#000000] dark:text-gray-200">
-                  General Chat
-                </span> 
-                {location.pathname === "/general-chat" && (
-                    <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-[#2c2d32] pointer-events-none"></div>
-                )}
-              </Link> */}
-
-              {/* <Link
-                to="/"
-                className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary border-none ${
-                  location.pathname === "/"
-                    ? "text-[#000000] bg-white dark:bg-white"
-                    : "text-muted-foreground dark:text-gray-400 hover:bg-[#f3f5f9] dark:hover:bg-[#2c2d32]"
-                }`}
-              >
-                <span className="z-10 font-passenger font-medium text-[#000000] dark:text-[#ffffff]">
-                  <span className={location.pathname === "/" ? "text-[#ef613c] dark:text-[#000000]" : ""}>
-                    BART&nbsp;Chat
-                  </span>
-                </span>
-                {location.pathname === "/" && (
-                  <div className="absolute inset-0 rounded-full bg-[#f0f0f0] dark:bg-white pointer-events-none"></div>
-                )}
-              </Link> */}
 
               <Link
                 to="/"
@@ -276,39 +227,7 @@ export function SiteHeader() {
                 )}
               </Link>
 
-              {/* 
-
-              <Link
-                to="/tickets"
-                className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary ${
-                  location.pathname === "/tickets"
-                    ? "text-primary bg-[#F3F5F9] dark:bg-[#2c2d32]"
-                    : "text-muted-foreground dark:text-gray-400 dark:hover:text-gray-200"
-                }`}
-              >
-                <span className="z-10 font-passenger font-medium text-[#000000] dark:text-gray-200">
-                  My tickets
-                </span>
-                {location.pathname === "/tickets" && (
-                  <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-[#2c2d32] pointer-events-none"></div>
-                )}
-              </Link> */}
-
-              {/* <Link
-                to="/tickets"
-                className={`relative flex items-center justify-center px-2 py-2 text-sm font-medium transition-colors rounded-full hover:text-primary border-none ${
-                  location.pathname === "/tickets"
-                    ? "text-primary bg-[#F3F5F9] dark:bg-[#2c2d32]"
-                    : "text-muted-foreground dark:text-gray-400 dark:hover:text-gray-200"
-                }`}
-              >
-                <span className="z-10 font-passenger font-medium text-[#000000] dark:text-gray-200">
-                  My&nbsp;Tickets
-                </span>
-                {location.pathname === "/tickets" && (
-                  <div className="absolute inset-0 rounded-full bg-[#F3F5F9] dark:bg-[#2c2d32] pointer-events-none"></div>
-                )}
-              </Link> */}
+         
             </nav>
 
           <div className="flex items-center space-x-1 relative">
@@ -394,19 +313,7 @@ export function SiteHeader() {
             </Button>
            
             <div className="flex items-center space-x-4">
-              {/* {localStorage.getItem("image") &&
-              localStorage.getItem("image") !== "undefined" ? (
-                <img
-                  src={`${BackendBaseUrl}/${localStorage.getItem("image")}`}
-                  alt="Profile"
-                  className="h-10 w-10 rounded-full dark:opacity-90"
-                />
-              ) : (
-                <div className="w-12 h-12 rounded-full bg-[#FF6F61] flex justify-center items-center text-xl text-white mr-3">
-                  {getInitials(localStorage.getItem("name") || "")}
-                </div>x
-              )} */}
-
+          
               <Button
                 variant="ghost"
                 size="icon"

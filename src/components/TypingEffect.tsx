@@ -1,12 +1,8 @@
 // TypingEffect.tsx
 import React, { useState, useEffect } from "react";
 import createMarkup from "../utils/chatUtils";
+import { TypingEffectProps } from "../props/Props";
 
-interface TypingEffectProps {
-  text: string;
-  speed?: number; // Speed in milliseconds
-  inline?: boolean; // Add inline prop
-}
 
 const TypingEffect: React.FC<TypingEffectProps> = ({ text, speed = 50, inline = false }) => {
   const [displayedText, setDisplayedText] = useState("");
@@ -31,13 +27,8 @@ const TypingEffect: React.FC<TypingEffectProps> = ({ text, speed = 50, inline = 
   }, [text, speed]);
 
   return (
-    // <div
-    //   className="text-sm text-black
-    //     [&_a:hover]:text-blue-300
-    //     [&_ol]:list-decimal [&_ul]:list-disc [&_li]:ml-4 [&_li]:block [&_li]:my-1"
-    //   dangerouslySetInnerHTML={createMarkup(displayedText)}
-    // />
     <div
+      data-testid="typing-effect"
       className="text-sm opacity-80 font-passenger text-[#00000]"
       dangerouslySetInnerHTML={createMarkup(displayedText, inline ? 'inline' : 'vertical')}
     />

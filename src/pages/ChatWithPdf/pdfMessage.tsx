@@ -275,6 +275,7 @@ const PdfMessage: React.FC<ChatMessageProps> = React.memo(
           <UserCard
             name={localStorage.getItem("name") || "User"}
             text={message.text}
+            timestamp={message.timestamp}
           />
         ) : (
           <div className="flex flex-col w-full">
