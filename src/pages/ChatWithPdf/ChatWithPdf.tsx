@@ -98,7 +98,11 @@ const PDFChat = () => {
         if (response.chat_id) {
           setCurrentChatId(response.chat_id);
           localStorage.setItem("chat_id", response.chat_id);
-          
+          // Use type assertion to tell TypeScript that file_url might exist
+          const responseWithFileUrl = response as { file_url?: string } & typeof response;
+          if (responseWithFileUrl.file_url) {
+            setPdfUrls([responseWithFileUrl.file_url]);
+          }
           // Only fetch history if this was an initial message
           if (!isInitializedRef.current) {
             fetchPdfChatHistory();
